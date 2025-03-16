@@ -1,0 +1,22 @@
+package org.fufu.spellbook
+
+import kotlinx.serialization.Serializable
+
+
+interface Route {
+
+    @Serializable
+    data object RouteGraph: Route
+
+    @Serializable
+    data object MainSpellList: Route
+
+    @Serializable
+    data class SpellDetail(val spellID : Int): Route
+
+    @Serializable
+    data object CharacterList: Route
+
+    @Serializable
+    data class CharacterDetail(val characterID : Int): Route
+}

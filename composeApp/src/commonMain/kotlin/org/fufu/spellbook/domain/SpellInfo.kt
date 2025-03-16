@@ -1,5 +1,7 @@
 package org.fufu.spellbook.domain
 
+import kotlin.math.absoluteValue
+
 enum class Book {
     WILDEMOUNT,
     LOSTLAB,
@@ -68,12 +70,16 @@ enum class SaveType {
 }
 
 data class Spell(
+    val key: Int,
+    val info: SpellInfo
+)
+
+data class SpellInfo(
     val book: List<Book>,
     val classes: List<String>,
     val components: String,
     val duration: String,
     val guilds: List<String>,
-    val key: Int,
     val level: Int,
     val name: String,
     val optional: List<String>,
@@ -88,3 +94,36 @@ data class Spell(
     val saves: List<SaveType>,
     val dragonmarks: List<DragonMark>
 )
+
+fun SpellInfo.formatAsOrdinalSchool() : String {
+    // 7th-level Transformation
+    // Conjuration cantrip
+    fun SpellInfo.formatAsOrdinalSchoolInternal() : String{
+        val schoolName = school.name
+            .lowercase()
+            .replaceFirstChar{
+                if(it.isLowerCase())
+                    it.titlecase()
+                else it.toString()
+            }
+        if(level == 0){
+            return "$schoolName cantrip"
+        }
+        return "${level.asOrdinal()}-level $schoolName"
+    }
+
+    // tack (ritual) onto the end if it's a ritual
+    val formatted = this.formatAsOrdinalSchoolInternal()
+    return if(ritual) "$formatted (ritual)" else formatted
+}
+
+///https://stackoverflow.com/a/41774548
+fun Int.asOrdinal() : String {
+    val iAbs = this.absoluteValue // if you want negative ordinals, or just use i
+    return "$this" + if (iAbs % 100 in 11..13) "th" else when (iAbs % 10) {
+        1 -> "st"
+        2 -> "nd"
+        3 -> "rd"
+        else -> "th"
+    }
+}
