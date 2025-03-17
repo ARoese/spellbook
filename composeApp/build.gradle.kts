@@ -80,6 +80,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.skiko.awt.runtime.windows.x64)
             implementation(libs.kotlinx.coroutines.swing)
         }
 

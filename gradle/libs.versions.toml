@@ -19,6 +19,7 @@ koin = "4.0.0"
 navigationCompose = "2.8.0-alpha10"
 kotlinSerialization = "1.7.3"
 androidx-room = "2.7.0-rc02"
+skikoAwtRuntimeWindowsX64 = "0.8.15"
 sqlite = "2.5.0-rc02"
 ksp = "2.0.20-1.0.24"
 
@@ -49,6 +50,7 @@ koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", ver
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
 androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "androidx-room" }
+skiko-awt-runtime-windows-x64 = { module = "org.jetbrains.skiko:skiko-awt-runtime-windows-x64", version.ref = "skikoAwtRuntimeWindowsX64" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 

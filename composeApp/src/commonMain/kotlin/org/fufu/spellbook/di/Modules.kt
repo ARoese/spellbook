@@ -1,6 +1,7 @@
 package org.fufu.spellbook.di
 
 import androidx.room.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import org.fufu.spellbook.SpellBookDatabase
 import org.fufu.spellbook.character.data.room.DBCharacterMutator
 import org.fufu.spellbook.spell.data.room.DBSpellMutator
@@ -29,8 +30,11 @@ expect val databaseModule: Module
 
 val sharedModule = module{
     // database
-    single{ get<RoomDatabase.Builder<SpellBookDatabase>>().build() }
-        .bind(SpellBookDatabase::class)
+    single{
+        get<RoomDatabase.Builder<SpellBookDatabase>>()
+            .setDriver(BundledSQLiteDriver())
+            .build()
+    }.bind(SpellBookDatabase::class)
     // database DAOs
     single{ get<SpellBookDatabase>().getSpellDao() }
     single{ get<SpellBookDatabase>().getCharacterDao() }
