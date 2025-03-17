@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.character_detail
+package org.fufu.spellbook.character.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,14 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.di.CHARACTER_SPELL_LIST_QUALIFIER
-import org.fufu.spellbook.domain.Spell
-import org.fufu.spellbook.domain.hasPreparedSpell
-import org.fufu.spellbook.presentation.spell_list.ChipSize
-import org.fufu.spellbook.presentation.spell_list.PreparedToken
-import org.fufu.spellbook.presentation.spell_list.SpellList
-import org.fufu.spellbook.presentation.spell_list.SpellListFilter
-import org.fufu.spellbook.presentation.spell_list.SpellListState
-import org.fufu.spellbook.presentation.spell_list.SpellListVM
+import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.character.domain.hasPreparedSpell
+import org.fufu.spellbook.spell.presentation.ChipSize
+import org.fufu.spellbook.spell.presentation.PreparedToken
+import org.fufu.spellbook.spell.presentation.SpellList
+import org.fufu.spellbook.spell.presentation.SpellListFilter
+import org.fufu.spellbook.spell.presentation.SpellListState
+import org.fufu.spellbook.spell.presentation.SpellListVM
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.qualifier
 

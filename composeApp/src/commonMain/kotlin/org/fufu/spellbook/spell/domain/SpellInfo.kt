@@ -1,4 +1,4 @@
-package org.fufu.spellbook.domain
+package org.fufu.spellbook.spell.domain
 
 import kotlin.math.absoluteValue
 

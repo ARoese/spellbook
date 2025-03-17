@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.character_list
+package org.fufu.spellbook.character.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.fufu.spellbook.domain.Character
+import org.fufu.spellbook.character.domain.Character
 
 @Composable
 fun CharacterListRoot(

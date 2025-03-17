@@ -2,8 +2,6 @@ package org.fufu.spellbook
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import org.fufu.spellbook.data.room.DB_FILE_NAME
-import org.fufu.spellbook.data.room.SpellBookDatabase
 import java.io.File
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<SpellBookDatabase> {

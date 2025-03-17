@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.spell_detail
+package org.fufu.spellbook.spell.presentation
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -39,9 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.fufu.spellbook.domain.MagicSchool
-import org.fufu.spellbook.domain.SpellInfo
-import org.fufu.spellbook.domain.formatAsOrdinalSchool
+import org.fufu.spellbook.spell.domain.MagicSchool
+import org.fufu.spellbook.spell.domain.SpellInfo
+import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
 
 data class EditableValue<T>(val value: T, val onChange: (T)->Unit)
 

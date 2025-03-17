@@ -1,4 +1,4 @@
-package org.fufu.spellbook.data.room.spell
+package org.fufu.spellbook.spell.data.room
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -10,13 +10,13 @@ import androidx.room.TypeConverters
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.SerializationException
-import org.fufu.spellbook.domain.Book
-import org.fufu.spellbook.domain.DamageType
-import org.fufu.spellbook.domain.DragonMark
-import org.fufu.spellbook.domain.MagicSchool
-import org.fufu.spellbook.domain.SaveType
-import org.fufu.spellbook.domain.Spell
-import org.fufu.spellbook.domain.SpellInfo
+import org.fufu.spellbook.spell.domain.Book
+import org.fufu.spellbook.spell.domain.DamageType
+import org.fufu.spellbook.spell.domain.DragonMark
+import org.fufu.spellbook.spell.domain.MagicSchool
+import org.fufu.spellbook.spell.domain.SaveType
+import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellInfo
 
 @Dao
 interface SpellDao{

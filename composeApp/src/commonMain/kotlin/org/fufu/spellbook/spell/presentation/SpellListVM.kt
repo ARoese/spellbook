@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.spell_list
+package org.fufu.spellbook.spell.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.fufu.spellbook.domain.Spell
-import org.fufu.spellbook.domain.SpellProvider
+import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellProvider
 
 data class SpellListFilter(
     val name: String? = null,

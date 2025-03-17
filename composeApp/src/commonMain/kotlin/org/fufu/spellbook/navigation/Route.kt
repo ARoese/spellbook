@@ -1,4 +1,4 @@
-package org.fufu.spellbook
+package org.fufu.spellbook.navigation
 
 import kotlinx.serialization.Serializable
 

@@ -1,4 +1,4 @@
-package org.fufu.spellbook.data.room.character
+package org.fufu.spellbook.character.data.room
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -11,8 +11,8 @@ import androidx.room.TypeConverters
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.SerializationException
-import org.fufu.spellbook.domain.Character
-import org.fufu.spellbook.domain.SpellSlotLevel
+import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.SpellSlotLevel
 
 @Dao
 interface CharacterDao {

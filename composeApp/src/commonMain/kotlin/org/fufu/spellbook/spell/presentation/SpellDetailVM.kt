@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.spell_detail
+package org.fufu.spellbook.spell.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.fufu.spellbook.domain.Spell
-import org.fufu.spellbook.domain.SpellInfo
-import org.fufu.spellbook.domain.SpellProvider
+import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellInfo
+import org.fufu.spellbook.spell.domain.SpellProvider
 
 data class SpellDetailState(
     val originalSpell: Spell?,
@@ -32,7 +32,7 @@ fun SpellDetailState.canBecomeConcrete() : Boolean{
     return !(originalSpell == null || spellInfo == null)
 }
 
-fun SpellDetailState.toConcrete() : ConcreteSpellDetailState{
+fun SpellDetailState.toConcrete() : ConcreteSpellDetailState {
     if(!canBecomeConcrete()){
         throw KotlinNullPointerException("null field is not allowed")
     }

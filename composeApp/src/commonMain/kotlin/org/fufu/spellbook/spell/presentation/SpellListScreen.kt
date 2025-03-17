@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.spell_list
+package org.fufu.spellbook.spell.presentation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -36,7 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.fufu.spellbook.domain.Spell
+import org.fufu.spellbook.spell.domain.Spell
 
 @Composable
 fun SpellListRoot(
@@ -152,7 +152,8 @@ fun Chip(
 @Composable
 fun TagChip(
     tag: String,
-    size: ChipSize = ChipSize.REGULAR){
+    size: ChipSize = ChipSize.REGULAR
+){
     Chip(tag, Color.Black, size, fillColor = Color.LightGray)
 }
 

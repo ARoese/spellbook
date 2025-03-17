@@ -1,14 +1,14 @@
-package org.fufu.spellbook.data.room
+package org.fufu.spellbook
 
 import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
-import org.fufu.spellbook.data.room.character.CharacterDao
-import org.fufu.spellbook.data.room.character.CharacterEntity
-import org.fufu.spellbook.data.room.character.SpellSlotLevelEntity
-import org.fufu.spellbook.data.room.spell.SpellDao
-import org.fufu.spellbook.data.room.spell.SpellEntity
+import org.fufu.spellbook.character.data.room.CharacterDao
+import org.fufu.spellbook.character.data.room.CharacterEntity
+import org.fufu.spellbook.character.data.room.SpellSlotLevelEntity
+import org.fufu.spellbook.spell.data.room.SpellDao
+import org.fufu.spellbook.spell.data.room.SpellEntity
 
 const val DB_FILE_NAME = "SpellBook.db"
 

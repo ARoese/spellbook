@@ -1,4 +1,4 @@
-package org.fufu.spellbook.domain
+package org.fufu.spellbook.character.domain
 
 // TODO: add level to this. Sort order is not enough
 data class SpellSlotLevel(
@@ -18,7 +18,7 @@ data class Character (
     val spellSlots: List<SpellSlotLevel>
 )
 
-fun Character.setPreparedness(preparednesses: Map<Int, Boolean>) : Character{
+fun Character.setPreparedness(preparednesses: Map<Int, Boolean>) : Character {
     return this.copy(
         spells = spells.plus(preparednesses)
     )

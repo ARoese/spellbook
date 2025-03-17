@@ -1,7 +1,8 @@
-package org.fufu.spellbook.domain
+package org.fufu.spellbook.spell.domain
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import org.fufu.spellbook.PreviewSpells
 
 interface SpellProvider {
     fun getSpells() : Flow<List<Spell>>

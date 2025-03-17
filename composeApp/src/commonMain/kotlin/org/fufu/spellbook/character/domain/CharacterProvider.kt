@@ -1,7 +1,8 @@
-package org.fufu.spellbook.domain
+package org.fufu.spellbook.character.domain
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import org.fufu.spellbook.PreviewCharacters
 
 interface CharacterProvider {
     fun getCharacters() : Flow<List<Character>>

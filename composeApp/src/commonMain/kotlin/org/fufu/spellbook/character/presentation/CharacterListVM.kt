@@ -1,4 +1,4 @@
-package org.fufu.spellbook.presentation.character_list
+package org.fufu.spellbook.character.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.fufu.spellbook.domain.Character
-import org.fufu.spellbook.domain.CharacterProvider
+import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.CharacterProvider
 
 data class CharacterListState(
     val characters : List<Character> = emptyList(),

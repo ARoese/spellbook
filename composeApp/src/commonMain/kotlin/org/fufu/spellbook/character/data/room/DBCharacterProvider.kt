@@ -1,13 +1,13 @@
-package org.fufu.spellbook.data.room.character
+package org.fufu.spellbook.character.data.room
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
-import org.fufu.spellbook.domain.Character
-import org.fufu.spellbook.domain.CharacterMutator
-import org.fufu.spellbook.domain.CharacterProvider
+import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.CharacterMutator
+import org.fufu.spellbook.character.domain.CharacterProvider
 
 open class DBCharacterProvider(
     protected val characterDao: CharacterDao
@@ -46,7 +46,7 @@ open class DBCharacterProvider(
 
 class DBCharacterMutator(
     characterDao: CharacterDao
-) : DBCharacterProvider(characterDao), CharacterMutator{
+) : DBCharacterProvider(characterDao), CharacterMutator {
     override suspend fun setCharacter(character: Character) {
         characterDao.setCharacter(character.toEntity())
     }

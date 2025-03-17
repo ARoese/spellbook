@@ -20,16 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import org.fufu.spellbook.domain.PreviewCharacters
-import org.fufu.spellbook.domain.PreviewSpells
-import org.fufu.spellbook.presentation.character_detail.CharacterDetail
-import org.fufu.spellbook.presentation.character_detail.ConcreteCharacterDetailState
-import org.fufu.spellbook.presentation.character_list.CharacterListScreen
-import org.fufu.spellbook.presentation.character_list.CharacterListState
-import org.fufu.spellbook.presentation.spell_detail.LoadingSpellDetailScreen
-import org.fufu.spellbook.presentation.spell_detail.SpellDetailState
-import org.fufu.spellbook.presentation.spell_list.SpellListScreen
-import org.fufu.spellbook.presentation.spell_list.SpellListState
+import org.fufu.spellbook.character.presentation.CharacterDetail
+import org.fufu.spellbook.character.presentation.ConcreteCharacterDetailState
+import org.fufu.spellbook.character.presentation.CharacterListScreen
+import org.fufu.spellbook.character.presentation.CharacterListState
+import org.fufu.spellbook.spell.presentation.LoadingSpellDetailScreen
+import org.fufu.spellbook.spell.presentation.SpellDetailState
+import org.fufu.spellbook.spell.presentation.SpellListScreen
+import org.fufu.spellbook.spell.presentation.SpellListState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +136,7 @@ fun CharacterDetailPreview(){
         SpellListState(
             displayedSpells = PreviewCharacter.spells
                 .keys
-                .map{PreviewSpells[it]},
+                .map{ PreviewSpells[it]},
             loading = false
         )
     )

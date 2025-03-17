@@ -1,5 +1,12 @@
-package org.fufu.spellbook.domain
+package org.fufu.spellbook
 
+import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.SpellSlotLevel
+import org.fufu.spellbook.spell.domain.DamageType
+import org.fufu.spellbook.spell.domain.MagicSchool
+import org.fufu.spellbook.spell.domain.SaveType
+import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellInfo
 import kotlin.random.Random
 
 val seededRandom = Random(42)
@@ -41,7 +48,7 @@ val PreviewSpells = (1..40).map {
         PreviewBaseSpellInfo.copy(
             text="Spell text for spell $it",
             name="Spell $it",
-            tag=randomTags(),
+            tag= randomTags(),
             school= randomSchool(),
             ritual= seededRandom.nextBoolean(),
             level= seededRandom.nextInt(0, 10)
@@ -56,7 +63,7 @@ val PreviewCharacters = (1..21)
         val max = PreviewSpells.maxOf{it.key}
         val spellIds = (min..max)
             .shuffled(seededRandom)
-            .subList(0,seededRandom.nextInt(from=0, until=10))
+            .subList(0, seededRandom.nextInt(from=0, until=10))
         Character(
             id = it,
             name = "Preview Character $it",
@@ -66,7 +73,7 @@ val PreviewCharacters = (1..21)
             level = it,
             maxPreparedSpells = 20,
             spellSlots = (0..seededRandom.nextInt(until=5))
-                    .map{SpellSlotLevel(it, it-1)}
+                    .map{ SpellSlotLevel(it, it-1) }
                     .toList(),
         )
     }
