@@ -31,5 +31,5 @@ fun Character.learnSpells(newSpells: Set<Int>) : Character {
 }
 
 fun Character.hasPreparedSpell(id: Int) : Boolean{
-    return spells.get(id) ?: false
+    return spells[id] ?: false
 }

@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.fufu.spellbook.domain.Character
 import org.fufu.spellbook.domain.CharacterProvider
 
@@ -19,7 +18,7 @@ data class CharacterListState(
     val loading : Boolean = true
 )
 
-class CharacterListVM(val provider : CharacterProvider) : ViewModel() {
+class CharacterListVM(private val provider : CharacterProvider) : ViewModel() {
     private val _state = MutableStateFlow(CharacterListState())
     val state = _state
         .onStart {
@@ -31,7 +30,7 @@ class CharacterListVM(val provider : CharacterProvider) : ViewModel() {
         )
 
     private fun observeCharacters(){
-        provider.GetCharacters()
+        provider.getCharacters()
             .onEach{characters ->
                 delay(1000)
                 _state.update{

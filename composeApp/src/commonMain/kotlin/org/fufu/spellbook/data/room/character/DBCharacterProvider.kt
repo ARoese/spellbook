@@ -13,7 +13,7 @@ open class DBCharacterProvider(
     protected val characterDao: CharacterDao
 ) : CharacterProvider {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun GetCharacters(): Flow<List<Character>> {
+    override fun getCharacters(): Flow<List<Character>> {
         return characterDao.getCharacters()
             .flatMapConcat { characters ->
                 val characterFlows = characters.map { character ->
@@ -32,7 +32,7 @@ open class DBCharacterProvider(
             }
     }
 
-    override fun GetCharacter(id: Int): Flow<Character?> {
+    override fun getCharacter(id: Int): Flow<Character?> {
         val characterFlow = characterDao.getCharacter(id)
         val spellSlotLevelFlow = characterDao.getCharacterLevels(id)
         return characterFlow.combine(spellSlotLevelFlow){ character, levels ->
@@ -47,15 +47,15 @@ open class DBCharacterProvider(
 class DBCharacterMutator(
     characterDao: CharacterDao
 ) : DBCharacterProvider(characterDao), CharacterMutator{
-    override suspend fun SetCharacter(character: Character) {
+    override suspend fun setCharacter(character: Character) {
         characterDao.setCharacter(character.toEntity())
     }
 
-    override suspend fun AddCharacter(character: Character) {
+    override suspend fun addCharacter(character: Character) {
         characterDao.setCharacter(character.copy(id = 0).toEntity())
     }
 
-    override suspend fun DeleteCharacter(character: Character) {
+    override suspend fun deleteCharacter(character: Character) {
         characterDao.deleteCharacter(character.toEntity())
     }
 

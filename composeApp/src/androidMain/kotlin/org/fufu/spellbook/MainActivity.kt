@@ -20,13 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import org.fufu.spellbook.domain.PreviewCharacters
 import org.fufu.spellbook.domain.PreviewSpells
 import org.fufu.spellbook.presentation.character_detail.CharacterDetail
-import org.fufu.spellbook.presentation.character_detail.CharacterDetailState
 import org.fufu.spellbook.presentation.character_detail.ConcreteCharacterDetailState
-import org.fufu.spellbook.presentation.character_list.CharacterList
 import org.fufu.spellbook.presentation.character_list.CharacterListScreen
 import org.fufu.spellbook.presentation.character_list.CharacterListState
 import org.fufu.spellbook.presentation.spell_detail.LoadingSpellDetailScreen

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,19 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.di.CHARACTER_SPELL_LIST_QUALIFIER
-import org.fufu.spellbook.domain.Character
 import org.fufu.spellbook.domain.Spell
-import org.fufu.spellbook.domain.SpellInfo
 import org.fufu.spellbook.domain.hasPreparedSpell
-import org.fufu.spellbook.presentation.spell_detail.SpellDetailScreen
-import org.fufu.spellbook.presentation.spell_detail.SpellDetailState
-import org.fufu.spellbook.presentation.spell_detail.canBecomeConcrete
-import org.fufu.spellbook.presentation.spell_detail.toConcrete
 import org.fufu.spellbook.presentation.spell_list.ChipSize
 import org.fufu.spellbook.presentation.spell_list.PreparedToken
 import org.fufu.spellbook.presentation.spell_list.SpellList
 import org.fufu.spellbook.presentation.spell_list.SpellListFilter
-import org.fufu.spellbook.presentation.spell_list.SpellListRoot
 import org.fufu.spellbook.presentation.spell_list.SpellListState
 import org.fufu.spellbook.presentation.spell_list.SpellListVM
 import org.koin.compose.viewmodel.koinViewModel

@@ -10,10 +10,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.fufu.spellbook.domain.Character
 import org.fufu.spellbook.domain.CharacterProvider
-import org.fufu.spellbook.presentation.character_list.CharacterListState
 
 data class CharacterDetailState(
     val character: Character? = null,
@@ -52,7 +50,7 @@ class CharacterDetailVM(private val characterId : Int, private val provider : Ch
         )
 
     private fun observeCharacter(){
-        provider.GetCharacter(characterId)
+        provider.getCharacter(characterId)
             .onEach{ character ->
                 delay(1000)
                 _state.update{

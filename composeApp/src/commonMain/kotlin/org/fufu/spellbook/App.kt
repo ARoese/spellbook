@@ -11,7 +11,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
@@ -25,7 +26,6 @@ import androidx.navigation.toRoute
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import org.fufu.spellbook.data.room.SpellBookDatabase
 import org.fufu.spellbook.di.MAIN_SPELL_LIST
 import org.fufu.spellbook.domain.CharacterMutator
 import org.fufu.spellbook.domain.PreviewCharacters
@@ -85,7 +85,7 @@ fun App() {
         }.awaitAll()
 
         PreviewCharacters.map{
-            async{ characterMutator.SetCharacter(it) }
+            async{ characterMutator.setCharacter(it) }
         }.awaitAll()
     }
 

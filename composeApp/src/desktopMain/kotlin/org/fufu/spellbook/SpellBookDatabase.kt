@@ -4,8 +4,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import org.fufu.spellbook.data.room.DB_FILE_NAME
 import org.fufu.spellbook.data.room.SpellBookDatabase
-import org.koin.core.module.Module
-import org.koin.dsl.module
 import java.io.File
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<SpellBookDatabase> {

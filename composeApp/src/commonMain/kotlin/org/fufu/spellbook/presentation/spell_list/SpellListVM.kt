@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import org.fufu.spellbook.domain.Spell
 import org.fufu.spellbook.domain.SpellProvider
 

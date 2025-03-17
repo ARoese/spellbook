@@ -4,23 +4,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 interface CharacterProvider {
-    fun GetCharacters() : Flow<List<Character>>
-    fun GetCharacter(id: Int) : Flow<Character?>
+    fun getCharacters() : Flow<List<Character>>
+    fun getCharacter(id: Int) : Flow<Character?>
 }
 
 interface CharacterMutator : CharacterProvider {
-    suspend fun SetCharacter(character: Character)
-    suspend fun AddCharacter(character: Character)
-    suspend fun DeleteCharacter(character: Character)
+    suspend fun setCharacter(character: Character)
+    suspend fun addCharacter(character: Character)
+    suspend fun deleteCharacter(character: Character)
 }
 
 class MockCharacterProvider : CharacterProvider {
-    private val MockCharacters : List<Character> = PreviewCharacters
-    override fun GetCharacters(): Flow<List<Character>> {
-        return flowOf(MockCharacters)
+    private val mockCharacters : List<Character> = PreviewCharacters
+    override fun getCharacters(): Flow<List<Character>> {
+        return flowOf(mockCharacters)
     }
 
-    override fun GetCharacter(id: Int): Flow<Character?> {
-        return flowOf( MockCharacters.find{it.id == id} )
+    override fun getCharacter(id: Int): Flow<Character?> {
+        return flowOf( mockCharacters.find{it.id == id} )
     }
 }
