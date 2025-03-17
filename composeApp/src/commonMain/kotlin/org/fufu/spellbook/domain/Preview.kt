@@ -49,7 +49,7 @@ val PreviewSpells = (1..40).map {
     )
 }
 
-val PreviewCharacters = (0..20)
+val PreviewCharacters = (1..21)
     .map{
         val numSpells = PreviewSpells.size
         val min = PreviewSpells.minOf{it.key}

@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,19 +23,23 @@ class CharacterListVM(val provider : CharacterProvider) : ViewModel() {
     private val _state = MutableStateFlow(CharacterListState())
     val state = _state
         .onStart {
-            viewModelScope.launch{
+            observeCharacters()
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _state.value
+        )
+
+    private fun observeCharacters(){
+        provider.GetCharacters()
+            .onEach{characters ->
                 delay(1000)
-                val characters = provider.GetCharacters()
                 _state.update{
                     it.copy(
                         characters = characters,
                         loading = false
                     )
                 }
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            _state.value
-        )
+            }.launchIn(viewModelScope)
+    }
 }

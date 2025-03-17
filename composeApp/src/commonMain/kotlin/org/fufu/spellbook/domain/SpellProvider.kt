@@ -1,19 +1,35 @@
 package org.fufu.spellbook.domain
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+
 interface SpellProvider {
-    suspend fun getSpells() : List<Spell>
-    suspend fun getSpell(id: Int) : Spell?
+    fun getSpells() : Flow<List<Spell>>
+    fun getSpell(id: Int) : Flow<Spell?>
+    fun getSpells(ids: Set<Int>): Flow<List<Spell>>
+}
+
+interface SpellMutator : SpellProvider {
+    suspend fun setSpell(spell: Spell)
+    suspend fun deleteSpell(spell: Spell)
+    suspend fun addSpell(spell: SpellInfo)
 }
 
 class MockSpellProvider : SpellProvider {
     private val mockSpells = PreviewSpells
-    override suspend fun getSpells() : List<Spell> {
-        return mockSpells.toList()
+    override fun getSpells() : Flow<List<Spell>> {
+        return flowOf(mockSpells.toList())
     }
 
-    override suspend fun getSpell(id: Int) : Spell? {
-        return mockSpells.find{
+    override fun getSpells(ids: Set<Int>) : Flow<List<Spell>> {
+        return flowOf(mockSpells.filter{
+            ids.contains(it.key)
+        })
+    }
+
+    override fun getSpell(id: Int) : Flow<Spell?> {
+        return flowOf(mockSpells.find{
             it.key == id
-        }
+        })
     }
 }

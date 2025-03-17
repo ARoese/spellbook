@@ -1,5 +1,6 @@
 package org.fufu.spellbook.domain
 
+// TODO: add level to this. Sort order is not enough
 data class SpellSlotLevel(
     val maxSlots: Int,
     val slots: Int
@@ -16,6 +17,18 @@ data class Character (
     val maxPreparedSpells: Int,
     val spellSlots: List<SpellSlotLevel>
 )
+
+fun Character.setPreparedness(preparednesses: Map<Int, Boolean>) : Character{
+    return this.copy(
+        spells = spells.plus(preparednesses)
+    )
+}
+
+fun Character.learnSpells(newSpells: Set<Int>) : Character {
+    return this.copy(
+        spells = spells.plus(newSpells.subtract(spells.keys).associateWith{false})
+    )
+}
 
 fun Character.hasPreparedSpell(id: Int) : Boolean{
     return spells.get(id) ?: false

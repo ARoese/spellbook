@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -58,17 +60,24 @@ class SpellDetailVM(
     private val _state = MutableStateFlow(SpellDetailState(null))
     val state = _state
         .onStart {
-            val actualSpell = provider.getSpell(spellId)
-            delay(3000)
-            _state.update{
-                SpellDetailState(actualSpell, loading = false)
-            }
+            observeSpell()
         }
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
             _state.value
         )
+
+    private fun observeSpell(){
+        provider.getSpell(spellId)
+            .onEach { actualSpell ->
+                delay(3000)
+                _state.update{
+                    SpellDetailState(actualSpell, loading = false)
+                }
+            }.launchIn(viewModelScope)
+
+    }
 
     fun onAction(action: Action){
         when(action){

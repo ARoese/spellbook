@@ -41,16 +41,7 @@ class SpellListVM(
     val state = _state
         .onStart {
             observeFilter()
-            viewModelScope.launch{
-                delay(1000)
-                val spells = provider.getSpells()
-                _state.update{
-                    it.copy(
-                        knownSpells = spells,
-                        loading = false
-                    )
-                }
-            }
+            observeSpells()
         }
         .stateIn(
             viewModelScope,
@@ -64,14 +55,30 @@ class SpellListVM(
             .map{it.filter}
             .distinctUntilChanged()
             .debounce(1000)
-            .onEach{
+            .onEach{ filter ->
                 _state.update {
                     it.copy(
-                        displayedSpells = it.filter.filter(it.knownSpells)
+                        displayedSpells = filter.filter(it.knownSpells)
                     )
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    private fun observeSpells(){
+        provider.getSpells()
+            .onEach { spells ->
+                delay(1000)
+                _state.update{
+                    it.copy(
+                        knownSpells = spells,
+                        displayedSpells = it.filter.filter(spells),
+                        loading = false
+                    )
+                }
+            }
+            .launchIn(viewModelScope)
+
     }
 
     fun useFilter(newFilter : SpellListFilter){

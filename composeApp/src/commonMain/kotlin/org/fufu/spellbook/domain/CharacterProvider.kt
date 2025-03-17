@@ -1,17 +1,26 @@
 package org.fufu.spellbook.domain
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+
 interface CharacterProvider {
-    suspend fun GetCharacters() : List<Character>
-    suspend fun GetCharacter(id: Int) : Character?
+    fun GetCharacters() : Flow<List<Character>>
+    fun GetCharacter(id: Int) : Flow<Character?>
+}
+
+interface CharacterMutator : CharacterProvider {
+    suspend fun SetCharacter(character: Character)
+    suspend fun AddCharacter(character: Character)
+    suspend fun DeleteCharacter(character: Character)
 }
 
 class MockCharacterProvider : CharacterProvider {
     private val MockCharacters : List<Character> = PreviewCharacters
-    override suspend fun GetCharacters(): List<Character> {
-        return MockCharacters
+    override fun GetCharacters(): Flow<List<Character>> {
+        return flowOf(MockCharacters)
     }
 
-    override suspend fun GetCharacter(id: Int): Character? {
-        return MockCharacters.find{it.id == id}
+    override fun GetCharacter(id: Int): Flow<Character?> {
+        return flowOf( MockCharacters.find{it.id == id} )
     }
 }

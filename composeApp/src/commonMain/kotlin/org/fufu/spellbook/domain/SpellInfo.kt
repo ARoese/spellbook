@@ -31,7 +31,7 @@ enum class DamageType {
     FIRE,
     LIGHTNING,
     FORCE,
-    ACID,
+    ACID
 }
 
 enum class DragonMark {
@@ -47,6 +47,7 @@ enum class DragonMark {
     HANDLING,
     PASSAGE,
     WARDING,
+    OTHER
 }
 
 enum class MagicSchool {
@@ -57,7 +58,8 @@ enum class MagicSchool {
     EVOCATION,
     CONJURATION,
     NECROMANCY,
-    TRANSFORMATION
+    TRANSFORMATION,
+    OTHER
 }
 
 enum class SaveType {

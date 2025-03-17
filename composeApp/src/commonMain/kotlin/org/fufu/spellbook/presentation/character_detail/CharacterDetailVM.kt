@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -42,19 +44,23 @@ class CharacterDetailVM(private val characterId : Int, private val provider : Ch
     private val _state = MutableStateFlow(CharacterDetailState())
     val state = _state
         .onStart {
-            viewModelScope.launch{
+            observeCharacter()
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _state.value
+        )
+
+    private fun observeCharacter(){
+        provider.GetCharacter(characterId)
+            .onEach{ character ->
                 delay(1000)
-                val character = provider.GetCharacter(characterId)
                 _state.update{
                     it.copy(
                         character = character,
                         loading = false
                     )
                 }
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            _state.value
-        )
+            }.launchIn(viewModelScope)
+    }
 }
