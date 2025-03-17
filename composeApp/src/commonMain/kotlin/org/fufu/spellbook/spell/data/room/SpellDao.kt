@@ -21,7 +21,7 @@ import org.fufu.spellbook.spell.domain.SpellInfo
 @Dao
 interface SpellDao{
     @Upsert
-    suspend fun upsertSpell(item: SpellEntity)
+    suspend fun upsertSpell(item: SpellEntity) : Long
 
     @Query("SELECT * FROM SpellEntity")
     fun getAllSpells(): Flow<List<SpellEntity>>

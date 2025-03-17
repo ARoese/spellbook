@@ -12,9 +12,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -135,7 +137,12 @@ fun SpellDetailScreenRoot(
     LoadingSpellDetailScreen(
         state,
         onEditClicked = {viewModel.onAction(SpellDetailVM.Action.OnEditClicked)},
-        onCloseClicked = onCloseClicked,
+        onCloseClicked = { // if the viewModel lets us, forward it to navigation
+            val vmRes = viewModel.onAction(SpellDetailVM.Action.OnCloseClicked)
+            if(vmRes != null){
+                onCloseClicked()
+            }
+                         },
         onSpellEdited = {viewModel.onAction(SpellDetailVM.Action.OnSpellEdited(it))}
     )
 }

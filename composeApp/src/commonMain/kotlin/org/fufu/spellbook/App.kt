@@ -110,7 +110,10 @@ fun App() {
                         onSpellSelected = {
                             navController.navigate(Route.SpellDetail(it.key))
                         },
-                        navBar = {BottomNavBar(navController, Route.MainSpellList)}
+                        navBar = {BottomNavBar(navController, Route.MainSpellList)},
+                        onNewClicked = {
+                            navController.navigate(Route.SpellDetail(0))
+                        }
                     )
                 }
                 composable<Route.SpellDetail>(

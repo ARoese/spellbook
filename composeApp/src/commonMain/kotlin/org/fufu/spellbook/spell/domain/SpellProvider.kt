@@ -13,7 +13,7 @@ interface SpellProvider {
 interface SpellMutator : SpellProvider {
     suspend fun setSpell(spell: Spell)
     suspend fun deleteSpell(spell: Spell)
-    suspend fun addSpell(spell: SpellInfo)
+    suspend fun addSpell(spell: SpellInfo): Int
 }
 
 class MockSpellProvider : SpellProvider {

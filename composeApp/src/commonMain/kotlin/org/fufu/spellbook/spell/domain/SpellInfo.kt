@@ -77,7 +77,7 @@ data class Spell(
 )
 
 data class SpellInfo(
-    val book: List<Book>,
+    val book: List<Book> ,
     val classes: List<String>,
     val components: String,
     val duration: String,
@@ -96,6 +96,29 @@ data class SpellInfo(
     val saves: List<SaveType>,
     val dragonmarks: List<DragonMark>
 )
+
+fun DefaultSpellInfo() : SpellInfo {
+    return SpellInfo(
+        book = listOf(Book.OTHER),
+        classes = emptyList(),
+        components = "",
+        duration = "",
+        guilds = emptyList(),
+        level = 0,
+        name = "New Spell",
+        optional = emptyList(),
+        range = "",
+        ritual = false,
+        school = MagicSchool.ILLUSION,
+        subclasses = emptyList(),
+        text = "Spell text",
+        time = "",
+        tag = emptyList(),
+        damages = emptyList(),
+        saves = emptyList(),
+        dragonmarks = emptyList()
+    )
+}
 
 fun SpellInfo.formatAsOrdinalSchool() : String {
     // 7th-level Transformation

@@ -18,13 +18,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +45,7 @@ import org.fufu.spellbook.spell.domain.Spell
 fun SpellListRoot(
     viewModel: SpellListVM,
     onSpellSelected: (Spell) -> Unit,
+    onNewClicked: () -> Unit,
     navBar: @Composable () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,7 +53,8 @@ fun SpellListRoot(
     SpellListScreen(
         state,
         onSpellSelected,
-        navBar
+        onNewClicked,
+        navBar,
     )
 }
 
@@ -57,10 +62,26 @@ fun SpellListRoot(
 fun SpellListScreen(
     state: SpellListState,
     onSpellSelected: (Spell) -> Unit,
+    onNewClicked: () -> Unit = {},
     navBar: @Composable () -> Unit
 ){
     Scaffold(
-        bottomBar = navBar
+        bottomBar = navBar,
+        floatingActionButton = {
+            IconButton(onClick = onNewClicked){
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(percent = 50))
+                        .background(color = Color.LightGray)
+                ){
+                    Icon(
+                        Icons.Filled.Add, contentDescription = "Add new spell",
+                        modifier = Modifier.padding(20.dp)
+                    )
+                }
+
+            }
+        }
     ){ padding ->
         Box(modifier = Modifier.padding(padding)){
             SpellList(
@@ -68,7 +89,6 @@ fun SpellListScreen(
                 onSpellSelected
             )
         }
-
     }
 }
 
