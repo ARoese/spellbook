@@ -1,6 +1,6 @@
 package org.fufu.spellbook.di
 
-import org.fufu.spellbook.getDatabaseBuilder
+import org.fufu.spellbook.jvm.getDatabaseBuilder
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
