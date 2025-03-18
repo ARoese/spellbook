@@ -113,7 +113,12 @@ class SpellDetailVM(
                 }
 
             is Action.OnEditClicked -> {
+
                 _state.update {
+                    // if loading, don't allow this
+                    // TODO: do something more clever than this
+                    // nasty logic
+                    if(it.loading){return null}
                     if(it.isEditing){
                         if(provider !is SpellMutator){
                             throw OperationNotSupportedException(

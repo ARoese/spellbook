@@ -21,10 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import org.fufu.spellbook.character.presentation.CharacterDetail
+import org.fufu.spellbook.character.presentation.CharacterDetailScreen
+import org.fufu.spellbook.character.presentation.CharacterDetailState
 import org.fufu.spellbook.character.presentation.ConcreteCharacterDetailState
 import org.fufu.spellbook.character.presentation.CharacterListScreen
 import org.fufu.spellbook.character.presentation.CharacterListState
-import org.fufu.spellbook.spell.presentation.LoadingSpellDetailScreen
+import org.fufu.spellbook.spell.presentation.LoadingSpellDetail
+import org.fufu.spellbook.spell.presentation.SpellDetailScreen
 import org.fufu.spellbook.spell.presentation.SpellDetailState
 import org.fufu.spellbook.spell.presentation.SpellListScreen
 import org.fufu.spellbook.spell.presentation.SpellListState
@@ -105,13 +108,13 @@ val previewSpell = PreviewSpells[5]
 @Preview(showBackground = true)
 @Composable
 fun SpellDetailScreenPreview(){
-    LoadingSpellDetailScreen(SpellDetailState(previewSpell, isEditing = false, loading = false))
+    SpellDetailScreen(SpellDetailState(previewSpell, isEditing = false, loading = false))
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SpellDetailEditingScreenPreview(){
-    LoadingSpellDetailScreen(SpellDetailState(previewSpell, isEditing = true, loading = false))
+    SpellDetailScreen(SpellDetailState(previewSpell, isEditing = true, loading = false))
 }
 
 @Preview(showBackground = true)
@@ -131,8 +134,8 @@ val PreviewCharacter = PreviewCharacters[3]
 @Preview(showBackground = true)
 @Composable
 fun CharacterDetailPreview(){
-    CharacterDetail(
-        ConcreteCharacterDetailState(PreviewCharacter, false),
+    CharacterDetailScreen(
+        CharacterDetailState(PreviewCharacter, false),
         SpellListState(
             displayedSpells = PreviewCharacter.spells
                 .keys

@@ -3,12 +3,16 @@ package org.fufu.spellbook.character.presentation
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,14 +49,46 @@ fun CharacterDetailScreenRoot(
         )
     )
 
-    LoadingCharacterDetailScreen(state, spellListState, onBack, onViewSpell)
+    CharacterDetailScreen(
+        state,
+        spellListState,
+        onBack = onBack,
+        onViewSpell = onViewSpell
+    )
 }
 
 @Composable
-fun LoadingCharacterDetailScreen(
+fun CharacterDetailScreen(
     state: CharacterDetailState,
     spellListState: SpellListState,
     onBack: () -> Unit = {},
+    onViewSpell: (Spell) -> Unit = {}
+){
+    Scaffold(
+        topBar = {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(onClick = onBack){
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+            }
+        }
+    ){ padding ->
+        Box(modifier = Modifier.padding(padding)){
+            LoadingCharacterDetail(
+                state,
+                spellListState,
+                onViewSpell
+            )
+        }
+    }
+}
+
+@Composable
+fun LoadingCharacterDetail(
+    state: CharacterDetailState,
+    spellListState: SpellListState,
     onViewSpell: (Spell) -> Unit = {}
 ){
     // check and handle loading status and nullability of stuff
@@ -69,7 +105,7 @@ fun LoadingCharacterDetailScreen(
             CharacterDetail(
                 state.toConcrete(),
                 spellListState,
-                onBack, onViewSpell
+                onViewSpell
             )
         }
     }
@@ -79,15 +115,11 @@ fun LoadingCharacterDetailScreen(
 fun CharacterDetail(
     state: ConcreteCharacterDetailState,
     spellListState: SpellListState,
-    onBack: () -> Unit = {},
     onViewSpell: (Spell) -> Unit = {}
 ){
     val character = state.character
     Box(modifier = Modifier.fillMaxSize()){
         Column {
-            IconButton(onClick = onBack){
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
             Text("Name: ${character.name}")
             Text("Class: ${character.characterClass}")
             Text("Level: ${character.level}")
