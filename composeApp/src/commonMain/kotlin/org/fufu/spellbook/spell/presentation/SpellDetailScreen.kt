@@ -14,6 +14,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -144,7 +145,13 @@ fun SpellDetailScreenRoot(
             }
         },
         onSpellEdited = { viewModel.onAction(SpellDetailVM.Action.OnSpellEdited(it)) },
-        onEditClicked = { viewModel.onAction(SpellDetailVM.Action.OnEditClicked) }
+        onEditClicked = { viewModel.onAction(SpellDetailVM.Action.OnEditClicked) },
+        onDeleteClicked = {
+            val vmRes = viewModel.onAction(SpellDetailVM.Action.OnDeleteClicked)
+            if(vmRes != null){
+                onCloseClicked()
+            }
+        }
     )
 }
 
@@ -153,7 +160,8 @@ fun SpellDetailScreen(
     state: SpellDetailState,
     onCloseClicked: () -> Unit = {},
     onSpellEdited: (SpellInfo) -> Unit = {},
-    onEditClicked: () -> Unit = {}
+    onEditClicked: () -> Unit = {},
+    onDeleteClicked: () -> Unit = {}
 ){
     val editButtonIcon = if(state.isEditing){
         Icons.Filled.Check
@@ -163,6 +171,14 @@ fun SpellDetailScreen(
     Scaffold (
         topBar = {
             Box(modifier = Modifier.fillMaxWidth()){
+                if(state.isEditing){
+                    IconButton(
+                        onClick = onDeleteClicked
+                    ){
+                        Icon(Icons.Filled.Delete, "Delete")
+                    }
+                }
+
                 Row(modifier = Modifier.align(Alignment.CenterEnd)){
                     IconButton(
                         onClick = onEditClicked,

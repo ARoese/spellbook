@@ -31,9 +31,9 @@ interface SpellDao{
 
     @Query("SELECT * FROM SpellEntity where `key`=:key")
     fun getSpell(key: Int) : Flow<SpellEntity?>
-
-    @Delete
-    suspend fun deleteSpell(spell: SpellEntity)
+    
+    @Query("DELETE FROM SpellEntity where `key`=:key")
+    suspend fun deleteSpell(key: Int)
 }
 
 class Converters{

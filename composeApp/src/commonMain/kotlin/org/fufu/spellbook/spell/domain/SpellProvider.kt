@@ -12,7 +12,7 @@ interface SpellProvider {
 
 interface SpellMutator : SpellProvider {
     suspend fun setSpell(spell: Spell)
-    suspend fun deleteSpell(spell: Spell)
+    suspend fun deleteSpell(key: Int)
     suspend fun addSpell(spell: SpellInfo): Int
 }
 

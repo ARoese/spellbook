@@ -36,8 +36,8 @@ class DBSpellMutator(spellDao: SpellDao) : DBSpellProvider(spellDao), SpellMutat
         return spellDao.upsertSpell(Spell(key = 0, info = spell).toEntity()).toInt()
     }
 
-    override suspend fun deleteSpell(spell: Spell) {
-        spellDao.deleteSpell(spell.toEntity())
+    override suspend fun deleteSpell(key: Int) {
+        spellDao.deleteSpell(key)
     }
 
 }

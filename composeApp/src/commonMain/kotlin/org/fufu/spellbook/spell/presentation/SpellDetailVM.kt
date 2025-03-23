@@ -56,10 +56,12 @@ class SpellDetailVM(
     private var spellId: Int,
     private val provider: SpellProvider
 ) : ViewModel() {
+    public val mutable = provider is SpellMutator
     sealed interface Action{
         data object OnCloseClicked : Action
         data object OnEditClicked : Action
         data class OnSpellEdited(val newInfo: SpellInfo) : Action
+        data object OnDeleteClicked : Action
     }
 
     private val _state = MutableStateFlow(
@@ -120,12 +122,12 @@ class SpellDetailVM(
                     // nasty logic
                     if(it.loading){return null}
                     if(it.isEditing){
-                        if(provider !is SpellMutator){
+                        if(!mutable){
                             throw OperationNotSupportedException(
                                 "tried to save to a provider instead of mutator"
                             )
                         }
-                        val mutator : SpellMutator = provider
+                        val mutator : SpellMutator = provider as SpellMutator
                         if(it.spellInfo == null){
                             throw OperationNotSupportedException(
                                 "tried to save a null spell info"
@@ -153,6 +155,21 @@ class SpellDetailVM(
                     it.copy(spellInfo = action.newInfo)
                 }
                 null
+            }
+
+            is Action.OnDeleteClicked -> {
+                if( provider !is SpellMutator){
+                    throw OperationNotSupportedException(
+                        "tried to delete using a provider instead of mutator"
+                    )
+                }
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    provider.deleteSpell(spellId)
+                    observeSpell()
+                }
+
+                return action
             }
         }
     }
