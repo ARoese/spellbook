@@ -7,7 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -26,6 +28,8 @@ import org.fufu.spellbook.character.presentation.CharacterDetailState
 import org.fufu.spellbook.character.presentation.ConcreteCharacterDetailState
 import org.fufu.spellbook.character.presentation.CharacterListScreen
 import org.fufu.spellbook.character.presentation.CharacterListState
+import org.fufu.spellbook.spell.presentation.ImportScreen
+import org.fufu.spellbook.spell.presentation.ImportScreenState
 import org.fufu.spellbook.spell.presentation.LoadingSpellDetail
 import org.fufu.spellbook.spell.presentation.SpellDetailScreen
 import org.fufu.spellbook.spell.presentation.SpellDetailState
@@ -65,6 +69,12 @@ fun FakeBottomNavBar(){
         NavigationBarItem(
             selected = false,
             label = { Text("item3") },
+            onClick = {},
+            icon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "import") }
+        )
+        NavigationBarItem(
+            selected = false,
+            label = { Text("item4") },
             onClick = {},
             icon = { Icon(Icons.Filled.Settings, contentDescription = "item") }
         )
@@ -142,5 +152,17 @@ fun CharacterDetailPreview(){
                 .map{ PreviewSpells[it]},
             loading = false
         )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ImportScreenPreview(){
+    ImportScreen(
+        ImportScreenState(
+            PreviewSpells,
+            loading = false
+        ),
+        navBar = { FakeBottomNavBar() }
     )
 }

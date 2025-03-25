@@ -77,6 +77,8 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
 
+            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

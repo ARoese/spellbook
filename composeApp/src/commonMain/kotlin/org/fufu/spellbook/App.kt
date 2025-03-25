@@ -4,6 +4,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -34,6 +35,8 @@ import org.fufu.spellbook.character.presentation.CharacterDetailVM
 import org.fufu.spellbook.character.presentation.CharacterListRoot
 import org.fufu.spellbook.character.presentation.CharacterListVM
 import org.fufu.spellbook.navigation.Route
+import org.fufu.spellbook.spell.presentation.ImportScreenRoot
+import org.fufu.spellbook.spell.presentation.ImportScreenVM
 import org.fufu.spellbook.spell.presentation.SpellDetailScreenRoot
 import org.fufu.spellbook.spell.presentation.SpellDetailVM
 import org.fufu.spellbook.spell.presentation.SpellListRoot
@@ -64,6 +67,12 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
             label = { Text("Characters")},
             onClick = {navController.popNavigateDistinct(Route.CharacterList, currentRoute)},
             icon = { Icon(Icons.Filled.Person, contentDescription = "Characters")}
+        )
+        NavigationBarItem(
+            selected = false,
+            label = { Text("Import") },
+            onClick = {navController.popNavigateDistinct(Route.ImportScreen, currentRoute)},
+            icon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "import") }
         )
         NavigationBarItem(
             selected = false,
@@ -177,6 +186,15 @@ fun App() {
                         onViewSpell = {
                             navController.navigate(Route.SpellDetail(it.key))
                         }
+                    )
+                }
+                composable<Route.ImportScreen>(
+
+                ){
+                    val importViewModel = koinViewModel<ImportScreenVM>()
+                    ImportScreenRoot(
+                        importViewModel,
+                        navBar = { BottomNavBar(navController, Route.ImportScreen) }
                     )
                 }
             }
