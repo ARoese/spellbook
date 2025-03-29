@@ -25,7 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.name
 
 @Composable
 fun ImportSourceDropDown(
@@ -75,24 +76,21 @@ fun EditableJsonImportSource(
     onChangeSource: (ImportSource) -> Unit
 ){
     Box{
-        var showPicker by remember { mutableStateOf(false) }
+
+        val launcher = rememberFilePickerLauncher { file ->
+            onChangeSource(ImportSource.JSON(file))
+        }
         Row{
             Button(
-                onClick = { showPicker = true },
+                onClick = { launcher.launch() },
                 modifier = Modifier
             ){
                 Text("Choose a file")
             }
-            if(source.path != null){
-                Text(source.path)
+            if(source.file != null){
+                Text(source.file.name)
             }
 
-        }
-        FilePicker(
-            show = showPicker
-        ) { path ->
-            showPicker = false
-            path?.path?.let { onChangeSource(ImportSource.JSON(it)) }
         }
     }
 }

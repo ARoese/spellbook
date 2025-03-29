@@ -23,19 +23,6 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-
-    /*
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-            isStatic = true
-        }
-    }
-    */
     
     jvm("desktop")
 
@@ -77,7 +64,8 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
 
-            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
+            implementation("io.github.vinceglb:filekit-core:0.10.0-beta01")
+            implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta01")
 
         }
         desktopMain.dependencies {

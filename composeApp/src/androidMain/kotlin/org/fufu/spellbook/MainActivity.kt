@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.init
 import org.fufu.spellbook.character.presentation.CharacterDetail
 import org.fufu.spellbook.character.presentation.CharacterDetailScreen
 import org.fufu.spellbook.character.presentation.CharacterDetailState
@@ -39,7 +41,7 @@ import org.fufu.spellbook.spell.presentation.SpellListState
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        FileKit.init(this)
         setContent {
             App()
         }

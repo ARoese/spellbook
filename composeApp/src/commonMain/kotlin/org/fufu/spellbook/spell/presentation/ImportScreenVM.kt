@@ -2,6 +2,7 @@ package org.fufu.spellbook.spell.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,7 +23,7 @@ import org.fufu.spellbook.spell.domain.SpellProvider
 import javax.naming.OperationNotSupportedException
 
 sealed interface ImportSource {
-    data class JSON(val path: String?) : ImportSource
+    data class JSON(val file: PlatformFile?) : ImportSource
     data object WIKIDOT : ImportSource
     data object SELECT : ImportSource
 }
