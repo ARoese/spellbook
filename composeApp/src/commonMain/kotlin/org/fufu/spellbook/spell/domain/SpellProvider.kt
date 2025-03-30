@@ -21,12 +21,25 @@ interface SpellMutator : SpellProvider {
 
 suspend fun SpellMutator.importFrom(
     provider: SpellProvider,
-    ids : Set<Int>? = null
+    ids : Set<Int>? = null,
+    onProgress : (Float) -> Unit = {}
 ) : List<Int> {
     val spellsFlow = if(ids == null) provider.getSpells() else provider.getSpells(ids)
-    return spellsFlow.lastOrNull()?.map{
-        addSpell(it.info)
-    }?.toList() ?: emptyList()
+
+    onProgress(0.5f)
+
+    val lastSpells = spellsFlow.lastOrNull()
+    if(lastSpells.isNullOrEmpty()){
+        onProgress(1f)
+        return emptyList()
+    }
+
+    val numSpells = lastSpells.size // not 0
+    return lastSpells.map{ (i, spell) ->
+        val res = addSpell(spell)
+        onProgress(0.5f + ((i+1)/numSpells)*0.5f)
+        res
+    }.toList()
 }
 
 class MockSpellProvider : SpellProvider {

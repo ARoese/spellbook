@@ -27,7 +27,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,7 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.spell.domain.Spell
 
 @Composable
-fun SpellListRoot(
+fun SpellListScreenRoot(
     viewModel: SpellListVM,
     onSpellSelected: (Spell) -> Unit,
     onNewClicked: () -> Unit,
@@ -55,6 +54,19 @@ fun SpellListRoot(
         onSpellSelected,
         onNewClicked,
         navBar,
+    )
+}
+
+@Composable
+fun SpellListRoot(
+    viewModel: SpellListVM,
+    onSpellSelected: (Spell) -> Unit
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    SpellList(
+        state,
+        onSpellSelected
     )
 }
 

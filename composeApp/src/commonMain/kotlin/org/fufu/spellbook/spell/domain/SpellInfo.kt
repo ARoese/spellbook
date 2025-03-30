@@ -58,7 +58,7 @@ enum class MagicSchool {
     EVOCATION,
     CONJURATION,
     NECROMANCY,
-    TRANSFORMATION,
+    TRANSMUTATION,
     OTHER
 }
 

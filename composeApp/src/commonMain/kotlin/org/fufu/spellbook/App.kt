@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.runBlocking
 import org.fufu.spellbook.di.MAIN_SPELL_LIST
 import org.fufu.spellbook.character.domain.CharacterMutator
@@ -39,7 +40,7 @@ import org.fufu.spellbook.spell.presentation.ImportScreenRoot
 import org.fufu.spellbook.spell.presentation.ImportScreenVM
 import org.fufu.spellbook.spell.presentation.SpellDetailScreenRoot
 import org.fufu.spellbook.spell.presentation.SpellDetailVM
-import org.fufu.spellbook.spell.presentation.SpellListRoot
+import org.fufu.spellbook.spell.presentation.SpellListScreenRoot
 import org.fufu.spellbook.spell.presentation.SpellListVM
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -85,19 +86,6 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
 
 @Composable
 fun App() {
-    val spellMutator = koinInject<SpellMutator>()
-    val characterMutator = koinInject<CharacterMutator>()
-    runBlocking {
-        PreviewSpells.map {
-            async {spellMutator.setSpell(it)}
-        }.awaitAll()
-
-        PreviewCharacters.map{
-            async{ characterMutator.setCharacter(it) }
-        }.awaitAll()
-    }
-
-
     MaterialTheme {
         val navController = rememberNavController()
         NavHost(
@@ -114,7 +102,7 @@ fun App() {
                     val listViewModel = koinViewModel<SpellListVM>(
                         qualifier = qualifier(MAIN_SPELL_LIST)
                     )
-                    SpellListRoot(
+                    SpellListScreenRoot(
                         listViewModel,
                         onSpellSelected = {
                             navController.navigate(Route.SpellDetail(it.key))

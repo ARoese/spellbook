@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
@@ -25,11 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
 import io.github.vinceglb.filekit.dialogs.FileKitMode
-import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
+import org.fufu.spellbook.spell.domain.Spell
 
 @Composable
 fun ImportSourceDropDown(
@@ -117,9 +117,11 @@ fun ImportScreenRoot(
     navBar: @Composable () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     ImportScreen(
         state = state,
         onChangeSource = {viewModel.onChangeSource(it)},
+        onDoImport = {viewModel.doImport()},
         navBar = navBar
     )
 }
@@ -128,17 +130,38 @@ fun ImportScreenRoot(
 fun ImportScreen(
     state: ImportScreenState,
     onChangeSource: (ImportSource) -> Unit = {},
+    onDoImport: () -> Unit = {},
     navBar: @Composable () -> Unit
 ){
     Scaffold(
         bottomBar = navBar
     ){ padding ->
         Box(modifier=Modifier.padding(padding)){
-            EditableImportSource(
-                state.importSource,
-                onChangeSource = onChangeSource
-            )
-        }
+            Column {
+                EditableImportSource(
+                    state.importSource,
+                    onChangeSource = onChangeSource
+                )
+                if(state.importSource is ImportSource.SELECT){
+                    return@Box
+                }
 
+                if(state.loading){
+                    CircularProgressIndicator()
+                }else if(state.importing){
+                    CircularProgressIndicator(
+                        progress = { state.importProgress },
+                    )
+                    Text("Importing...")
+                }else{
+                    Text("There are ${state.availableSpells.size} spells available to import")
+                    if(state.availableSpells.isNotEmpty()){
+                        Button(onClick = onDoImport){
+                            Text("Import!")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
