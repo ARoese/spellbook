@@ -64,6 +64,9 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
 
+            // for filekit desktop
+            implementation("net.java.dev.jna:jna:5.17.0")
+            implementation("net.java.dev.jna:jna-platform:5.17.0")
             implementation("io.github.vinceglb:filekit-core:0.10.0-beta01")
             implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta01")
 
