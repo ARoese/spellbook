@@ -25,6 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.vinceglb.filekit.dialogs.FileKitDialogSettings
+import io.github.vinceglb.filekit.dialogs.FileKitMode
+import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
 
@@ -76,8 +79,9 @@ fun EditableJsonImportSource(
     onChangeSource: (ImportSource) -> Unit
 ){
     Box{
-
-        val launcher = rememberFilePickerLauncher { file ->
+        val launcher = rememberFilePickerLauncher(
+            mode = FileKitMode.Single
+        ) { file ->
             onChangeSource(ImportSource.JSON(file))
         }
         Row{
@@ -85,12 +89,8 @@ fun EditableJsonImportSource(
                 onClick = { launcher.launch() },
                 modifier = Modifier
             ){
-                Text("Choose a file")
+                Text(source.file?.name ?: "Choose a file")
             }
-            if(source.file != null){
-                Text(source.file.name)
-            }
-
         }
     }
 }

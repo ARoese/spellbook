@@ -1,6 +1,6 @@
 [versions]
-agp = "8.5.2"
-android-compileSdk = "34"
+agp = "8.8.2"
+android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
@@ -13,7 +13,7 @@ androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
 compose-multiplatform = "1.7.3"
 junit = "4.13.2"
-kotlin = "2.1.0"
+kotlin = "2.1.10"
 kotlinx-coroutines = "1.10.1"
 koin = "4.0.0"
 navigationCompose = "2.8.0-alpha10"
@@ -21,7 +21,7 @@ kotlinSerialization = "1.7.3"
 androidx-room = "2.7.0-rc02"
 skikoAwtRuntimeWindowsX64 = "0.8.15"
 sqlite = "2.5.0-rc02"
-ksp = "2.0.20-1.0.24"
+ksp = "2.1.10-1.0.31"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
