@@ -17,6 +17,8 @@ import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.SaveType
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
+import org.fufu.spellbook.toEnumUsingName
+import org.fufu.spellbook.toStringUsingName
 
 @Dao
 interface SpellDao{
@@ -48,15 +50,6 @@ class Converters{
             return listOf()
         }
         return s.splitToSequence('|').toList()
-    }
-
-    private inline fun <reified T : Enum<T>>toStringUsingName(enum: T) : String{
-        return enum.name
-    }
-
-    private inline fun <reified T : Enum<T>>toEnumUsingName(enum: String, default: T? = null) : T {
-        val map = enumValues<T>().associate { (it.name to it) }
-        return map[enum] ?: default ?: throw SerializationException("illegal enum: $enum")
     }
 
     @TypeConverter

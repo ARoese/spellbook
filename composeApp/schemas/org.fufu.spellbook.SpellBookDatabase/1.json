@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "adf49f4c0e8aa2951adc28c12a15274d",
+    "identityHash": "1697367259d1304cba6693c4f0a6bd95",
     "entities": [
       {
         "tableName": "CharacterEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `spells` TEXT NOT NULL, `characterClass` TEXT NOT NULL, `subclass` TEXT NOT NULL, `level` INTEGER NOT NULL, `maxPreparedSpells` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `spells` TEXT NOT NULL, `characterClass` TEXT NOT NULL, `subclass` TEXT NOT NULL, `level` INTEGER NOT NULL, `maxPreparedSpells` INTEGER NOT NULL, `characterIcon` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -48,6 +48,12 @@
             "fieldPath": "maxPreparedSpells",
             "columnName": "maxPreparedSpells",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "characterIcon",
+            "columnName": "characterIcon",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -237,7 +243,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'adf49f4c0e8aa2951adc28c12a15274d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1697367259d1304cba6693c4f0a6bd95')"
     ]
   }
 }

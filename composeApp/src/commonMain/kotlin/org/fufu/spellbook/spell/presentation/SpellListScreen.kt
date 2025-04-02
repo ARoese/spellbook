@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.fufu.spellbook.composables.FloatingAddButton
 import org.fufu.spellbook.spell.domain.Spell
 
 @Composable
@@ -80,19 +82,7 @@ fun SpellListScreen(
     Scaffold(
         bottomBar = navBar,
         floatingActionButton = {
-            IconButton(onClick = onNewClicked){
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(percent = 50))
-                        .background(color = Color.LightGray)
-                ){
-                    Icon(
-                        Icons.Filled.Add, contentDescription = "Add new spell",
-                        modifier = Modifier.padding(20.dp)
-                    )
-                }
-
-            }
+            FloatingAddButton(onNewClicked)
         }
     ){ padding ->
         Box(modifier = Modifier.padding(padding)){

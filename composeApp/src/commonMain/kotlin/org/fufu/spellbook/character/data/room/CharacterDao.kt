@@ -102,7 +102,8 @@ data class CharacterEntity (
     val characterClass: String,
     val subclass: String,
     val level: Int,
-    val maxPreparedSpells: Int
+    val maxPreparedSpells: Int,
+    val characterIcon: String
 )
 
 fun SpellSlotLevelEntity.fromEntity() : SpellSlotLevel {
@@ -130,7 +131,8 @@ fun CharacterEntity.fromEntity(spellSlots: List<SpellSlotLevel>) : Character {
         subclass = subclass,
         level = level,
         maxPreparedSpells = maxPreparedSpells,
-        spellSlots = spellSlots
+        spellSlots = spellSlots,
+        characterIcon = characterIcon
     )
 }
 
@@ -142,6 +144,7 @@ fun Character.toEntity() : CharacterEntity {
         characterClass = characterClass,
         subclass = subclass,
         level = level,
-        maxPreparedSpells = maxPreparedSpells
+        maxPreparedSpells = maxPreparedSpells,
+        characterIcon = characterIcon
     )
 }

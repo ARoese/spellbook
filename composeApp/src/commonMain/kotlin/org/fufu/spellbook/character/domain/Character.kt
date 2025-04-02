@@ -15,7 +15,8 @@ data class Character (
     val subclass: String,
     val level: Int,
     val maxPreparedSpells: Int,
-    val spellSlots: List<SpellSlotLevel>
+    val spellSlots: List<SpellSlotLevel>,
+    val characterIcon: String
 )
 
 fun Character.setPreparedness(preparednesses: Map<Int, Boolean>) : Character {

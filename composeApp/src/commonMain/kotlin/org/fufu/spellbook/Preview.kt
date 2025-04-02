@@ -75,5 +75,6 @@ val PreviewCharacters = (1..21)
             spellSlots = (0..seededRandom.nextInt(until=5))
                     .map{ SpellSlotLevel(it, it-1) }
                     .toList(),
+            characterIcon = "Icon $it"
         )
     }
