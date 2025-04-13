@@ -77,7 +77,7 @@ class Converters{
             .map{ pair ->
                 val subElement = pair
                     .filter{ it != '(' && it != ')'}
-                    .split(',')
+                    .split(", ")
                     .take(2)
 
                 if(subElement.size != 2){

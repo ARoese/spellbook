@@ -10,15 +10,14 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
-import org.fufu.spellbook.character.domain.CharacterProvider
+import org.fufu.spellbook.spell.presentation.SpellListState
 
 data class CharacterDetailState(
     val character: Character? = null,
-    val loading: Boolean = true,
-    val editing: Boolean = false,
-    val canEdit: Boolean = false
+    val loading: Boolean = true
 )
 
 data class ConcreteCharacterDetailState(
@@ -41,16 +40,23 @@ fun CharacterDetailState.toConcrete() : ConcreteCharacterDetailState {
     )
 }
 
+enum class SpellListType{
+    PREPARED,
+    KNOWN,
+    CLASS
+}
+
+data class SpellListVariant(
+    val type: SpellListType,
+    val state: SpellListState
+)
+
 class CharacterDetailVM(
     private val characterId : Int,
-    private val provider : CharacterProvider
+    private val provider : CharacterMutator
 ) : ViewModel() {
-    val canEdit : Boolean
-        get() = provider is CharacterMutator
 
-    private val _state = MutableStateFlow(CharacterDetailState(
-        canEdit = canEdit
-    ))
+    private val _state = MutableStateFlow(CharacterDetailState())
 
     val state = _state
         .onStart {
@@ -72,5 +78,35 @@ class CharacterDetailVM(
                     )
                 }
             }.launchIn(viewModelScope)
+    }
+
+    fun onSetSpellLearned(spell: Int, learned: Boolean){
+        state.value.character?.let { character ->
+            viewModelScope.launch {
+                provider.setCharacter(
+                    character.copy(
+                        spells = if(learned){
+                            character.spells.plus(spell to false)
+                        }else{
+                            character.spells.filter { it.key != spell }
+                        }
+                    )
+                )
+            }
+        }
+    }
+
+    fun onSetSpellPrepared(spell: Int, prepared: Boolean){
+        state.value.character?.let { character ->
+            viewModelScope.launch {
+                provider.setCharacter(
+                    character.copy(
+                        spells = character.spells.plus(
+                            spell to prepared
+                        )
+                    )
+                )
+            }
+        }
     }
 }

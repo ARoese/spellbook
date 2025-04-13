@@ -20,6 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,17 +44,6 @@ import org.fufu.spellbook.spell.presentation.SpellListVM
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.qualifier
 
-enum class SpellListType{
-    PREPARED,
-    KNOWN,
-    CLASS
-}
-
-data class SpellListVariant(
-    val type: SpellListType,
-    val state: SpellListState
-)
-
 @Composable
 fun CharacterDetailScreenRoot(
     viewModel: CharacterDetailVM,
@@ -63,19 +55,18 @@ fun CharacterDetailScreenRoot(
     val preparedSpellListVM = koinViewModel<SpellListVM>(
         qualifier = qualifier(CHARACTER_PREPARED_SPELL_LIST)
     )
-    val preparedSpellListState by preparedSpellListVM.state.collectAsStateWithLifecycle()
     val knownSpellListVM = koinViewModel<SpellListVM>(
         qualifier = qualifier(CHARACTER_KNOWN_SPELL_LIST)
     )
-    val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
     val classSpellListVM = koinViewModel<SpellListVM>(
         qualifier = qualifier(CHARACTER_CLASS_SPELL_LIST)
     )
-    val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
 
     preparedSpellListVM.useFilter(
         SpellListFilter(
-            onlyIds = state.character?.spells?.keys ?: emptySet()
+            onlyIds = state.character?.let{ character ->
+                character.spells.filter { it.value }.keys
+            } ?: emptySet()
         )
     )
 
@@ -87,18 +78,41 @@ fun CharacterDetailScreenRoot(
 
     classSpellListVM.useFilter(
         SpellListFilter(
-            onlyIds = state.character?.let{ character ->
-                character.spells.filter { it.value }.keys
-            } ?: emptySet()
+            onlyIds = null
         )
     )
 
+    val preparedSpellListState by preparedSpellListVM.state.collectAsStateWithLifecycle()
+    val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
+    val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
+
+    var spellListVariant : SpellListVariant by remember {
+        mutableStateOf(
+            SpellListVariant(SpellListType.PREPARED, preparedSpellListState)
+        )
+    }
+
     CharacterDetailScreen(
         state,
-        classSpellListState,
+        variant = spellListVariant,
         onBack = onBack,
         onViewSpell = onViewSpell,
-        onClickEditCharacter = onClickEditCharacter
+        onClickEditCharacter = onClickEditCharacter,
+        onChangeVariant = { type ->
+            if(type != spellListVariant.type){
+                spellListVariant = when(type){
+                    SpellListType.PREPARED -> SpellListVariant(type, preparedSpellListState)
+                    SpellListType.KNOWN -> SpellListVariant(type, knownSpellListState)
+                    SpellListType.CLASS -> SpellListVariant(type, classSpellListState)
+                }
+            }
+        },
+        onSetSpellLearnedness = { spell, learned ->
+            viewModel.onSetSpellLearned(spell.key, learned)
+        },
+        onSetSpellPreparedness = { spell, prepared ->
+            viewModel.onSetSpellPrepared(spell.key, prepared)
+        }
     )
 }
 
@@ -161,10 +175,13 @@ fun SpellListVariantDisplay(
 @Composable
 fun CharacterDetailScreen(
     state: CharacterDetailState,
-    spellListState: SpellListState,
+    variant: SpellListVariant,
     onBack: () -> Unit = {},
     onViewSpell: (Spell) -> Unit = {},
-    onClickEditCharacter: (Int) -> Unit = {}
+    onClickEditCharacter: (Int) -> Unit = {},
+    onChangeVariant: (SpellListType) -> Unit = {},
+    onSetSpellPreparedness: (Spell, Boolean) -> Unit = {_,_ -> },
+    onSetSpellLearnedness: (Spell, Boolean) -> Unit = {_,_ -> }
 ){
     Scaffold(
         topBar = {
@@ -190,9 +207,12 @@ fun CharacterDetailScreen(
         Box(modifier = Modifier.padding(padding)){
             LoadingCharacterDetail(
                 state,
-                spellListState,
+                variant,
                 onViewSpell,
-                onBack = onBack
+                onBack = onBack,
+                onChangeVariant = onChangeVariant,
+                onSetSpellLearnedness = onSetSpellLearnedness,
+                onSetSpellPreparedness = onSetSpellPreparedness
             )
         }
     }
@@ -201,9 +221,12 @@ fun CharacterDetailScreen(
 @Composable
 fun LoadingCharacterDetail(
     state: CharacterDetailState,
-    spellListState: SpellListState,
+    variant: SpellListVariant,
     onViewSpell: (Spell) -> Unit = {},
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    onChangeVariant: (SpellListType) -> Unit = {},
+    onSetSpellLearnedness: (Spell, Boolean) -> Unit,
+    onSetSpellPreparedness: (Spell, Boolean) -> Unit
 ){
     // check and handle loading status and nullability of stuff
     if(state.loading){
@@ -216,8 +239,11 @@ fun LoadingCharacterDetail(
         }else{
             CharacterDetail(
                 state.toConcrete(),
-                spellListState,
-                onViewSpell
+                variant,
+                onViewSpell,
+                onChangeVariant = onChangeVariant,
+                onSetSpellLearnedness = onSetSpellLearnedness,
+                onSetSpellPreparedness = onSetSpellPreparedness
             )
         }
     }
@@ -226,8 +252,11 @@ fun LoadingCharacterDetail(
 @Composable
 fun CharacterDetail(
     state: ConcreteCharacterDetailState,
-    spellListState: SpellListState,
-    onViewSpell: (Spell) -> Unit = {}
+    variant: SpellListVariant,
+    onViewSpell: (Spell) -> Unit = {},
+    onChangeVariant: (SpellListType) -> Unit = {},
+    onSetSpellLearnedness: (Spell, Boolean) -> Unit,
+    onSetSpellPreparedness: (Spell, Boolean) -> Unit
 ){
     val character = state.character
     Box(modifier = Modifier.fillMaxSize()){
@@ -237,17 +266,13 @@ fun CharacterDetail(
             Text("Level: ${character.level}")
             Text("Max prepared spells: ${character.maxPreparedSpells}")
             Text("Spells:")
-            SpellList(
-                spellListState,
-                onSpellSelected = onViewSpell,
-                rightSideButton = {spell ->
-                    Box(
-                        modifier = Modifier
-                            .clickable(true, onClick = {})
-                    ){
-                        PreparedToken(character.hasPreparedSpell(spell.key), ChipSize.REGULAR)
-                    }
-                }
+            SpellListVariantDisplay(
+                variant = variant,
+                character = state.character,
+                onSpellClicked = onViewSpell,
+                onChangeVariant = onChangeVariant,
+                onSetSpellLearnedness = onSetSpellLearnedness,
+                onSetSpellPreparedness = onSetSpellPreparedness
             )
         }
     }

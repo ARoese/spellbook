@@ -32,6 +32,8 @@ import org.fufu.spellbook.character.presentation.CharacterListScreen
 import org.fufu.spellbook.character.presentation.CharacterListState
 import org.fufu.spellbook.character.presentation.EditingCharacterDetailScreen
 import org.fufu.spellbook.character.presentation.EditingCharacterDetailState
+import org.fufu.spellbook.character.presentation.SpellListType
+import org.fufu.spellbook.character.presentation.SpellListVariant
 import org.fufu.spellbook.spell.presentation.ImportScreen
 import org.fufu.spellbook.spell.presentation.ImportScreenState
 import org.fufu.spellbook.spell.presentation.LoadingSpellDetail
@@ -148,13 +150,17 @@ val PreviewCharacter = PreviewCharacters[3]
 @Preview(showBackground = true)
 @Composable
 fun CharacterDetailPreview(){
+    val listState = SpellListState(
+        displayedSpells = PreviewCharacter.spells
+            .keys
+            .map{ PreviewSpells[it]},
+        loading = false
+    )
     CharacterDetailScreen(
         CharacterDetailState(PreviewCharacter, false),
-        SpellListState(
-            displayedSpells = PreviewCharacter.spells
-                .keys
-                .map{ PreviewSpells[it]},
-            loading = false
+        SpellListVariant(
+            SpellListType.KNOWN,
+            listState
         )
     )
 }

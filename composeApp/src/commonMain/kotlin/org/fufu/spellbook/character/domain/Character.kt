@@ -31,18 +31,6 @@ val defaultCharacter: Character = Character(
     characterIcon = "Icon1"
 )
 
-fun Character.setPreparedness(preparednesses: Map<Int, Boolean>) : Character {
-    return this.copy(
-        spells = spells.plus(preparednesses)
-    )
-}
-
-fun Character.learnSpells(newSpells: Set<Int>) : Character {
-    return this.copy(
-        spells = spells.plus(newSpells.subtract(spells.keys).associateWith{false})
-    )
-}
-
 fun Character.hasPreparedSpell(id: Int) : Boolean {
     return spells[id] ?: false
 }
