@@ -19,6 +19,18 @@ data class Character (
     val characterIcon: String
 )
 
+val defaultCharacter: Character = Character(
+    id = 0,
+    name = "",
+    spells = emptyMap(),
+    characterClass = "",
+    subclass = "",
+    level = 0,
+    maxPreparedSpells = 0,
+    spellSlots = emptyList(),
+    characterIcon = "Icon1"
+)
+
 fun Character.setPreparedness(preparednesses: Map<Int, Boolean>) : Character {
     return this.copy(
         spells = spells.plus(preparednesses)
@@ -31,6 +43,10 @@ fun Character.learnSpells(newSpells: Set<Int>) : Character {
     )
 }
 
-fun Character.hasPreparedSpell(id: Int) : Boolean{
+fun Character.hasPreparedSpell(id: Int) : Boolean {
     return spells[id] ?: false
+}
+
+fun Character.knowsSpell(id: Int) : Boolean {
+    return spells.containsKey(id)
 }

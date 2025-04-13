@@ -11,6 +11,7 @@ import org.fufu.spellbook.spell.domain.SpellMutator
 import org.fufu.spellbook.spell.domain.SpellProvider
 import org.fufu.spellbook.character.presentation.CharacterDetailVM
 import org.fufu.spellbook.character.presentation.CharacterListVM
+import org.fufu.spellbook.character.presentation.EditingCharacterDetailVM
 import org.fufu.spellbook.spell.presentation.ImportScreenVM
 import org.fufu.spellbook.spell.presentation.SpellDetailVM
 import org.fufu.spellbook.spell.presentation.SpellListVM
@@ -24,7 +25,9 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 const val MAIN_SPELL_LIST = "mainSpellList"
-const val CHARACTER_SPELL_LIST_QUALIFIER = "characterSpellList"
+const val CHARACTER_KNOWN_SPELL_LIST = "characterKnownSpellList"
+const val CHARACTER_PREPARED_SPELL_LIST = "characterPreparedSpellList"
+const val CHARACTER_CLASS_SPELL_LIST = "characterClassSpellList"
 
 // provides database class implementations
 expect val databaseModule: Module
@@ -55,12 +58,19 @@ val sharedModule = module{
 
     viewModel{ (sid:Int) -> SpellDetailVM(sid, get()) }
     viewModel{ (cid:Int) -> CharacterDetailVM(cid, get()) }
+    viewModel{ (cid:Int) -> EditingCharacterDetailVM(cid, get()) }
     viewModel{ CharacterListVM(get()) }
     viewModel{ ImportScreenVM(get(), null) }
     viewModel(qualifier = qualifier(MAIN_SPELL_LIST)){
         SpellListVM(get())
     }
-    viewModel(qualifier = qualifier(CHARACTER_SPELL_LIST_QUALIFIER)){
+    viewModel(qualifier = qualifier(CHARACTER_KNOWN_SPELL_LIST)){
+        SpellListVM(get())
+    }
+    viewModel(qualifier = qualifier(CHARACTER_PREPARED_SPELL_LIST)){
+        SpellListVM(get())
+    }
+    viewModel(qualifier = qualifier(CHARACTER_CLASS_SPELL_LIST)){
         SpellListVM(get())
     }
 }

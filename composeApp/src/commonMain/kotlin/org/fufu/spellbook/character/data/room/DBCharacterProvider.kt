@@ -48,11 +48,11 @@ class DBCharacterMutator(
     characterDao: CharacterDao
 ) : DBCharacterProvider(characterDao), CharacterMutator {
     override suspend fun setCharacter(character: Character) {
-        characterDao.setCharacter(character.toEntity())
+        characterDao.upsertCharacter(character.toEntity())
     }
 
-    override suspend fun addCharacter(character: Character) {
-        characterDao.setCharacter(character.copy(id = 0).toEntity())
+    override suspend fun addCharacter(character: Character): Int {
+        return characterDao.upsertCharacter(character.copy(id = 0).toEntity()).toInt()
     }
 
     override suspend fun deleteCharacter(character: Character) {

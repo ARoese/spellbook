@@ -35,6 +35,9 @@ import org.fufu.spellbook.character.presentation.CharacterDetailScreenRoot
 import org.fufu.spellbook.character.presentation.CharacterDetailVM
 import org.fufu.spellbook.character.presentation.CharacterListRoot
 import org.fufu.spellbook.character.presentation.CharacterListVM
+import org.fufu.spellbook.character.presentation.EditingCharacterDetailScreen
+import org.fufu.spellbook.character.presentation.EditingCharacterDetailScreenRoot
+import org.fufu.spellbook.character.presentation.EditingCharacterDetailVM
 import org.fufu.spellbook.navigation.Route
 import org.fufu.spellbook.spell.presentation.ImportScreenRoot
 import org.fufu.spellbook.spell.presentation.ImportScreenVM
@@ -150,7 +153,10 @@ fun App() {
                         onCharacterClicked = {
                             navController.navigate(Route.CharacterDetail(it.id))
                         },
-                        navBar = {BottomNavBar(navController, Route.CharacterList)}
+                        navBar = {BottomNavBar(navController, Route.CharacterList)},
+                        onNewClicked = {
+                            navController.navigate(Route.EditingCharacterDetail(0))
+                        }
                     )
                 }
                 composable<Route.CharacterDetail>(
@@ -173,8 +179,22 @@ fun App() {
                         },
                         onViewSpell = {
                             navController.navigate(Route.SpellDetail(it.key))
+                        },
+                        onClickEditCharacter = {
+                            navController.navigate(Route.EditingCharacterDetail(it))
                         }
                     )
+                }
+                composable<Route.EditingCharacterDetail>{ backStack ->
+                    val characterID = backStack.toRoute<Route.EditingCharacterDetail>().characterId
+                    val editingDetailViewModel = koinViewModel<EditingCharacterDetailVM>(
+                        parameters = { parametersOf(characterID) }
+                    )
+
+                    EditingCharacterDetailScreenRoot(
+                        editingDetailViewModel,
+                        onBack = {navController.popBackStack()}
+                        )
                 }
                 composable<Route.ImportScreen>(
 

@@ -17,13 +17,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -123,6 +120,19 @@ enum class ChipSize {
 }
 
 @Composable
+fun ClickableToken(
+    onClick: () -> Unit = {},
+    token: @Composable () -> Unit
+){
+    Box(
+        modifier = Modifier
+            .clickable(true, onClick = onClick)
+    ){
+        token()
+    }
+}
+
+@Composable
 fun PreparedToken(
     prepared: Boolean,
     size: ChipSize = ChipSize.REGULAR
@@ -130,6 +140,21 @@ fun PreparedToken(
     val actualColor = if (prepared) Color.Blue else Color.Black
     Chip(
         "Prepared",
+        actualColor,
+        size,
+        Color.Transparent,
+        BorderStroke(2.dp, actualColor)
+    )
+}
+
+@Composable
+fun KnownToken(
+    known: Boolean,
+    size: ChipSize = ChipSize.REGULAR
+){
+    val actualColor = if (known) Color.Blue else Color.Black
+    Chip(
+        "Known",
         actualColor,
         size,
         Color.Transparent,

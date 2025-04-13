@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 
 interface Route {
-
     @Serializable
     data object RouteGraph: Route
 
@@ -22,4 +21,7 @@ interface Route {
 
     @Serializable
     data class CharacterDetail(val characterID : Int): Route
+
+    @Serializable
+    data class EditingCharacterDetail(val characterId: Int): Route
 }

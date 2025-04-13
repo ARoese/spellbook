@@ -24,18 +24,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.composables.FloatingAddButton
 
 @Composable
 fun CharacterListRoot(
     viewModel: CharacterListVM,
     onCharacterClicked: (Character) -> Unit = {},
-    navBar: @Composable () -> Unit
+    navBar: @Composable () -> Unit,
+    onNewClicked: () -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
     CharacterListScreen(
         state,
         onCharacterClicked,
-        navBar = navBar
+        navBar = navBar,
+        onNewClicked = onNewClicked
     )
 }
 
@@ -43,16 +46,19 @@ fun CharacterListRoot(
 fun CharacterListScreen(
     state: CharacterListState,
     onCharacterClicked: (Character) -> Unit = {},
-    navBar: @Composable () -> Unit
+    navBar: @Composable () -> Unit,
+    onNewClicked: () -> Unit = {}
 ){
-    Scaffold(bottomBar = navBar) { padding ->
+    Scaffold(
+        bottomBar = navBar,
+        floatingActionButton = { FloatingAddButton(onNewClicked) }
+    ) { padding ->
         Box(modifier = Modifier.padding(padding)){
             CharacterList(
                 state,
                 onCharacterClicked
             )
         }
-
     }
 }
 

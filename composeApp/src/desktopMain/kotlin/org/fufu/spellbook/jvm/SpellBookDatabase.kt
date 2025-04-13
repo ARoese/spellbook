@@ -7,6 +7,7 @@ import org.fufu.spellbook.SpellBookDatabase
 import java.io.File
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<SpellBookDatabase> {
+    // TODO: do not use tmpdir
     val dbFile = File(System.getProperty("java.io.tmpdir"), DB_FILE_NAME)
     return Room.databaseBuilder<SpellBookDatabase>(
         name = dbFile.absolutePath,

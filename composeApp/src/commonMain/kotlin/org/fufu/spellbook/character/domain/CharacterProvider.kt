@@ -11,7 +11,7 @@ interface CharacterProvider {
 
 interface CharacterMutator : CharacterProvider {
     suspend fun setCharacter(character: Character)
-    suspend fun addCharacter(character: Character)
+    suspend fun addCharacter(character: Character): Int
     suspend fun deleteCharacter(character: Character)
 }
 

@@ -30,6 +30,8 @@ import org.fufu.spellbook.character.presentation.CharacterDetailState
 import org.fufu.spellbook.character.presentation.ConcreteCharacterDetailState
 import org.fufu.spellbook.character.presentation.CharacterListScreen
 import org.fufu.spellbook.character.presentation.CharacterListState
+import org.fufu.spellbook.character.presentation.EditingCharacterDetailScreen
+import org.fufu.spellbook.character.presentation.EditingCharacterDetailState
 import org.fufu.spellbook.spell.presentation.ImportScreen
 import org.fufu.spellbook.spell.presentation.ImportScreenState
 import org.fufu.spellbook.spell.presentation.LoadingSpellDetail
@@ -166,5 +168,16 @@ fun ImportScreenPreview(){
             loading = false
         ),
         navBar = { FakeBottomNavBar() }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EditingCharacterDetailScreenPreview() {
+    EditingCharacterDetailScreen(
+        EditingCharacterDetailState(
+            character = PreviewCharacter,
+            loading = false,
+        )
     )
 }

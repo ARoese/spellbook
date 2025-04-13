@@ -11,11 +11,14 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.CharacterMutator
 import org.fufu.spellbook.character.domain.CharacterProvider
 
 data class CharacterDetailState(
     val character: Character? = null,
-    val loading: Boolean = true
+    val loading: Boolean = true,
+    val editing: Boolean = false,
+    val canEdit: Boolean = false
 )
 
 data class ConcreteCharacterDetailState(
@@ -38,8 +41,17 @@ fun CharacterDetailState.toConcrete() : ConcreteCharacterDetailState {
     )
 }
 
-class CharacterDetailVM(private val characterId : Int, private val provider : CharacterProvider) : ViewModel() {
-    private val _state = MutableStateFlow(CharacterDetailState())
+class CharacterDetailVM(
+    private val characterId : Int,
+    private val provider : CharacterProvider
+) : ViewModel() {
+    val canEdit : Boolean
+        get() = provider is CharacterMutator
+
+    private val _state = MutableStateFlow(CharacterDetailState(
+        canEdit = canEdit
+    ))
+
     val state = _state
         .onStart {
             observeCharacter()

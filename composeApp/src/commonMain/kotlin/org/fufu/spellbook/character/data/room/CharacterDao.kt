@@ -26,7 +26,7 @@ interface CharacterDao {
     fun getCharacterLevels(characterId: Int) : Flow<List<SpellSlotLevelEntity>>
 
     @Upsert
-    suspend fun setCharacter(character: CharacterEntity)
+    suspend fun upsertCharacter(character: CharacterEntity): Long
 
     @Delete
     suspend fun deleteCharacter(character: CharacterEntity)
