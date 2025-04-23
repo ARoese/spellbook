@@ -1,6 +1,7 @@
 package org.fufu.spellbook.spell.presentation
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,9 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -38,8 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.FloatingAddButton
-import org.fufu.spellbook.spell.domain.DefaultSpellInfo
-import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.Spell
 
 @Composable
@@ -94,22 +91,56 @@ fun SpellListScreen(
     }
 }
 
+fun orderSpellList(
+    spells: List<Spell>,
+    shouldGroupByLevel: Boolean
+) : List<Spell> {
+    return spells
+        .sortedBy { it.info.name }
+        .let {
+            if(shouldGroupByLevel)
+            { it.sortedBy { e -> e.info.level } }
+            else
+            { it }
+        }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SpellList(
     state: SpellListState,
     onSpellSelected: (Spell) -> Unit,
-    rightSideButton: (@Composable (Spell) -> Unit)? = null
+    rightSideButton: (@Composable (Spell) -> Unit)? = null,
+    shouldGroupByLevel: Boolean = true
 ) {
     Box(modifier = Modifier.fillMaxWidth()){
         if(state.loading){
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }else{
+            // sorted by name, then by level. Levels are grouped together, and
+            // within that, names are sorted alphabetically
+            val sortedSpells : List<Spell> = orderSpellList(
+                state.displayedSpells,
+                shouldGroupByLevel
+            )
+            val numSpells = sortedSpells.size
             LazyColumn(modifier = Modifier
                 .padding(horizontal = 5.dp)
             ){
-                state.displayedSpells.forEach{
-                    item(key=it.key){
-                        SpellListItem(it, {onSpellSelected(it)}, rightSideButton)
+                (0 until numSpells).forEach{
+                    val spell = sortedSpells[it]
+                    val lastSpell = sortedSpells.getOrNull(it-1)
+                    // if the last spell has a different level than this one
+                    // if there is no last spell, this is also true
+                    val needsStickyHeader =
+                        shouldGroupByLevel && lastSpell?.info?.level != spell.info.level
+                    if(needsStickyHeader){
+                        stickyHeader{
+                            SpellListStickyHeader("Level ${spell.info.level}")
+                        }
+                    }
+                    item(key=spell.key){
+                        SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton)
                         HorizontalDivider()
                     }
                 }
@@ -205,6 +236,22 @@ fun TagChip(
     size: ChipSize = ChipSize.REGULAR
 ){
     Chip(tag, Color.Black, size, fillColor = Color.LightGray)
+}
+
+@Composable
+fun SpellListStickyHeader(
+    text: String
+){
+    Box(
+        modifier=Modifier
+            .background(color = Color.LightGray)
+            .fillMaxWidth()
+    ){
+        Text(
+            text,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
