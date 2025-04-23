@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +38,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.FloatingAddButton
+import org.fufu.spellbook.spell.domain.DefaultSpellInfo
+import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.Spell
 
 @Composable
@@ -101,14 +104,14 @@ fun SpellList(
         if(state.loading){
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }else{
-            val scrollState = rememberScrollState(0)
-            Column(modifier = Modifier
-                .verticalScroll(scrollState)
+            LazyColumn(modifier = Modifier
                 .padding(horizontal = 5.dp)
             ){
                 state.displayedSpells.forEach{
-                    SpellListItem(it, {onSpellSelected(it)}, rightSideButton)
-                    HorizontalDivider()
+                    item(key=it.key){
+                        SpellListItem(it, {onSpellSelected(it)}, rightSideButton)
+                        HorizontalDivider()
+                    }
                 }
             }
         }
