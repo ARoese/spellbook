@@ -1,4 +1,4 @@
-package org.fufu.spellbook.character.presentation
+package org.fufu.spellbook.character.presentation.editingCharacterDetail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,35 +33,43 @@ fun EditingCharacterDetailScreenRoot(
     onBack: () -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     EditingCharacterDetailScreen(
         state,
-        onBack = onBack,
-        onCharacterChanged = {viewModel.onCharacterChanged(it)},
-        onSaveCharacter = {viewModel.onSaveCharacter(it)},
-        onDeleteCharacter = {viewModel.onDeleteCharacter(it)}
-    )
+    ){ intent ->
+        when(intent){
+            Intent.Back -> onBack()
+            is Intent.DeleteCharacter -> viewModel.onDeleteCharacter(intent.character)
+            is Intent.SaveCharacter -> viewModel.onSaveCharacter(intent.character)
+            is Intent.EditCharacter -> viewModel.onCharacterChanged(intent.character)
+        }
+    }
+}
+
+sealed interface Intent {
+    data class EditCharacter(val character: Character) : Intent
+    data class SaveCharacter(val character: Character) : Intent
+    data class DeleteCharacter(val character: Character) : Intent
+    data object Back : Intent
 }
 
 @Composable
 fun EditingCharacterDetailScreen(
     state: EditingCharacterDetailState,
-    onBack: () -> Unit = {},
-    onCharacterChanged: (Character) -> Unit = {},
-    onSaveCharacter: (Character) -> Unit = {},
-    onDeleteCharacter: (Character) -> Unit = {}
+    intend: (Intent) -> Unit
 ) {
     Scaffold(
         topBar = {
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = onBack){
+                IconButton(onClick = { intend(Intent.Back) }){
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = {
-                        state.character?.let{onDeleteCharacter(it)}
+                        state.character?.let{intend(Intent.DeleteCharacter(it))}
                     }
                 ){
                     Icon(Icons.Filled.Delete, contentDescription = "Delete")
@@ -69,7 +77,7 @@ fun EditingCharacterDetailScreen(
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = {
-                        state.character?.let{onSaveCharacter(it)}
+                        state.character?.let{intend(Intent.SaveCharacter(it))}
                     }
                 ){
                     Icon(Icons.Filled.Check, contentDescription = "Edit")
@@ -83,11 +91,10 @@ fun EditingCharacterDetailScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }else if(!state.canBecomeConcrete()){
-                onBack()
+                intend(Intent.Back)
             }else{
-                ConcreteEditingCharacterDetailScreen(state.toConcrete(), onCharacterChanged)
+                ConcreteEditingCharacterDetailScreen(state.toConcrete(), intend)
             }
-
         }
     }
 }
@@ -106,36 +113,32 @@ fun NumberField(contents: Int, onValueChange: (Int) -> Unit){
 @Composable
 fun ConcreteEditingCharacterDetailScreen(
     state: ConcreteEditingCharacterDetailState,
-    onCharacterChanged: (Character) -> Unit = {}
+    intend: (Intent) -> Unit
 ){
     val character = state.character
     Column {
         Text("Name")
         TextField(
             character.name,
-            onValueChange = { onCharacterChanged(character.copy(name = it)) }
+            onValueChange = { intend(Intent.EditCharacter(character.copy(name = it))) }
         )
         Text("Level")
         NumberField(
             character.level,
-            onValueChange = {onCharacterChanged(character.copy(level = it))}
+            onValueChange = { intend(Intent.EditCharacter(character.copy(level = it))) }
         )
         Text("Max Prepared Spells")
         NumberField(
             character.maxPreparedSpells,
-            onValueChange = {onCharacterChanged(character.copy(maxPreparedSpells = it))}
+            onValueChange = { intend(Intent.EditCharacter(character.copy(maxPreparedSpells = it))) }
         )
-        // TODO: build a selector for this
+
         Text("Icon")
-//        TextField(
-//            character.characterIcon,
-//            onValueChange = {onCharacterChanged(character.copy(characterIcon = it))}
-//        )
         DropdownSelector(
             options = CharacterIcon.options().toList(),
             selected = setOf(character.characterIcon),
             optionPresenter = { Icon(CharacterIcon(it).fromString(), it) },
-            onOptionPicked = { onCharacterChanged(character.copy(characterIcon = it)) },
+            onOptionPicked = { intend(Intent.EditCharacter(character.copy(characterIcon = it))) },
             singleSelect = true,
             buttonContent = { Icon(CharacterIcon(character.characterIcon).fromString(), character.characterIcon) },
         )

@@ -1,4 +1,4 @@
-package org.fufu.spellbook.character.presentation
+package org.fufu.spellbook.character.presentation.editingCharacterDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

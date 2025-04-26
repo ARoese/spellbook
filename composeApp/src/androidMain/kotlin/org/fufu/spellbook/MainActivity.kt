@@ -23,14 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
-import org.fufu.spellbook.character.presentation.CharacterDetailScreen
-import org.fufu.spellbook.character.presentation.CharacterDetailState
-import org.fufu.spellbook.character.presentation.CharacterListScreen
-import org.fufu.spellbook.character.presentation.CharacterListState
-import org.fufu.spellbook.character.presentation.EditingCharacterDetailScreen
-import org.fufu.spellbook.character.presentation.EditingCharacterDetailState
-import org.fufu.spellbook.character.presentation.SpellListType
-import org.fufu.spellbook.character.presentation.SpellListVariant
+import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetailScreen
+import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetailState
+import org.fufu.spellbook.character.presentation.characterList.CharacterListScreen
+import org.fufu.spellbook.character.presentation.characterList.CharacterListState
+import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailScreen
+import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailState
+import org.fufu.spellbook.character.presentation.characterDetail.SpellListType
+import org.fufu.spellbook.character.presentation.characterDetail.SpellListVariant
 import org.fufu.spellbook.spell.presentation.ImportScreen
 import org.fufu.spellbook.spell.presentation.ImportScreenState
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailScreen
@@ -110,9 +110,8 @@ fun SpellListScreenPreview(){
             displayedSpells = PreviewSpells,
             loading = false
         ),
-        onSpellSelected = {},
         navBar = { FakeBottomNavBar() }
-    )
+    ){}
 }
 
 val previewSpell = PreviewSpells[5]
@@ -138,7 +137,7 @@ fun CharacterListPreview(){
             false
         ),
         navBar = { FakeBottomNavBar() }
-    )
+    ){}
 }
 
 val PreviewCharacter = PreviewCharacters[3]
@@ -158,7 +157,7 @@ fun CharacterDetailPreview(){
             SpellListType.KNOWN,
             listState
         )
-    )
+    ){}
 }
 
 @Preview(showBackground = true)
@@ -181,5 +180,5 @@ fun EditingCharacterDetailScreenPreview() {
             character = PreviewCharacter,
             loading = false,
         )
-    )
+    ){}
 }

@@ -1,4 +1,4 @@
-package org.fufu.spellbook.character.presentation
+package org.fufu.spellbook.character.presentation.characterDetail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -91,55 +91,61 @@ fun CharacterDetailScreenRoot(
 
     CharacterDetailScreen(
         state,
-        variant = spellListVariant,
-        onBack = onBack,
-        onViewSpell = onViewSpell,
-        onClickEditCharacter = onClickEditCharacter,
-        onChangeVariant = { type ->
-            if(type != spellListVariant.type){
-                spellListVariant = when(type){
-                    SpellListType.PREPARED -> SpellListVariant(type, preparedSpellListState)
-                    SpellListType.KNOWN -> SpellListVariant(type, knownSpellListState)
-                    SpellListType.CLASS -> SpellListVariant(type, classSpellListState)
+        variant = spellListVariant
+    ) { intent ->
+        when(intent){
+            Intent.Back -> onBack()
+            is Intent.ChangeListVariant -> {
+                val type = intent.type
+                if(type != spellListVariant.type){
+                    spellListVariant = when(type){
+                        SpellListType.PREPARED -> SpellListVariant(type, preparedSpellListState)
+                        SpellListType.KNOWN -> SpellListVariant(type, knownSpellListState)
+                        SpellListType.CLASS -> SpellListVariant(type, classSpellListState)
+                    }
                 }
             }
-        },
-        onSetSpellLearnedness = { spell, learned ->
-            viewModel.onSetSpellLearned(spell.key, learned)
-        },
-        onSetSpellPreparedness = { spell, prepared ->
-            viewModel.onSetSpellPrepared(spell.key, prepared)
+            is Intent.EditCharacter -> onClickEditCharacter(intent.characterId)
+            is Intent.SetSpellLearnedness -> viewModel.onSetSpellLearned(intent.spell.key, intent.learned)
+            is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell.key, intent.prepared)
+            is Intent.ViewSpell -> onViewSpell(intent.spell)
         }
-    )
+    }
+}
+
+sealed interface Intent {
+    data class ViewSpell(val spell: Spell) : Intent
+    data object Back : Intent
+    data class EditCharacter(val characterId: Int) : Intent
+    data class ChangeListVariant(val type: SpellListType) : Intent
+    data class SetSpellLearnedness(val spell: Spell, val learned: Boolean) : Intent
+    data class SetSpellPreparedness(val spell: Spell, val prepared: Boolean) : Intent
 }
 
 @Composable
 fun SpellListVariantDisplay(
     variant: SpellListVariant,
     character: Character,
-    onChangeVariant: (SpellListType) -> Unit = {},
-    onSpellClicked: (Spell) -> Unit = {},
-    onSetSpellPreparedness: (Spell, Boolean) -> Unit = {_,_ -> },
-    onSetSpellLearnedness: (Spell, Boolean) -> Unit = {_,_ -> }
+    intend: (Intent) -> Unit
 ){
     Column {
         NavigationBar {
             NavigationBarItem(
-                onClick = { onChangeVariant(SpellListType.PREPARED) },
+                onClick = { intend(Intent.ChangeListVariant(SpellListType.PREPARED)) },
                 label = { Text("Prepared") },
                 selected = variant.type == SpellListType.PREPARED,
                 icon = {},
                 alwaysShowLabel = true
             )
             NavigationBarItem(
-                onClick = { onChangeVariant(SpellListType.KNOWN) },
+                onClick = { intend(Intent.ChangeListVariant(SpellListType.KNOWN)) },
                 label = { Text("Known") },
                 selected = variant.type == SpellListType.KNOWN,
                 icon = {},
                 alwaysShowLabel = true
             )
             NavigationBarItem(
-                onClick = { onChangeVariant(SpellListType.CLASS) },
+                onClick = { intend(Intent.ChangeListVariant(SpellListType.CLASS)) },
                 label = { Text("Class") },
                 selected = variant.type == SpellListType.CLASS,
                 icon = {},
@@ -151,7 +157,7 @@ fun SpellListVariantDisplay(
             SpellListType.KNOWN -> { spell ->
                 val prepared = character.hasPreparedSpell(spell.key)
                 ClickableToken(
-                    onClick = {onSetSpellPreparedness(spell, !prepared)}
+                    onClick = {intend(Intent.SetSpellPreparedness(spell, !prepared))}
                 ) {
                     PreparedToken(prepared = prepared)
                 }
@@ -159,13 +165,13 @@ fun SpellListVariantDisplay(
             SpellListType.CLASS -> { spell ->
                 val known = character.knowsSpell(spell.key)
                 ClickableToken(
-                    onClick = {onSetSpellLearnedness(spell, !known)}
+                    onClick = {intend(Intent.SetSpellLearnedness(spell, !known))}
                 ) {
                     KnownToken(known = known)
                 }
             }
         }
-        SpellList(variant.state, onSpellSelected = onSpellClicked, rightSideButton)
+        SpellList(variant.state, onSpellSelected = { intend(Intent.ViewSpell(it)) }, rightSideButton)
     }
 }
 
@@ -173,26 +179,21 @@ fun SpellListVariantDisplay(
 fun CharacterDetailScreen(
     state: CharacterDetailState,
     variant: SpellListVariant,
-    onBack: () -> Unit = {},
-    onViewSpell: (Spell) -> Unit = {},
-    onClickEditCharacter: (Int) -> Unit = {},
-    onChangeVariant: (SpellListType) -> Unit = {},
-    onSetSpellPreparedness: (Spell, Boolean) -> Unit = {_,_ -> },
-    onSetSpellLearnedness: (Spell, Boolean) -> Unit = {_,_ -> }
+    intend: (Intent) -> Unit
 ){
     Scaffold(
         topBar = {
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(onClick = onBack){
+                IconButton(onClick = { intend(Intent.Back) }){
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = {
                         state.character?.let {
-                            onClickEditCharacter(it.id)
+                            intend(Intent.EditCharacter(it.id))
                         }
                     }
                 ){
@@ -205,11 +206,7 @@ fun CharacterDetailScreen(
             LoadingCharacterDetail(
                 state,
                 variant,
-                onViewSpell,
-                onBack = onBack,
-                onChangeVariant = onChangeVariant,
-                onSetSpellLearnedness = onSetSpellLearnedness,
-                onSetSpellPreparedness = onSetSpellPreparedness
+                intend
             )
         }
     }
@@ -219,11 +216,7 @@ fun CharacterDetailScreen(
 fun LoadingCharacterDetail(
     state: CharacterDetailState,
     variant: SpellListVariant,
-    onViewSpell: (Spell) -> Unit = {},
-    onBack: () -> Unit = {},
-    onChangeVariant: (SpellListType) -> Unit = {},
-    onSetSpellLearnedness: (Spell, Boolean) -> Unit,
-    onSetSpellPreparedness: (Spell, Boolean) -> Unit
+    intend: (Intent) -> Unit
 ){
     // check and handle loading status and nullability of stuff
     if(state.loading){
@@ -232,15 +225,12 @@ fun LoadingCharacterDetail(
         }
     }else{
         if(!state.canBecomeConcrete()){
-            onBack()
+            intend(Intent.Back)
         }else{
             CharacterDetail(
                 state.toConcrete(),
                 variant,
-                onViewSpell,
-                onChangeVariant = onChangeVariant,
-                onSetSpellLearnedness = onSetSpellLearnedness,
-                onSetSpellPreparedness = onSetSpellPreparedness
+                intend
             )
         }
     }
@@ -250,10 +240,7 @@ fun LoadingCharacterDetail(
 fun CharacterDetail(
     state: ConcreteCharacterDetailState,
     variant: SpellListVariant,
-    onViewSpell: (Spell) -> Unit = {},
-    onChangeVariant: (SpellListType) -> Unit = {},
-    onSetSpellLearnedness: (Spell, Boolean) -> Unit,
-    onSetSpellPreparedness: (Spell, Boolean) -> Unit
+    intend: (Intent) -> Unit
 ){
     val character = state.character
     Box(modifier = Modifier.fillMaxSize()){
@@ -266,10 +253,7 @@ fun CharacterDetail(
             SpellListVariantDisplay(
                 variant = variant,
                 character = state.character,
-                onSpellClicked = onViewSpell,
-                onChangeVariant = onChangeVariant,
-                onSetSpellLearnedness = onSetSpellLearnedness,
-                onSetSpellPreparedness = onSetSpellPreparedness
+                intend
             )
         }
     }

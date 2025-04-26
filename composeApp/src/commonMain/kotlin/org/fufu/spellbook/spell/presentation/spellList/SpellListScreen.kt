@@ -58,11 +58,20 @@ fun SpellListScreenRoot(
 
     SpellListScreen(
         state,
-        onSpellSelected,
-        onNewClicked,
         navBar,
-        onChangeFilter = {viewModel.useFilter(it)},
-    )
+    ){ intent ->
+        when(intent){
+            Intent.NewSpell -> onNewClicked()
+            is Intent.UseFilter -> viewModel.useFilter(intent.filter)
+            is Intent.ViewSpell -> onSpellSelected(intent.spell)
+        }
+    }
+}
+
+sealed interface Intent {
+    data object NewSpell : Intent
+    data class ViewSpell(val spell: Spell) : Intent
+    data class UseFilter(val filter: SpellListFilter) : Intent
 }
 
 @Composable
@@ -83,22 +92,20 @@ fun SpellListRoot(
 @Composable
 fun SpellListScreen(
     state: SpellListState,
-    onSpellSelected: (Spell) -> Unit,
-    onNewClicked: () -> Unit = {},
     navBar: @Composable () -> Unit,
-    onChangeFilter: (SpellListFilter) -> Unit = {}
+    intend: (Intent) -> Unit
 ){
     Scaffold(
         bottomBar = navBar,
         floatingActionButton = {
-            FloatingAddButton(onNewClicked)
+            FloatingAddButton({ intend(Intent.NewSpell) })
         }
     ){ padding ->
         Box(modifier = Modifier.padding(padding)){
             SpellList(
                 state,
-                onSpellSelected,
-                onChangeFilter = onChangeFilter,
+                { intend(Intent.ViewSpell(it)) },
+                onChangeFilter = { intend(Intent.UseFilter(it)) },
                 showFilterOptions = true
             )
         }

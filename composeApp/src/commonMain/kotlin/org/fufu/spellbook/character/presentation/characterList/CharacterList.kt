@@ -1,4 +1,4 @@
-package org.fufu.spellbook.character.presentation
+package org.fufu.spellbook.character.presentation.characterList
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CardColors
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -36,29 +35,37 @@ fun CharacterListRoot(
     onNewClicked: () -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
+
     CharacterListScreen(
         state,
-        onCharacterClicked,
-        navBar = navBar,
-        onNewClicked = onNewClicked
-    )
+        navBar
+    ) { intent ->
+        when(intent){
+            Intent.NewCharacter -> onNewClicked()
+            is Intent.ViewCharacter -> onCharacterClicked(intent.character)
+        }
+    }
+}
+
+sealed interface Intent {
+    data class ViewCharacter(val character: Character) : Intent
+    data object NewCharacter : Intent
 }
 
 @Composable
 fun CharacterListScreen(
     state: CharacterListState,
-    onCharacterClicked: (Character) -> Unit = {},
     navBar: @Composable () -> Unit,
-    onNewClicked: () -> Unit = {}
+    intend: (Intent) -> Unit
 ){
     Scaffold(
         bottomBar = navBar,
-        floatingActionButton = { FloatingAddButton(onNewClicked) }
+        floatingActionButton = { FloatingAddButton({ intend(Intent.NewCharacter) }) }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)){
             CharacterList(
                 state,
-                onCharacterClicked
+                { intend(Intent.ViewCharacter(it)) }
             )
         }
     }
@@ -78,7 +85,7 @@ fun CharacterList(
         items(state.characters){ character ->
             CharacterCard(
                 character = character,
-                onClick = {onCharacterClicked(character)}
+                onClick = { onCharacterClicked(character) }
             )
         }
     }
