@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -24,10 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
-import org.fufu.spellbook.character.presentation.CharacterDetail
 import org.fufu.spellbook.character.presentation.CharacterDetailScreen
 import org.fufu.spellbook.character.presentation.CharacterDetailState
-import org.fufu.spellbook.character.presentation.ConcreteCharacterDetailState
 import org.fufu.spellbook.character.presentation.CharacterListScreen
 import org.fufu.spellbook.character.presentation.CharacterListState
 import org.fufu.spellbook.character.presentation.EditingCharacterDetailScreen
@@ -36,11 +33,10 @@ import org.fufu.spellbook.character.presentation.SpellListType
 import org.fufu.spellbook.character.presentation.SpellListVariant
 import org.fufu.spellbook.spell.presentation.ImportScreen
 import org.fufu.spellbook.spell.presentation.ImportScreenState
-import org.fufu.spellbook.spell.presentation.LoadingSpellDetail
-import org.fufu.spellbook.spell.presentation.SpellDetailScreen
-import org.fufu.spellbook.spell.presentation.SpellDetailState
-import org.fufu.spellbook.spell.presentation.SpellListScreen
-import org.fufu.spellbook.spell.presentation.SpellListState
+import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailScreen
+import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailState
+import org.fufu.spellbook.spell.presentation.spellList.SpellListScreen
+import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

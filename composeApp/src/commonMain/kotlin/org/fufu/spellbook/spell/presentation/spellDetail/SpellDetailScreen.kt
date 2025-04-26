@@ -1,4 +1,4 @@
-package org.fufu.spellbook.spell.presentation
+package org.fufu.spellbook.spell.presentation.spellDetail
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -43,89 +43,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
-
-data class EditableValue<T>(val value: T, val onChange: (T)->Unit)
-
-@Composable
-fun DisplayBlock(
-    datums: Map<String, String>,
-    modifier: Modifier = Modifier
-){
-    Row(modifier = modifier){
-        Column(horizontalAlignment = Alignment.End){
-            datums.keys
-                .map{"$it: "}
-                .forEach {
-                    Text(
-                        it,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.End
-                    )
-                }
-        }
-        Column{
-            datums.values.forEach{
-                Text(it)
-            }
-        }
-    }
-}
-
-@Composable
-fun EditableDataBlock(
-    datums: Map<String, EditableValue<String>>,
-    isEditing: Boolean = false,
-    modifier: Modifier = Modifier
-){
-    if(isEditing){
-        Column(modifier = modifier){
-            datums.forEach{(key, value) ->
-                Text(
-                    "$key:",
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.End
-                )
-                TextField(
-                    value.value,
-                    onValueChange = value.onChange
-                )
-            }
-        }
-
-    }else{
-        DisplayBlock(
-            datums.mapValues{
-                it.value.value
-            },
-            modifier = modifier
-        )
-    }
-}
-
-@Composable
-fun EditableText(
-    text: String,
-    style: TextStyle = LocalTextStyle.current,
-    fontWeight: FontWeight? = null,
-    fontStyle: FontStyle? = null,
-    isEditing: Boolean = false,
-    onChange: (String) -> Unit = {}
-){
-    if(isEditing){
-        TextField(
-            text,
-            onValueChange = onChange
-        )
-    }else{
-        Text(
-            text,
-            style = style,
-            fontWeight = fontWeight,
-            fontStyle = fontStyle
-        )
-
-    }
-}
 
 @Composable
 fun SpellDetailScreenRoot(

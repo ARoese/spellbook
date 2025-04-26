@@ -1,6 +1,7 @@
 package org.fufu.spellbook
 
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.CharacterIcon
 import org.fufu.spellbook.character.domain.SpellSlotLevel
 import org.fufu.spellbook.spell.domain.DamageType
 import org.fufu.spellbook.spell.domain.MagicSchool
@@ -75,6 +76,6 @@ val PreviewCharacters = (1..21)
             spellSlots = (0..seededRandom.nextInt(until=5))
                     .map{ SpellSlotLevel(it, it-1) }
                     .toList(),
-            characterIcon = "Icon $it"
+            characterIcon = CharacterIcon.options().random(seededRandom)
         )
     }

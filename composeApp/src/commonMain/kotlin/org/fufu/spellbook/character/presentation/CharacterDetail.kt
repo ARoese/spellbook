@@ -1,6 +1,5 @@
 package org.fufu.spellbook.character.presentation
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,17 +29,15 @@ import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.character.domain.hasPreparedSpell
 import org.fufu.spellbook.character.domain.knowsSpell
+import org.fufu.spellbook.composables.ClickableToken
+import org.fufu.spellbook.composables.KnownToken
+import org.fufu.spellbook.composables.PreparedToken
 import org.fufu.spellbook.di.CHARACTER_CLASS_SPELL_LIST
 import org.fufu.spellbook.di.CHARACTER_KNOWN_SPELL_LIST
 import org.fufu.spellbook.di.CHARACTER_PREPARED_SPELL_LIST
-import org.fufu.spellbook.spell.presentation.ChipSize
-import org.fufu.spellbook.spell.presentation.ClickableToken
-import org.fufu.spellbook.spell.presentation.KnownToken
-import org.fufu.spellbook.spell.presentation.PreparedToken
-import org.fufu.spellbook.spell.presentation.SpellList
-import org.fufu.spellbook.spell.presentation.SpellListFilter
-import org.fufu.spellbook.spell.presentation.SpellListState
-import org.fufu.spellbook.spell.presentation.SpellListVM
+import org.fufu.spellbook.spell.presentation.spellList.SpellList
+import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
+import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.qualifier
 

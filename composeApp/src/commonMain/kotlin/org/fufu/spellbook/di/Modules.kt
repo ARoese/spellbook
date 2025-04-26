@@ -13,8 +13,8 @@ import org.fufu.spellbook.character.presentation.CharacterDetailVM
 import org.fufu.spellbook.character.presentation.CharacterListVM
 import org.fufu.spellbook.character.presentation.EditingCharacterDetailVM
 import org.fufu.spellbook.spell.presentation.ImportScreenVM
-import org.fufu.spellbook.spell.presentation.SpellDetailVM
-import org.fufu.spellbook.spell.presentation.SpellListVM
+import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailVM
+import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel

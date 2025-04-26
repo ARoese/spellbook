@@ -29,49 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
-import org.fufu.spellbook.spell.domain.Spell
-
-@Composable
-fun ImportSourceDropDown(
-    selected: ImportSource,
-    onChange: (ImportSource) -> Unit
-){
-    Box(modifier = Modifier.fillMaxWidth()){
-        var expanded by remember { mutableStateOf(false) }
-        IconButton(
-            onClick = {expanded = true},
-            modifier = Modifier.border(
-                Dp.Hairline,
-                Color.Black,
-                RoundedCornerShape(6.dp)
-            ).width(150.dp)
-        ){
-            val text = when(selected){
-                is ImportSource.JSON -> "Json"
-                ImportSource.SELECT -> "SELECT"
-                ImportSource.WIKIDOT -> "Wikidot"
-            }
-            Text(text)
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = {expanded = false}) {
-            DropdownMenuItem(
-                text={Text("Json")},
-                onClick= {
-                    onChange(ImportSource.JSON(null))
-                    expanded = false
-                }
-            )
-            DropdownMenuItem(
-                text={Text("Wikidot")},
-                onClick= {
-                    onChange(ImportSource.WIKIDOT)
-                    expanded = false
-                }
-            )
-        }
-    }
-
-}
+import org.fufu.spellbook.composables.DropdownSelector
 
 @Composable
 fun EditableJsonImportSource(
@@ -101,14 +59,31 @@ fun EditableImportSource(
     onChangeSource: (ImportSource) -> Unit
 ){
     Column {
-        ImportSourceDropDown(source, onChangeSource)
+        fun present(src: ImportSource) : String {
+            return when(src){
+                is ImportSource.JSON -> "json"
+                ImportSource.SELECT -> "SELECT"
+                ImportSource.WIKIDOT -> "wikidot"
+            }
+        }
+        DropdownSelector(
+            options = listOf(
+                ImportSource.JSON(null),
+                ImportSource.WIKIDOT,
+            ),
+            selected = emptySet(),
+            singleSelect = true,
+            optionPresenter = { Text(present(it)) },
+            buttonContent = { Text(present(source)) },
+            onOptionPicked = { onChangeSource(it) }
+        )
+        //ImportSourceDropDown(source, onChangeSource)
         when(source){
             is ImportSource.SELECT -> {}
             is ImportSource.JSON -> EditableJsonImportSource(source, onChangeSource)
             is ImportSource.WIKIDOT -> {}
         }
     }
-
 }
 
 @Composable

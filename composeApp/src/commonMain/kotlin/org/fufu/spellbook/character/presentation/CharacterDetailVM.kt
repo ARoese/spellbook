@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
-import org.fufu.spellbook.spell.presentation.SpellListState
+import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 
 data class CharacterDetailState(
     val character: Character? = null,
