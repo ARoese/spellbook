@@ -134,7 +134,8 @@ fun <T>DropdownSelector(
     selected: Set<T>? = null,
     optionPresenter: @Composable (T) -> Unit,
     onOptionPicked: (T)-> Unit= {},
-    buttonContent: @Composable RowScope.() -> Unit
+    singleSelect: Boolean = false,
+    buttonContent: @Composable RowScope.() -> Unit,
 ){
     Box{
         var expanded by remember { mutableStateOf(false) }
@@ -156,7 +157,9 @@ fun <T>DropdownSelector(
                     modifier = Modifier.background(background),
                     text = { optionPresenter(it) },
                     onClick = {
-                        //expanded = false
+                        if(singleSelect){
+                            expanded = false
+                        }
                         onOptionPicked(it)
                     }
                 )

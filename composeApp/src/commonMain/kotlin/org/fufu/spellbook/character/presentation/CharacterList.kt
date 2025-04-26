@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.CharacterIcon
 import org.fufu.spellbook.composables.FloatingAddButton
 
 @Composable
@@ -109,7 +111,7 @@ fun CharacterCard(
         ){
             Column(horizontalAlignment = Alignment.CenterHorizontally){
                 Text(character.name)
-                CircularProgressIndicator()
+                Icon(CharacterIcon(character.characterIcon).fromString(), character.characterIcon)
             }
         }
     }

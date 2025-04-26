@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.CharacterIcon
+import org.fufu.spellbook.spell.presentation.DropdownSelector
 
 @Composable
 fun EditingCharacterDetailScreenRoot(
@@ -109,22 +111,34 @@ fun ConcreteEditingCharacterDetailScreen(
 ){
     val character = state.character
     Column {
+        Text("Name")
         TextField(
             character.name,
             onValueChange = { onCharacterChanged(character.copy(name = it)) }
         )
+        Text("Level")
         NumberField(
             character.level,
             onValueChange = {onCharacterChanged(character.copy(level = it))}
         )
+        Text("Max Prepared Spells")
         NumberField(
             character.maxPreparedSpells,
             onValueChange = {onCharacterChanged(character.copy(maxPreparedSpells = it))}
         )
         // TODO: build a selector for this
-        TextField(
-            character.characterIcon,
-            onValueChange = {onCharacterChanged(character.copy(characterIcon = it))}
+        Text("Icon")
+//        TextField(
+//            character.characterIcon,
+//            onValueChange = {onCharacterChanged(character.copy(characterIcon = it))}
+//        )
+        DropdownSelector(
+            options = CharacterIcon.options().toList(),
+            selected = setOf(character.characterIcon),
+            optionPresenter = { Icon(CharacterIcon(it).fromString(), it) },
+            onOptionPicked = { onCharacterChanged(character.copy(characterIcon = it)) },
+            singleSelect = true,
+            buttonContent = { Icon(CharacterIcon(character.characterIcon).fromString(), character.characterIcon) },
         )
     }
 }
