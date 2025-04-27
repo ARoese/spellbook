@@ -18,6 +18,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,27 +84,23 @@ fun CharacterDetailScreenRoot(
     val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
     val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
 
-    var spellListVariant : SpellListVariant by remember {
-        mutableStateOf(
-            SpellListVariant(SpellListType.PREPARED, preparedSpellListState)
-        )
+    var listType : SpellListType by remember { mutableStateOf(SpellListType.PREPARED) }
+    val variant by derivedStateOf {
+        when(listType){
+            SpellListType.PREPARED -> SpellListVariant(listType, preparedSpellListState)
+            SpellListType.KNOWN -> SpellListVariant(listType, knownSpellListState)
+            SpellListType.CLASS -> SpellListVariant(listType, classSpellListState)
+        }
     }
 
     CharacterDetailScreen(
         state,
-        variant = spellListVariant
+        variant = variant
     ) { intent ->
         when(intent){
             Intent.Back -> onBack()
             is Intent.ChangeListVariant -> {
-                val type = intent.type
-                if(type != spellListVariant.type){
-                    spellListVariant = when(type){
-                        SpellListType.PREPARED -> SpellListVariant(type, preparedSpellListState)
-                        SpellListType.KNOWN -> SpellListVariant(type, knownSpellListState)
-                        SpellListType.CLASS -> SpellListVariant(type, classSpellListState)
-                    }
-                }
+                listType = intent.type
             }
             is Intent.EditCharacter -> onClickEditCharacter(intent.characterId)
             is Intent.SetSpellLearnedness -> viewModel.onSetSpellLearned(intent.spell.key, intent.learned)

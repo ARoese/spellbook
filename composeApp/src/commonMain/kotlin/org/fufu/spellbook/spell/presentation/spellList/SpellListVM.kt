@@ -107,7 +107,6 @@ class SpellListVM(
             _state.value
         )
 
-    @OptIn(FlowPreview::class)
     private fun observeFilter(){
         _state
             .map{it.filter}
