@@ -1,5 +1,6 @@
 package org.fufu.spellbook.spell.presentation.spellList
 
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
@@ -20,6 +21,7 @@ import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.SaveType
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellProvider
+import java.util.Locale
 
 data class SpellListFilter(
     val book: Set<Book>? = null,
@@ -54,6 +56,17 @@ data class SpellListFilter(
                 && saves?.let { info.saves.intersect(it).isEmpty() } != true
                 && tag?.let { info.tag.intersect(it).isEmpty() } != true
                 && dragonmarks?.let { info.dragonmarks.intersect(it).isEmpty() } != true
+                && name?.let { hasString(spell.info.name, it) } != false
+    }
+
+    private fun hasString(string: String, filter: String) : Boolean {
+        return filterableString(string).contains(filterableString(filter))
+    }
+
+    private fun filterableString(string: String) : String {
+        return string
+            .lowercase()
+            .filter { it.isLetter() }
     }
 
     fun hasActiveCriteria() : Boolean {

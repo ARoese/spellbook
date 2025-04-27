@@ -1,10 +1,15 @@
 package org.fufu.spellbook.composables
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.DropdownMenu
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -14,8 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun <T>DropdownSelector(
@@ -29,10 +37,22 @@ fun <T>DropdownSelector(
     Box {
         var expanded by remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
-        Button(
-            onClick = { expanded = true },
-            content = buttonContent
-        )
+        val rotation by animateFloatAsState(if(expanded){180f}else{0f})
+        Box{
+            Button(
+                onClick = { expanded = true },
+                content = buttonContent
+            )
+            Icon(
+                Icons.Default.ArrowDropDown,
+                "dropdown",
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .offset(y=1.dp)
+                    .rotate(rotation)
+            )
+        }
+
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
