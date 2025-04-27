@@ -4,7 +4,6 @@ import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -138,7 +137,6 @@ class SpellListVM(
     private fun observeSpells(){
         provider.getSpells()
             .onEach { spells ->
-                delay(1000)
                 _state.update{
                     it.copy(
                         knownSpells = spells,

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -93,7 +92,6 @@ class SpellDetailVM(
         isObserving = true
         provider.getSpell(spellId)
             .onEach { actualSpell ->
-                delay(3000)
                 _state.update{
                     SpellDetailState(actualSpell, loading = false)
                 }

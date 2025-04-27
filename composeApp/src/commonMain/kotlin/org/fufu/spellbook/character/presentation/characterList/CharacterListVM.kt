@@ -2,7 +2,6 @@ package org.fufu.spellbook.character.presentation.characterList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -32,7 +31,6 @@ class CharacterListVM(private val provider : CharacterProvider) : ViewModel() {
     private fun observeCharacters(){
         provider.getCharacters()
             .onEach{characters ->
-                delay(1000)
                 _state.update{
                     it.copy(
                         characters = characters,

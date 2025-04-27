@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -74,7 +73,6 @@ class EditingCharacterDetailVM(
         observeCharacterJob?.cancel()
         observeCharacterJob = provider.getCharacter(characterId)
             .onEach{ character ->
-                delay(1000)
                 _state.update{
                     it.copy(
                         character = character,

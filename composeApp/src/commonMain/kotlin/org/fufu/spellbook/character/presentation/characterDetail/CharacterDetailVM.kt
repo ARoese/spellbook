@@ -2,7 +2,6 @@ package org.fufu.spellbook.character.presentation.characterDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.launchIn
@@ -70,7 +69,6 @@ class CharacterDetailVM(
     private fun observeCharacter(){
         provider.getCharacter(characterId)
             .onEach{ character ->
-                delay(1000)
                 _state.update{
                     it.copy(
                         character = character,
