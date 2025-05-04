@@ -80,12 +80,6 @@ fun CharacterDetailScreenRoot(
         )
     )
 
-    classSpellListVM.useFilter(
-        SpellListFilter(
-            onlyIds = null
-        )
-    )
-
     val preparedSpellListState by preparedSpellListVM.state.collectAsStateWithLifecycle()
     val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
     val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
@@ -113,6 +107,7 @@ fun CharacterDetailScreenRoot(
             is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell.key, intent.prepared)
             is Intent.ViewSpell -> onViewSpell(intent.spell)
             is Intent.SetSpellSlotLevel -> viewModel.onSetSpellSlot(intent.level, intent.slotLevel)
+            is Intent.SetListFilter -> classSpellListVM.useFilter(intent.filter.copy(onlyIds = null))
         }
     }
 }
@@ -125,6 +120,7 @@ sealed interface Intent {
     data class SetSpellLearnedness(val spell: Spell, val learned: Boolean) : Intent
     data class SetSpellPreparedness(val spell: Spell, val prepared: Boolean) : Intent
     data class SetSpellSlotLevel(val level: Int, val slotLevel: SpellSlotLevel) : Intent
+    data class SetListFilter(val filter: SpellListFilter) : Intent
 }
 
 @Composable
@@ -224,7 +220,11 @@ fun SpellListVariantDisplay(
         SpellList(variant.state,
             onSpellSelected = { intend(Intent.ViewSpell(it)) },
             rightSideButton,
-            headerContent = headerContent
+            headerContent = headerContent,
+            showFilterOptions = variant.type == SpellListType.CLASS,
+            onChangeFilter = {
+                intend(Intent.SetListFilter(it))
+            }
         )
     }
 }
@@ -303,7 +303,6 @@ fun CharacterDetail(
             Text("Class: ${character.characterClass}")
             Text("Level: ${character.level}")
             Text("Max prepared spells: ${character.maxPreparedSpells}")
-            Text("Spells:")
             SpellListVariantDisplay(
                 variant = variant,
                 character = state.character,
