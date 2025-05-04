@@ -73,7 +73,7 @@ val PreviewCharacters = (1..21)
             subclass = "Subclass $it",
             level = it,
             maxPreparedSpells = 20,
-            spellSlots = (0..9)
+            spellSlots = (1..9)
                 .associateWith { seededRandom.nextInt(until=6)+1 }
                 .mapValues { SpellSlotLevel(it.value, seededRandom.nextInt(it.value)) },
             characterIcon = CharacterIcon.options().random(seededRandom)

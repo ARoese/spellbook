@@ -52,6 +52,7 @@ fun SpellList(
     state: SpellListState,
     onSpellSelected: (Spell) -> Unit,
     rightSideButton: (@Composable (Spell) -> Unit)? = null,
+    headerContent: @Composable (Int) -> Unit = {},
     shouldGroupByLevel: Boolean = true,
     onChangeFilter: (SpellListFilter) -> Unit = {},
     showFilterOptions: Boolean = false
@@ -84,7 +85,10 @@ fun SpellList(
                             shouldGroupByLevel && lastSpell?.info?.level != spell.info.level
                         if(needsStickyHeader){
                             stickyHeader{
-                                SpellListStickyHeader("Level ${spell.info.level}")
+                                SpellListStickyHeader(
+                                    "Level ${spell.info.level}",
+                                    { headerContent(spell.info.level) }
+                                )
                             }
                         }
                         item(key=spell.key){
@@ -100,13 +104,21 @@ fun SpellList(
 
 @Composable
 fun SpellListStickyHeader(
-    text: String
+    text: String,
+    centerContent: (@Composable () -> Unit)? = null
 ){
     Box(
         modifier= Modifier
             .background(color = Color.LightGray)
             .fillMaxWidth()
     ){
+        centerContent?.let{
+            Box(
+                modifier = Modifier.align(Alignment.Center)
+            ){
+                it()
+            }
+        }
         Text(
             text,
             modifier = Modifier.align(Alignment.CenterEnd)

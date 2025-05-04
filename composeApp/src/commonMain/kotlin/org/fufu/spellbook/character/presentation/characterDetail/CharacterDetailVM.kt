@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
+import org.fufu.spellbook.character.domain.SpellSlotLevel
 import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 
 data class CharacterDetailState(
@@ -102,6 +103,19 @@ class CharacterDetailVM(
                         spells = character.spells.plus(
                             spell to prepared
                         )
+                    )
+                )
+            }
+        }
+    }
+
+    fun onSetSpellSlot(level: Int, slotLevel: SpellSlotLevel){
+        state.value.character?.let { character ->
+            viewModelScope.launch {
+                val newSpellSlots = character.spellSlots.plus(level to slotLevel)
+                provider.setCharacter(
+                    character.copy(
+                        spellSlots = newSpellSlots
                     )
                 )
             }

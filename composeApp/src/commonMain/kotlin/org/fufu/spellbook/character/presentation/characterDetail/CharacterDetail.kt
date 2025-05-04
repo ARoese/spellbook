@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.SpellSlotLevel
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.character.domain.hasPreparedSpell
 import org.fufu.spellbook.character.domain.knowsSpell
@@ -41,6 +45,8 @@ import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.qualifier.qualifier
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun CharacterDetailScreenRoot(
@@ -106,6 +112,7 @@ fun CharacterDetailScreenRoot(
             is Intent.SetSpellLearnedness -> viewModel.onSetSpellLearned(intent.spell.key, intent.learned)
             is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell.key, intent.prepared)
             is Intent.ViewSpell -> onViewSpell(intent.spell)
+            is Intent.SetSpellSlotLevel -> viewModel.onSetSpellSlot(intent.level, intent.slotLevel)
         }
     }
 }
@@ -117,6 +124,35 @@ sealed interface Intent {
     data class ChangeListVariant(val type: SpellListType) : Intent
     data class SetSpellLearnedness(val spell: Spell, val learned: Boolean) : Intent
     data class SetSpellPreparedness(val spell: Spell, val prepared: Boolean) : Intent
+    data class SetSpellSlotLevel(val level: Int, val slotLevel: SpellSlotLevel) : Intent
+}
+
+@Composable
+fun SpellSlotLevelDisplay(
+    level: SpellSlotLevel,
+    onChange: (SpellSlotLevel) -> Unit
+){
+    Row {
+        fun decrement(){
+            onChange(level.copy(slots=max(0, level.slots-1)))
+        }
+
+        fun increment(){
+            onChange(level.copy(slots=min(level.slots+1, level.maxSlots)))
+        }
+
+        (1..level.maxSlots).forEach {
+            if(it <= level.slots){
+                IconButton(onClick = { decrement() }){
+                    Icon(Icons.Filled.CheckCircle, "checkCircle")
+                }
+            }else{
+                IconButton(onClick = { increment() }){
+                    Icon(Icons.Outlined.AddCircle, "add Circle")
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -168,7 +204,28 @@ fun SpellListVariantDisplay(
                 }
             }
         }
-        SpellList(variant.state, onSpellSelected = { intend(Intent.ViewSpell(it)) }, rightSideButton)
+
+        val headerContent : @Composable (Int) -> Unit = when(variant.type){
+            SpellListType.PREPARED -> { level ->
+                character.spellSlots[level]?.let { slotLevel ->
+                    if(slotLevel.maxSlots != 0){
+                        SpellSlotLevelDisplay(
+                            slotLevel,
+                            onChange = { newLevel ->
+                                intend(Intent.SetSpellSlotLevel(level, newLevel))
+                            }
+                        )
+                    }
+                }
+            }
+            else -> {_ -> Unit}
+        }
+
+        SpellList(variant.state,
+            onSpellSelected = { intend(Intent.ViewSpell(it)) },
+            rightSideButton,
+            headerContent = headerContent
+        )
     }
 }
 
