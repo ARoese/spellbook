@@ -5,16 +5,18 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import org.fufu.spellbook.character.data.room.CharacterDao
-import org.fufu.spellbook.character.data.room.CharacterEntity
-import org.fufu.spellbook.character.data.room.SpellSlotLevelEntity
+import org.fufu.spellbook.character.data.room.entities.CharacterEntity
+import org.fufu.spellbook.character.data.room.entities.CharacterSpellEntity
+import org.fufu.spellbook.character.data.room.entities.SpellSlotLevelEntity
 import org.fufu.spellbook.spell.data.room.SpellDao
-import org.fufu.spellbook.spell.data.room.SpellEntity
+import org.fufu.spellbook.spell.data.room.entities.SpellEntity
 
 const val DB_FILE_NAME = "SpellBook.db"
 
 @Database(
     entities = [
         CharacterEntity::class,
+        CharacterSpellEntity::class,
         SpellEntity::class,
         SpellSlotLevelEntity::class
     ],

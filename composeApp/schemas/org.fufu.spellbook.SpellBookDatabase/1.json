@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "1697367259d1304cba6693c4f0a6bd95",
+    "identityHash": "dd23629d9e1f123e89356fa8f96314e9",
     "entities": [
       {
         "tableName": "CharacterEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `spells` TEXT NOT NULL, `characterClass` TEXT NOT NULL, `subclass` TEXT NOT NULL, `level` INTEGER NOT NULL, `maxPreparedSpells` INTEGER NOT NULL, `characterIcon` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `characterClass` TEXT NOT NULL, `subclass` TEXT NOT NULL, `level` INTEGER NOT NULL, `maxPreparedSpells` INTEGER NOT NULL, `characterIcon` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -17,12 +17,6 @@
           {
             "fieldPath": "name",
             "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "spells",
-            "columnName": "spells",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -63,6 +57,72 @@
             "id"
           ]
         }
+      },
+      {
+        "tableName": "CharacterSpellEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`characterId` INTEGER NOT NULL, `spellId` INTEGER NOT NULL, `prepared` INTEGER NOT NULL, PRIMARY KEY(`characterId`, `spellId`), FOREIGN KEY(`characterId`) REFERENCES `CharacterEntity`(`id`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`spellId`) REFERENCES `SpellEntity`(`key`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "characterId",
+            "columnName": "characterId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spellId",
+            "columnName": "spellId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prepared",
+            "columnName": "prepared",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "characterId",
+            "spellId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_CharacterSpellEntity_spellId",
+            "unique": false,
+            "columnNames": [
+              "spellId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_CharacterSpellEntity_spellId` ON `${TABLE_NAME}` (`spellId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "CharacterEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "characterId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "SpellEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "spellId"
+            ],
+            "referencedColumns": [
+              "key"
+            ]
+          }
+        ]
       },
       {
         "tableName": "SpellEntity",
@@ -243,7 +303,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1697367259d1304cba6693c4f0a6bd95')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd23629d9e1f123e89356fa8f96314e9')"
     ]
   }
 }

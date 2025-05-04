@@ -6,6 +6,8 @@ import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.SpellMutator
 import org.fufu.spellbook.spell.domain.SpellProvider
+import org.fufu.spellbook.spell.data.room.entities.toSpell
+import org.fufu.spellbook.spell.data.room.entities.toEntity
 
 open class DBSpellProvider(protected val spellDao: SpellDao) : SpellProvider {
     override fun getSpells(): Flow<List<Spell>> {

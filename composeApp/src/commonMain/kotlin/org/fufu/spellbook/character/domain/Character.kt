@@ -31,7 +31,7 @@ data class Character (
     val subclass: String,
     val level: Int,
     val maxPreparedSpells: Int,
-    val spellSlots: List<SpellSlotLevel>,
+    val spellSlots: Map<Int, SpellSlotLevel>,
     val characterIcon: String
 )
 
@@ -69,7 +69,7 @@ val defaultCharacter: Character = Character(
     subclass = "",
     level = 0,
     maxPreparedSpells = 0,
-    spellSlots = emptyList(),
+    spellSlots = emptyMap(),
     characterIcon = "Icon1"
 )
 

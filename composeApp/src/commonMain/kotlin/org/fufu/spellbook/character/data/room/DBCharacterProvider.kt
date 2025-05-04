@@ -4,7 +4,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import org.fufu.spellbook.character.data.room.entities.CharacterSpellEntity
+import org.fufu.spellbook.character.data.room.entities.SpellSlotLevelEntity
+import org.fufu.spellbook.character.data.room.entities.toEntity
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
 import org.fufu.spellbook.character.domain.CharacterProvider
@@ -14,33 +19,21 @@ open class DBCharacterProvider(
 ) : CharacterProvider {
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getCharacters(): Flow<List<Character>> {
-        return characterDao.getCharacters()
-            .flatMapConcat { characters ->
-                val characterFlows = characters.map { character ->
-                    characterDao
-                        .getCharacterLevels(character.id)
-                        .map{ levels ->
-                            levels
-                                .sortedBy { it.level }
-                                .map { it.fromEntity() }
-                        }
-                        .map{ levels ->
-                            character.fromEntity(levels)
-                        }
-                }
-                combine(characterFlows){it.toList()}
+        val characterIdsFlow = characterDao.getCharacters().map { it.map { it.id } }
+        val charactersFlow = characterIdsFlow.map { characterIds ->
+            characterIds.map { id ->
+                getCharacter(id=id)
             }
+        }
+        return charactersFlow.flatMapLatest {
+            combine(it){ characters ->
+                characters.toList().filterNotNull()
+            }
+        }
     }
 
     override fun getCharacter(id: Int): Flow<Character?> {
-        val characterFlow = characterDao.getCharacter(id)
-        val spellSlotLevelFlow = characterDao.getCharacterLevels(id)
-        return characterFlow.combine(spellSlotLevelFlow){ character, levels ->
-            val sortedLevels = levels
-                .sortedBy { it.level }
-                .map { it.fromEntity() }
-            character?.fromEntity(sortedLevels)
-        }
+        return characterDao.getCharacterWithSpells(id)
     }
 }
 
@@ -48,7 +41,18 @@ class DBCharacterMutator(
     characterDao: CharacterDao
 ) : DBCharacterProvider(characterDao), CharacterMutator {
     override suspend fun setCharacter(character: Character) {
-        characterDao.upsertCharacter(character.toEntity())
+        require(character.id >= 0){"cannot create character here"}
+        val spellEntities = character.spells.map {
+            CharacterSpellEntity(character.id, it.key, it.value)
+        }
+        val spellSlotEntities = character.spellSlots.map {
+            it.value.toEntity(character.id, it.key)
+        }
+        characterDao.setCharacter(
+            character.toEntity(),
+            spellSlotEntities,
+            spellEntities
+        )
     }
 
     override suspend fun addCharacter(character: Character): Int {
