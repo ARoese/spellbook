@@ -84,12 +84,11 @@ fun CharacterDetailScreenRoot(
     val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
     val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
 
-    var listType : SpellListType by remember { mutableStateOf(SpellListType.PREPARED) }
     val variant by derivedStateOf {
-        when(listType){
-            SpellListType.PREPARED -> SpellListVariant(listType, preparedSpellListState)
-            SpellListType.KNOWN -> SpellListVariant(listType, knownSpellListState)
-            SpellListType.CLASS -> SpellListVariant(listType, classSpellListState)
+        when(state.selectedSpellList){
+            SpellListType.PREPARED -> SpellListVariant(state.selectedSpellList, preparedSpellListState)
+            SpellListType.KNOWN -> SpellListVariant(state.selectedSpellList, knownSpellListState)
+            SpellListType.CLASS -> SpellListVariant(state.selectedSpellList, classSpellListState)
         }
     }
 
@@ -100,7 +99,7 @@ fun CharacterDetailScreenRoot(
         when(intent){
             Intent.Back -> onBack()
             is Intent.ChangeListVariant -> {
-                listType = intent.type
+                viewModel.onSetSpellListType(intent.type)
             }
             is Intent.EditCharacter -> onClickEditCharacter(intent.characterId)
             is Intent.SetSpellLearnedness -> viewModel.onSetSpellLearned(intent.spell.key, intent.learned)

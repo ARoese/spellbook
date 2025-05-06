@@ -152,7 +152,11 @@ fun CharacterDetailPreview(){
         loading = false
     )
     CharacterDetailScreen(
-        CharacterDetailState(PreviewCharacter, false),
+        CharacterDetailState(
+            PreviewCharacter,
+            SpellListType.PREPARED,
+            false
+        ),
         SpellListVariant(
             SpellListType.KNOWN,
             listState

@@ -17,12 +17,14 @@ import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 
 data class CharacterDetailState(
     val character: Character? = null,
+    val selectedSpellList: SpellListType = SpellListType.PREPARED,
     val loading: Boolean = true
 )
 
 data class ConcreteCharacterDetailState(
     val character: Character,
-    val loading: Boolean = true
+    val selectedSpellList: SpellListType = SpellListType.PREPARED,
+    val loading: Boolean = false
 )
 
 fun CharacterDetailState.canBecomeConcrete() : Boolean {
@@ -36,6 +38,7 @@ fun CharacterDetailState.toConcrete() : ConcreteCharacterDetailState {
 
     return ConcreteCharacterDetailState(
         character!!,
+        selectedSpellList,
         loading
     )
 }
@@ -77,6 +80,12 @@ class CharacterDetailVM(
                     )
                 }
             }.launchIn(viewModelScope)
+    }
+
+    fun onSetSpellListType(newType: SpellListType){
+        _state.update {
+            it.copy(selectedSpellList = newType)
+        }
     }
 
     fun onSetSpellLearned(spell: Int, learned: Boolean){
