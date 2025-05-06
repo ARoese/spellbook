@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,8 @@ import org.fufu.spellbook.composables.ChipSize
 import org.fufu.spellbook.composables.TagChip
 import org.fufu.spellbook.spell.domain.Spell
 
+// sorted by name, then by level. Levels are grouped together, and
+// within that, names are sorted alphabetically
 fun orderSpellList(
     spells: List<Spell>,
     shouldGroupByLevel: Boolean
@@ -46,7 +49,63 @@ fun orderSpellList(
         }
 }
 
+fun groupSpellsByLevels(
+    spells: List<Spell>,
+    necessaryLevels: Set<Int>
+): Map<Int, List<Spell>>{
+    val groups = orderSpellList(spells, true)
+        .groupBy { it.info.level }
+    val remainingLevels = necessaryLevels
+        .subtract(groups.keys)
+        .associateWith { emptyList<Spell>() }
+    return groups + remainingLevels
+}
+
+fun LazyListScope.ungroupedSpellList(
+    state: SpellListState,
+    onSpellSelected: (Spell) -> Unit,
+    rightSideButton: (@Composable (Spell) -> Unit)? = null,
+){
+    val sortedSpells : List<Spell> = orderSpellList(
+        state.displayedSpells,
+        false
+    )
+    sortedSpells.forEach{ spell ->
+        item(key=spell.key){
+            SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton)
+            HorizontalDivider()
+        }
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
+fun LazyListScope.groupedSpellList(
+    state: SpellListState,
+    onSpellSelected: (Spell) -> Unit,
+    rightSideButton: (@Composable (Spell) -> Unit)? = null,
+    headerContent: @Composable (Int) -> Unit = {},
+    necessaryLevels: Set<Int>,
+){
+    val spellGroups = groupSpellsByLevels(state.displayedSpells, necessaryLevels)
+
+    spellGroups.toList()
+        .sortedBy{it.first}
+        .forEach{ mapItem ->
+        val (spellLevel, spells) = mapItem
+        stickyHeader{
+            SpellListStickyHeader(
+                "Level $spellLevel"
+            ) { headerContent(spellLevel) }
+        }
+        spells.forEach{ spell ->
+            item(key=spell.key){
+                SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton)
+                HorizontalDivider()
+            }
+        }
+    }
+}
+
 @Composable
 fun SpellList(
     state: SpellListState,
@@ -54,6 +113,7 @@ fun SpellList(
     rightSideButton: (@Composable (Spell) -> Unit)? = null,
     headerContent: @Composable (Int) -> Unit = {},
     shouldGroupByLevel: Boolean = true,
+    necessarySpellLevels: Set<Int> = emptySet(),
     onChangeFilter: (SpellListFilter) -> Unit = {},
     showFilterOptions: Boolean = false
 ) {
@@ -65,36 +125,23 @@ fun SpellList(
                 if(showFilterOptions){
                     SpellListFilterSelector(state, onChangeFilter)
                 }
-
-                // sorted by name, then by level. Levels are grouped together, and
-                // within that, names are sorted alphabetically
-                val sortedSpells : List<Spell> = orderSpellList(
-                    state.displayedSpells,
-                    shouldGroupByLevel
-                )
-                val numSpells = sortedSpells.size
                 LazyColumn(modifier = Modifier
                     .padding(horizontal = 5.dp)
-                ){
-                    (0 until numSpells).forEach{
-                        val spell = sortedSpells[it]
-                        val lastSpell = sortedSpells.getOrNull(it-1)
-                        // if the last spell has a different level than this one
-                        // if there is no last spell, this is also true
-                        val needsStickyHeader =
-                            shouldGroupByLevel && lastSpell?.info?.level != spell.info.level
-                        if(needsStickyHeader){
-                            stickyHeader{
-                                SpellListStickyHeader(
-                                    "Level ${spell.info.level}",
-                                    { headerContent(spell.info.level) }
-                                )
-                            }
-                        }
-                        item(key=spell.key){
-                            SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton)
-                            HorizontalDivider()
-                        }
+                ) {
+                    if (shouldGroupByLevel) {
+                        groupedSpellList(
+                            state,
+                            onSpellSelected,
+                            rightSideButton,
+                            headerContent,
+                            necessarySpellLevels
+                        )
+                    } else {
+                        ungroupedSpellList(
+                            state,
+                            onSpellSelected,
+                            rightSideButton,
+                        )
                     }
                 }
             }

@@ -221,6 +221,10 @@ fun SpellListVariantDisplay(
             else -> {_ -> Unit}
         }
 
+        val necessarySpellLevels = character.spellSlots
+            .filter { it.value.maxSlots != 0 }
+            .keys
+
         SpellList(variant.state,
             onSpellSelected = { intend(Intent.ViewSpell(it)) },
             rightSideButton,
@@ -228,7 +232,9 @@ fun SpellListVariantDisplay(
             showFilterOptions = variant.type == SpellListType.CLASS,
             onChangeFilter = {
                 intend(Intent.SetListFilter(it))
-            }
+            },
+            shouldGroupByLevel = true,
+            necessarySpellLevels = necessarySpellLevels
         )
     }
 }
