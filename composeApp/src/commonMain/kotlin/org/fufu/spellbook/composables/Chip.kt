@@ -58,9 +58,16 @@ fun Chip(
 @Composable
 fun PreparedToken(
     prepared: Boolean,
+    enabled: Boolean = true,
     size: ChipSize = ChipSize.REGULAR
 ){
-    val actualColor = if (prepared) Color.Blue else Color.Black
+    val actualColor = if(!enabled){
+        Color.LightGray
+    } else if (prepared) {
+        Color.Blue
+    } else {
+        Color.Black
+    }
     Chip(
         "Prepared",
         actualColor,
@@ -88,11 +95,12 @@ fun KnownToken(
 @Composable
 fun ClickableToken(
     onClick: () -> Unit = {},
+    enabled: Boolean = true,
     token: @Composable () -> Unit
 ){
     Box(
         modifier = Modifier
-            .clickable(true, onClick = onClick)
+            .clickable(enabled, onClick = onClick)
     ){
         token()
     }

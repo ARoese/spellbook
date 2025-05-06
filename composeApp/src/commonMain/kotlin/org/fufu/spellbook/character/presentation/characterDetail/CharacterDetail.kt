@@ -185,10 +185,14 @@ fun SpellListVariantDisplay(
             SpellListType.PREPARED -> null
             SpellListType.KNOWN -> { spell ->
                 val prepared = character.hasPreparedSpell(spell.key)
+                val hasMaxPrepared = character.spells.count { it.value } >=
+                        character.maxPreparedSpells
+                val isEnabled = !hasMaxPrepared || prepared
                 ClickableToken(
+                    enabled = isEnabled,
                     onClick = {intend(Intent.SetSpellPreparedness(spell, !prepared))}
                 ) {
-                    PreparedToken(prepared = prepared)
+                    PreparedToken(prepared = prepared, enabled = isEnabled)
                 }
             }
             SpellListType.CLASS -> { spell ->
