@@ -205,4 +205,17 @@ fun RowScope.SpellListFilterSelectorItems(
     ){
         Text("Save")
     }
+    val allClasses = state.knownSpells.flatMap { it.info.classes }.toSet()
+    DropdownSelector(
+        options = allClasses.toList(),
+        selected = state.filter.classes,
+        optionPresenter = { Text(it) },
+        onOptionPicked = { cl ->
+            onChangeFilter(state.filter.let {
+                it.copy(classes = nullingXor(it.classes, cl))
+            })
+        }
+    ){
+        Text("Class")
+    }
 }

@@ -56,6 +56,7 @@ data class SpellListFilter(
                 && tag?.let { info.tag.intersect(it).isEmpty() } != true
                 && dragonmarks?.let { info.dragonmarks.intersect(it).isEmpty() } != true
                 && name?.let { hasString(spell.info.name, it) } != false
+                && classes?.let { classes -> info.classes.any { cl -> cl in classes } } != false
     }
 
     private fun hasString(string: String, filter: String) : Boolean {
