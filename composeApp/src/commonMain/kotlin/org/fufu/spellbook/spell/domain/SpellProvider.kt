@@ -1,9 +1,7 @@
 package org.fufu.spellbook.spell.domain
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.lastOrNull
 import org.fufu.spellbook.PreviewSpells
 

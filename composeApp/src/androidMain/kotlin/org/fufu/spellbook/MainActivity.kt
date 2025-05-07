@@ -25,12 +25,12 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetailScreen
 import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetailState
+import org.fufu.spellbook.character.presentation.characterDetail.SpellListType
+import org.fufu.spellbook.character.presentation.characterDetail.SpellListVariant
 import org.fufu.spellbook.character.presentation.characterList.CharacterListScreen
 import org.fufu.spellbook.character.presentation.characterList.CharacterListState
 import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailScreen
 import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailState
-import org.fufu.spellbook.character.presentation.characterDetail.SpellListType
-import org.fufu.spellbook.character.presentation.characterDetail.SpellListVariant
 import org.fufu.spellbook.spell.presentation.ImportScreen
 import org.fufu.spellbook.spell.presentation.ImportScreenState
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailScreen

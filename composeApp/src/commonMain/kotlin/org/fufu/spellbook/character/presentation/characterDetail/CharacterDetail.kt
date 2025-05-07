@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.AddCircle
@@ -23,15 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.SpellSlotLevel
-import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.character.domain.hasPreparedSpell
 import org.fufu.spellbook.character.domain.knowsSpell
 import org.fufu.spellbook.composables.ClickableToken
@@ -40,6 +35,7 @@ import org.fufu.spellbook.composables.PreparedToken
 import org.fufu.spellbook.di.CHARACTER_CLASS_SPELL_LIST
 import org.fufu.spellbook.di.CHARACTER_KNOWN_SPELL_LIST
 import org.fufu.spellbook.di.CHARACTER_PREPARED_SPELL_LIST
+import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.presentation.spellList.SpellList
 import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellListVM

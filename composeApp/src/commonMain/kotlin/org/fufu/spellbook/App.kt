@@ -1,8 +1,6 @@
 package org.fufu.spellbook
 
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
@@ -37,13 +35,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import org.fufu.spellbook.di.MAIN_SPELL_LIST
 import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetailScreenRoot
 import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetailVM
 import org.fufu.spellbook.character.presentation.characterList.CharacterListRoot
 import org.fufu.spellbook.character.presentation.characterList.CharacterListVM
 import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailScreenRoot
 import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailVM
+import org.fufu.spellbook.di.MAIN_SPELL_LIST
 import org.fufu.spellbook.navigation.Route
 import org.fufu.spellbook.spell.presentation.ImportScreenRoot
 import org.fufu.spellbook.spell.presentation.ImportScreenVM

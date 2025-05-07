@@ -3,12 +3,9 @@ package org.fufu.spellbook.character.data.room
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import org.fufu.spellbook.character.data.room.entities.CharacterSpellEntity
-import org.fufu.spellbook.character.data.room.entities.SpellSlotLevelEntity
 import org.fufu.spellbook.character.data.room.entities.toEntity
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator

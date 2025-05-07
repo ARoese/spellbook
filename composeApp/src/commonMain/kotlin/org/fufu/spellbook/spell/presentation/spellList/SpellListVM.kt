@@ -1,9 +1,7 @@
 package org.fufu.spellbook.spell.presentation.spellList
 
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -20,7 +18,6 @@ import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.SaveType
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellProvider
-import java.util.Locale
 
 data class SpellListFilter(
     val book: Set<Book>? = null,

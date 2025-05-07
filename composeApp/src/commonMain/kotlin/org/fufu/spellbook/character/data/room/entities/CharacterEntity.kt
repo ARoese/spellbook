@@ -2,8 +2,8 @@ package org.fufu.spellbook.character.data.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.fufu.spellbook.character.domain.SpellSlotLevel
 import org.fufu.spellbook.character.domain.Character
+import org.fufu.spellbook.character.domain.SpellSlotLevel
 
 @Entity
 data class CharacterEntity (
