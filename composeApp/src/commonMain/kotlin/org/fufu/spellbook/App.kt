@@ -4,6 +4,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -15,8 +17,17 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -48,6 +59,33 @@ fun NavHostController.popNavigateDistinct(newRoute: Route, currentRoute: Route){
     if(newRoute != currentRoute){
         popBackStack(route = Route.RouteGraph, inclusive = false)
         navigate(route = newRoute)
+    }
+}
+
+@Composable
+fun Backable(
+    navController: NavHostController,
+    content: @Composable () -> Unit
+){
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(null){
+        focusRequester.requestFocus()
+    }
+
+    Box(
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .focusable()
+            .onKeyEvent {
+                if(it.key == Key.Escape && it.type == KeyEventType.KeyUp){
+                    navController.popBackStack()
+                    true
+                }else{
+                    false
+                }
+            }
+    ){
+        content()
     }
 }
 
@@ -118,19 +156,20 @@ fun App() {
                         initialOffset
                     } }
                 ){ backStack ->
-                    NavigationBar {  }
                     val spellID = backStack.toRoute<Route.SpellDetail>().spellID
                     val detailViewModel = koinViewModel<SpellDetailVM>(
                         parameters = { parametersOf(spellID) }
                     )
                     //backStack.destination.parent.
 
-                    SpellDetailScreenRoot(
-                        detailViewModel,
-                        onCloseClicked = {
-                            navController.popBackStack()
-                        }
-                    )
+                    Backable(navController){
+                        SpellDetailScreenRoot(
+                            detailViewModel,
+                            onCloseClicked = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
                 }
                 composable<Route.CharacterList>(
                     //enterTransition = { slideInHorizontally { initialOffset ->
@@ -166,18 +205,20 @@ fun App() {
                         parameters = { parametersOf(characterID) }
                     )
 
-                    CharacterDetailScreenRoot(
-                        detailViewModel,
-                        onBack = {
-                            navController.popBackStack()
-                        },
-                        onViewSpell = {
-                            navController.navigate(Route.SpellDetail(it.key))
-                        },
-                        onClickEditCharacter = {
-                            navController.navigate(Route.EditingCharacterDetail(it))
-                        }
-                    )
+                    Backable(navController){
+                        CharacterDetailScreenRoot(
+                            detailViewModel,
+                            onBack = {
+                                navController.popBackStack()
+                            },
+                            onViewSpell = {
+                                navController.navigate(Route.SpellDetail(it.key))
+                            },
+                            onClickEditCharacter = {
+                                navController.navigate(Route.EditingCharacterDetail(it))
+                            }
+                        )
+                    }
                 }
                 composable<Route.EditingCharacterDetail>{ backStack ->
                     val characterID = backStack.toRoute<Route.EditingCharacterDetail>().characterId
@@ -185,10 +226,12 @@ fun App() {
                         parameters = { parametersOf(characterID) }
                     )
 
-                    EditingCharacterDetailScreenRoot(
-                        editingDetailViewModel,
-                        onBack = {navController.popBackStack()}
+                    Backable(navController){
+                        EditingCharacterDetailScreenRoot(
+                            editingDetailViewModel,
+                            onBack = {navController.popBackStack()}
                         )
+                    }
                 }
                 composable<Route.ImportScreen>(
 
