@@ -1,7 +1,9 @@
 package org.fufu.spellbook
 
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -109,10 +111,10 @@ fun App() {
                     )
                 }
                 composable<Route.SpellDetail>(
-                    enterTransition = { slideInHorizontally { initialOffset ->
+                    enterTransition = { slideInVertically { initialOffset ->
                         initialOffset
                     } },
-                    exitTransition = { slideOutHorizontally { initialOffset ->
+                    exitTransition = { slideOutVertically { initialOffset ->
                         initialOffset
                     } }
                 ){ backStack ->
@@ -152,12 +154,12 @@ fun App() {
                     )
                 }
                 composable<Route.CharacterDetail>(
-                    enterTransition = { slideInHorizontally { initialOffset ->
-                        initialOffset
-                    } },
-                    exitTransition = { slideOutHorizontally { initialOffset ->
-                        initialOffset
-                    } }
+//                    enterTransition = { slideInHorizontally { initialOffset ->
+//                        initialOffset
+//                    } },
+//                    exitTransition = { slideOutHorizontally { initialOffset ->
+//                        initialOffset
+//                    } }
                 ){ backStack ->
                     val characterID = backStack.toRoute<Route.CharacterDetail>().characterID
                     val detailViewModel = koinViewModel<CharacterDetailVM>(
