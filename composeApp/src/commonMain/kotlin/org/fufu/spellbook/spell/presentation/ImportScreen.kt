@@ -81,7 +81,9 @@ fun EditableImportSource(
         when(source){
             is ImportSource.SELECT -> {}
             is ImportSource.JSON -> EditableJsonImportSource(source, onChangeSource)
-            is ImportSource.WIKIDOT -> {}
+            is ImportSource.WIKIDOT -> {
+                Text("This is not yet implemented")
+            }
         }
     }
 }
