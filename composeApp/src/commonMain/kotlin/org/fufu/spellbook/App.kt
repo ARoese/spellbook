@@ -16,7 +16,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -66,6 +69,8 @@ fun Backable(
     content: @Composable () -> Unit
 ){
     val focusRequester = remember { FocusRequester() }
+    // prevents double-backs
+    var triggered by remember { mutableStateOf(false) }
     LaunchedEffect(null){
         focusRequester.requestFocus()
     }
@@ -75,8 +80,9 @@ fun Backable(
             .focusRequester(focusRequester)
             .focusable()
             .onKeyEvent {
-                if(it.key == Key.Escape && it.type == KeyEventType.KeyUp){
+                if(!triggered && it.key == Key.Escape && it.type == KeyEventType.KeyUp){
                     navController.popBackStack()
+                    triggered = true
                     true
                 }else{
                     false
