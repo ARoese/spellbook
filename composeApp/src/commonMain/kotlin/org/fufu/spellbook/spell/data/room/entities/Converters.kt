@@ -1,7 +1,6 @@
 package org.fufu.spellbook.spell.data.room.entities
 
 import androidx.room.TypeConverter
-import org.fufu.spellbook.spell.domain.Book
 import org.fufu.spellbook.spell.domain.DamageType
 import org.fufu.spellbook.spell.domain.DragonMark
 import org.fufu.spellbook.spell.domain.MagicSchool
@@ -31,21 +30,6 @@ class Converters{
     @TypeConverter
     fun fromMagicSchool(school: MagicSchool) : String {
         return toStringUsingName(school)
-    }
-
-    @TypeConverter
-    fun fromBookList(books: List<Book>) : String {
-        return fromStringList(books.map{ toStringUsingName(it) })
-    }
-
-    @TypeConverter
-    fun toBookList(s: String) : List<Book> {
-        if(s.isEmpty()){
-            return listOf()
-        }
-        return toStringList(s).map{
-            toEnumUsingName(it, Book.OTHER)
-        }
     }
 
     @TypeConverter

@@ -23,8 +23,9 @@ fun randomSchool() : MagicSchool {
 }
 
 val PreviewBaseSpellInfo = SpellInfo(
-    book = listOf(),
+    sources = listOf("PreviewSource1", "PreviewSource2"),
     classes = listOf("Wizard", "Sorcerer"),
+    versions = listOf("5e"),
     components = "V, S",
     duration = "instantaneous",
     guilds = emptyList(),

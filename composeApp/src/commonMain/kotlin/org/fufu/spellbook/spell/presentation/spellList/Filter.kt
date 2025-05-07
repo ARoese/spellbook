@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import org.fufu.spellbook.composables.BooleanSelector
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.nullingXor
-import org.fufu.spellbook.spell.domain.Book
 import org.fufu.spellbook.spell.domain.DamageType
 import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.SaveType
@@ -146,17 +145,31 @@ fun RowScope.SpellListFilterSelectorItems(
         Text("School")
     }
     //VerticalDivider()
+    val allSources = state.knownSpells.flatMap { it.info.sources }.toSet()
     DropdownSelector(
-        Book.entries,
-        state.filter.book,
-        { Text(it.name) },
-        { book ->
+        allSources.toList(),
+        state.filter.sources,
+        { Text(it) },
+        { source ->
             onChangeFilter(state.filter.let {
-                it.copy(book = nullingXor(it.book, book))
+                it.copy(sources = nullingXor(it.sources, setOf(source)))
             })
         }
     ){
-        Text("Book")
+        Text("Source")
+    }
+    val allVersions = state.knownSpells.flatMap { it.info.versions }.toSet()
+    DropdownSelector(
+        allVersions.toList(),
+        state.filter.versions,
+        { Text(it) },
+        { version ->
+            onChangeFilter(state.filter.let {
+                it.copy(versions = nullingXor(it.versions, setOf(version)))
+            })
+        }
+    ){
+        Text("Version")
     }
     BooleanSelector(
         state.filter.ritual,

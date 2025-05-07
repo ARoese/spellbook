@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.fufu.spellbook.spell.domain.Book
 import org.fufu.spellbook.spell.domain.DamageType
 import org.fufu.spellbook.spell.domain.DragonMark
 import org.fufu.spellbook.spell.domain.MagicSchool
@@ -20,7 +19,8 @@ import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellProvider
 
 data class SpellListFilter(
-    val book: Set<Book>? = null,
+    val sources: Set<String>? = null,
+    val versions: Set<String>? = null,
     val classes: Set<String>? = null,
     val components: String? = null,
     val duration: String? = null,
@@ -44,7 +44,8 @@ data class SpellListFilter(
     fun matches(spell: Spell) : Boolean {
         val info = spell.info
         return onlyIds?.let { spell.key in it } != false
-                && book?.let{ info.book.intersect(it).isEmpty() } != true
+                && sources?.let{ info.sources.intersect(it).isEmpty() } != true
+                && versions?.let{ info.versions.intersect(it).isEmpty() } != true
                 && level?.let { info.level in it } != false
                 && ritual?.let { info.ritual == ritual } != false
                 && school?.let { info.school in it } != false
@@ -67,7 +68,7 @@ data class SpellListFilter(
     }
 
     fun hasActiveCriteria() : Boolean {
-        return book != null
+        return sources != null
                 || classes != null
                 || components != null
                 || duration != null

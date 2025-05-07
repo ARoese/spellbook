@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dd23629d9e1f123e89356fa8f96314e9",
+    "identityHash": "d31b8047e09909fe10fdb0ae2198f173",
     "entities": [
       {
         "tableName": "CharacterEntity",
@@ -126,7 +126,7 @@
       },
       {
         "tableName": "SpellEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `book` TEXT NOT NULL, `classes` TEXT NOT NULL, `components` TEXT NOT NULL, `duration` TEXT NOT NULL, `guilds` TEXT NOT NULL, `level` INTEGER NOT NULL, `name` TEXT NOT NULL, `optional` TEXT NOT NULL, `range` TEXT NOT NULL, `ritual` INTEGER NOT NULL, `school` TEXT NOT NULL, `subclasses` TEXT NOT NULL, `text` TEXT NOT NULL, `time` TEXT NOT NULL, `tag` TEXT NOT NULL, `damages` TEXT NOT NULL, `saves` TEXT NOT NULL, `dragonmarks` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sources` TEXT NOT NULL, `versions` TEXT NOT NULL, `classes` TEXT NOT NULL, `components` TEXT NOT NULL, `duration` TEXT NOT NULL, `guilds` TEXT NOT NULL, `level` INTEGER NOT NULL, `name` TEXT NOT NULL, `optional` TEXT NOT NULL, `range` TEXT NOT NULL, `ritual` INTEGER NOT NULL, `school` TEXT NOT NULL, `subclasses` TEXT NOT NULL, `text` TEXT NOT NULL, `time` TEXT NOT NULL, `tag` TEXT NOT NULL, `damages` TEXT NOT NULL, `saves` TEXT NOT NULL, `dragonmarks` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "key",
@@ -135,8 +135,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "book",
-            "columnName": "book",
+            "fieldPath": "sources",
+            "columnName": "sources",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versions",
+            "columnName": "versions",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -303,7 +309,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dd23629d9e1f123e89356fa8f96314e9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd31b8047e09909fe10fdb0ae2198f173')"
     ]
   }
 }

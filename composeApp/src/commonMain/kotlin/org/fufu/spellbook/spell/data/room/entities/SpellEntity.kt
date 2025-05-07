@@ -3,7 +3,6 @@ package org.fufu.spellbook.spell.data.room.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import org.fufu.spellbook.spell.domain.Book
 import org.fufu.spellbook.spell.domain.DamageType
 import org.fufu.spellbook.spell.domain.DragonMark
 import org.fufu.spellbook.spell.domain.MagicSchool
@@ -15,7 +14,8 @@ import org.fufu.spellbook.spell.domain.SpellInfo
 @TypeConverters(Converters::class)
 data class SpellEntity(
     @PrimaryKey(autoGenerate = true) val key: Int = 0,
-    val book: List<Book>,
+    val sources: List<String>,
+    val versions: List<String>,
     val classes: List<String>,
     val components: String,
     val duration: String,
@@ -39,7 +39,8 @@ fun SpellEntity.toSpell(): Spell {
     return Spell(
         key = key,
         info = SpellInfo(
-            book = book,
+            sources = sources,
+            versions = versions,
             classes = classes,
             components = components,
             duration = duration,
@@ -64,7 +65,8 @@ fun SpellEntity.toSpell(): Spell {
 fun Spell.toEntity() : SpellEntity {
     return SpellEntity(
         key = key,
-        book = info.book,
+        sources = info.sources,
+        versions = info.versions,
         classes = info.classes,
         components = info.components,
         duration = info.duration,

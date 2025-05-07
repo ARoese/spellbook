@@ -147,6 +147,41 @@ fun LoadingSpellDetail(
 }
 
 @Composable
+fun VersionAndSourceDisplay(
+    spellInfo: SpellInfo
+){
+    if(spellInfo.versions.isNotEmpty()){
+        val versionsString = spellInfo.versions
+            .joinToString(", ")
+            .let {
+                if (spellInfo.versions.size > 1)
+                    "versions: ( $it )"
+                else
+                    "version: $it"
+            }
+        Text(
+            versionsString,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+
+    if(spellInfo.sources.isNotEmpty()){
+        val sourcesString = spellInfo.sources
+            .joinToString(", ")
+            .let {
+                if (spellInfo.sources.size > 1)
+                    "sources: ( $it )"
+                else
+                    "source: $it"
+            }
+        Text(
+            sourcesString,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+@Composable
 fun SpellDetail(
     state: ConcreteSpellDetailState,
     onSpellEdited: (SpellInfo) -> Unit = {}
@@ -246,6 +281,7 @@ fun SpellDetail(
                         )
                     }
 
+                    VersionAndSourceDisplay(spellInfo)
                 }
             }
 

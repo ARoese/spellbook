@@ -2,22 +2,6 @@ package org.fufu.spellbook.spell.domain
 
 import kotlin.math.absoluteValue
 
-enum class Book {
-    WILDEMOUNT,
-    LOSTLAB,
-    SCAG,
-    ELEMENTALEVIL,
-    XANATHAR,
-    STRIX,
-    FIZBAN,
-    PHB,
-    RIME,
-    ACQINC,
-    TASHA,
-    RAVNICA,
-    OTHER
-}
-
 enum class DamageType {
     RADIANT,
     POISON,
@@ -77,7 +61,8 @@ data class Spell(
 )
 
 data class SpellInfo(
-    val book: List<Book> ,
+    val sources: List<String>,
+    val versions: List<String>,
     val classes: List<String>,
     val components: String,
     val duration: String,
@@ -99,7 +84,8 @@ data class SpellInfo(
 
 fun DefaultSpellInfo() : SpellInfo {
     return SpellInfo(
-        book = listOf(Book.OTHER),
+        sources = listOf("Custom"),
+        versions = listOf("5e"),
         classes = emptyList(),
         components = "",
         duration = "",

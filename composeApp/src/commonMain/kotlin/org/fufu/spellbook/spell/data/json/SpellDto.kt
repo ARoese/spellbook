@@ -2,7 +2,6 @@ package org.fufu.spellbook.spell.data.json
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.fufu.spellbook.spell.domain.Book
 import org.fufu.spellbook.spell.domain.DamageType
 import org.fufu.spellbook.spell.domain.DragonMark
 import org.fufu.spellbook.spell.domain.MagicSchool
@@ -11,28 +10,28 @@ import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 
 @Serializable
-enum class BookDto(val domainBook: Book) {
-    @SerialName("strings.wildemountname")   wildemount(Book.WILDEMOUNT),
-    @SerialName("strings.lostlabname")      lostlab(Book.LOSTLAB),
-    @SerialName("strings.scagname")         scag(Book.SCAG),
-    @SerialName("strings.eename")           elementalevil(Book.ELEMENTALEVIL),
-    @SerialName("strings.xanatharname")     xanathar(Book.XANATHAR),
-    @SerialName("strings.strixname")        strix(Book.STRIX),
-    @SerialName("strings.fizbanname")       fizban(Book.FIZBAN),
-    @SerialName("strings.phbname")          phb(Book.PHB),
-    @SerialName("strings.rimename")         rime(Book.RIME),
-    @SerialName("strings.acqincname")       acqinc(Book.ACQINC),
-    @SerialName("strings.tashaname")        tasha(Book.TASHA),
-    @SerialName("strings.ravnicaname")      ravnica(Book.RAVNICA),
-    @SerialName("strings.otherbook")        otherBook(Book.OTHER);
+enum class BookDto {
+    @SerialName("strings.wildemountname")   wildemount,
+    @SerialName("strings.lostlabname")      lostlab,
+    @SerialName("strings.scagname")         scag,
+    @SerialName("strings.eename")           elementalevil,
+    @SerialName("strings.xanatharname")     xanathar,
+    @SerialName("strings.strixname")        strix,
+    @SerialName("strings.fizbanname")       fizban,
+    @SerialName("strings.phbname")          phb,
+    @SerialName("strings.rimename")         rime,
+    @SerialName("strings.acqincname")       acqinc,
+    @SerialName("strings.tashaname")        tasha,
+    @SerialName("strings.ravnicaname")      ravnica,
+    @SerialName("strings.otherbook")        otherBook;
 
-    fun toDomain(): Book {
-        return this.domainBook
+    fun toName(): String {
+        return this.name
     }
 
     companion object {
-        fun fromDomain(book: Book): BookDto {
-            return entries.find {it.domainBook == book} ?: otherBook
+        fun fromDomain(src: String): BookDto {
+            return entries.find {it.name == src} ?: otherBook
         }
     }
 }
@@ -169,7 +168,9 @@ data class SpellDto(
             key,
             // TODO: configurably pull the correct language from multilinguals
             SpellInfo(
-                book = book.map{it.toDomain()},
+                sources = book.map{it.toName()},
+                // TODO: do not assume 5e. Add something to the json spec that gives this
+                versions = listOf("5e"),
                 classes = classes.toList(),
                 components = components.enUS ?: "",
                 duration = duration,
@@ -246,7 +247,7 @@ data class SpellDto(
     companion object {
         fun fromDomain(spell: Spell) : SpellDto {
             return SpellDto(
-                book = spell.info.book.map { BookDto.fromDomain(it) }.toTypedArray(),
+                book = spell.info.sources.map { BookDto.fromDomain(it) }.toTypedArray(),
                 classes = spell.info.classes.toTypedArray(),
                 components = MultiLingualStringDto(spell.info.components),
                 duration = spell.info.duration,
