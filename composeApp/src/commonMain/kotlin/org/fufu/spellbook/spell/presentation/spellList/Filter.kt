@@ -32,9 +32,6 @@ import androidx.compose.ui.unit.dp
 import org.fufu.spellbook.composables.BooleanSelector
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.nullingXor
-import org.fufu.spellbook.spell.domain.DamageType
-import org.fufu.spellbook.spell.domain.MagicSchool
-import org.fufu.spellbook.spell.domain.SaveType
 
 @Composable
 fun SpellListFilterSelector(
@@ -132,10 +129,11 @@ fun RowScope.SpellListFilterSelectorItems(
         Text("Level")
     }
     //VerticalDivider()
+    val allMagicSchools = state.knownSpells.map { it.info.school }.toSet()
     DropdownSelector(
-        MagicSchool.entries,
+        allMagicSchools.toList(),
         state.filter.school,
-        { Text(it.name) },
+        { Text(it) },
         { school ->
             onChangeFilter(state.filter.let {
                 it.copy(school = nullingXor(it.school, school))
@@ -152,7 +150,7 @@ fun RowScope.SpellListFilterSelectorItems(
         { Text(it) },
         { source ->
             onChangeFilter(state.filter.let {
-                it.copy(sources = nullingXor(it.sources, setOf(source)))
+                it.copy(sources = nullingXor(it.sources, source))
             })
         }
     ){
@@ -165,7 +163,7 @@ fun RowScope.SpellListFilterSelectorItems(
         { Text(it) },
         { version ->
             onChangeFilter(state.filter.let {
-                it.copy(versions = nullingXor(it.versions, setOf(version)))
+                it.copy(versions = nullingXor(it.versions, version))
             })
         }
     ){
@@ -193,10 +191,11 @@ fun RowScope.SpellListFilterSelectorItems(
     ){
         Text("Tag")
     }
+    val allDamageTypes = state.knownSpells.flatMap { it.info.damages }.toSet()
     DropdownSelector(
-        DamageType.entries,
+        allDamageTypes.toList(),
         state.filter.damages,
-        { Text(it.name) },
+        { Text(it) },
         { damage ->
             onChangeFilter(state.filter.let {
                 it.copy(damages = nullingXor(it.damages, damage))
@@ -205,10 +204,11 @@ fun RowScope.SpellListFilterSelectorItems(
     ){
         Text("Damage")
     }
+    val allSaveTypes = state.knownSpells.flatMap { it.info.saves }.toSet()
     DropdownSelector(
-        SaveType.entries,
+        allSaveTypes.toList(),
         state.filter.saves,
-        { Text(it.name) },
+        { Text(it) },
         { save ->
             onChangeFilter(state.filter.let {
                 it.copy(saves = nullingXor(it.saves, save))

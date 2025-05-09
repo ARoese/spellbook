@@ -11,10 +11,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.fufu.spellbook.spell.domain.DamageType
-import org.fufu.spellbook.spell.domain.DragonMark
-import org.fufu.spellbook.spell.domain.MagicSchool
-import org.fufu.spellbook.spell.domain.SaveType
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellProvider
 
@@ -30,13 +26,13 @@ data class SpellListFilter(
     val optional: List<String>? = null,
     val range: String? = null,
     val ritual: Boolean? = null,
-    val school: Set<MagicSchool>? = null,
+    val school: Set<String>? = null,
     val text: String? = null,
     val time: String? = null,
     val tag: Set<String>? = null,
-    val damages: Set<DamageType>? = null,
-    val saves: Set<SaveType>? = null,
-    val dragonmarks: Set<DragonMark>? = null,
+    val damages: Set<String>? = null,
+    val saves: Set<String>? = null,
+    val dragonmarks: Set<String>? = null,
 
     // non-user configurable
     val onlyIds: Set<Int>? = null

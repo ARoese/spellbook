@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.fufu.spellbook.spell.domain.MagicSchool
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
 
@@ -242,36 +241,13 @@ fun SpellDetail(
                                     }
                                 }
                             }
-                            Box {
-                                var expanded by remember { mutableStateOf(false) }
-                                val scrollState = rememberScrollState()
-                                IconButton(
-                                    onClick = { expanded = true },
-                                    modifier = Modifier
-                                        .border(
-                                            Dp.Hairline,
-                                            Color.Black,
-                                            RoundedCornerShape(6.dp)
-                                        )
-                                ) {
-                                    Text(spellInfo.school.toString())
+
+                            TextField(
+                                spellInfo.school,
+                                onValueChange = {
+                                    onSpellEdited(spellInfo.copy(school = it))
                                 }
-                                DropdownMenu(
-                                    expanded,
-                                    onDismissRequest = { expanded = false },
-                                    scrollState = scrollState
-                                ) {
-                                    MagicSchool.entries.forEach {
-                                        DropdownMenuItem(
-                                            text = { Text(it.name) },
-                                            onClick = {
-                                                expanded = false
-                                                onSpellEdited(spellInfo.copy(school = it))
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                            )
                         }
                     } else {
                         Text(

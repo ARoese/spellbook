@@ -2,59 +2,6 @@ package org.fufu.spellbook.spell.domain
 
 import kotlin.math.absoluteValue
 
-enum class DamageType {
-    RADIANT,
-    POISON,
-    NECROTIC,
-    THUNDER,
-    PIERCING,
-    PSYCHIC,
-    COLD,
-    BLUDGEONING,
-    SLASHING,
-    FIRE,
-    LIGHTNING,
-    FORCE,
-    ACID
-}
-
-enum class DragonMark {
-    HEALING,
-    SHADOW,
-    SCRIBING,
-    FINDING,
-    SENTINEL,
-    MAKING,
-    HOSPITALITY,
-    STORM,
-    DETECTION,
-    HANDLING,
-    PASSAGE,
-    WARDING,
-    OTHER
-}
-
-enum class MagicSchool {
-    DIVINATION,
-    ABJURATION,
-    ENCHANTMENT,
-    ILLUSION,
-    EVOCATION,
-    CONJURATION,
-    NECROMANCY,
-    TRANSMUTATION,
-    OTHER
-}
-
-enum class SaveType {
-    CON,
-    INT,
-    WIS,
-    STR,
-    CHA,
-    DEX
-}
-
 data class Spell(
     val key: Int,
     val info: SpellInfo
@@ -72,15 +19,33 @@ data class SpellInfo(
     val optional: List<String>,
     val range: String,
     val ritual: Boolean,
-    val school: MagicSchool,
+    val school: String,
     val subclasses: List<String>,
     val text: String,
     val time: String,
     val tag: List<String>,
-    val damages: List<DamageType>,
-    val saves: List<SaveType>,
-    val dragonmarks: List<DragonMark>
+    val damages: List<String>,
+    val saves: List<String>,
+    val dragonmarks: List<String>
 )
+
+fun SpellInfo.normalized() : SpellInfo {
+    return this.copy(
+        classes=classes.normalized(),
+        guilds=guilds.normalized(),
+        school=school.uppercase(),
+        subclasses=subclasses.normalized(),
+        damages=damages.normalized(),
+        saves=saves.normalized(),
+        dragonmarks=dragonmarks.normalized()
+    )
+}
+
+fun List<String>.normalized() : List<String> {
+    return this.map {
+        it.lowercase()
+    }
+}
 
 fun DefaultSpellInfo() : SpellInfo {
     return SpellInfo(
@@ -95,7 +60,7 @@ fun DefaultSpellInfo() : SpellInfo {
         optional = emptyList(),
         range = "",
         ritual = false,
-        school = MagicSchool.ILLUSION,
+        school = "ILLUSION",
         subclasses = emptyList(),
         text = "Spell text",
         time = "",
@@ -110,7 +75,7 @@ fun SpellInfo.formatAsOrdinalSchool() : String {
     // 7th-level Transformation
     // Conjuration cantrip
     fun SpellInfo.formatAsOrdinalSchoolInternal() : String{
-        val schoolName = school.name
+        val schoolName = school
             .lowercase()
             .replaceFirstChar{
                 if(it.isLowerCase())

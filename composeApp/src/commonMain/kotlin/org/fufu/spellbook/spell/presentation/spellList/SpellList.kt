@@ -194,7 +194,7 @@ fun SpellListItem(
             )
 
             Text(
-                text=spell.info.school.name,
+                text=spell.info.school,
                 fontStyle= FontStyle.Italic,
                 style= MaterialTheme.typography.titleSmall
             )

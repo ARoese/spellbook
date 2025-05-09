@@ -35,6 +35,13 @@ data class Character (
     val characterIcon: String
 )
 
+fun Character.normalized(): Character {
+    return this.copy(
+        characterClass=characterClass.lowercase(),
+        subclass=subclass.lowercase()
+    )
+}
+
 data class CharacterIcon (val icon: String) {
     companion object {
         private val mapping: Map<String, DrawableResource> = mapOf(

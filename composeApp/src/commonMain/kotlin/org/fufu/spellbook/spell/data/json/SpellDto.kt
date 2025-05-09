@@ -2,10 +2,6 @@ package org.fufu.spellbook.spell.data.json
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.fufu.spellbook.spell.domain.DamageType
-import org.fufu.spellbook.spell.domain.DragonMark
-import org.fufu.spellbook.spell.domain.MagicSchool
-import org.fufu.spellbook.spell.domain.SaveType
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 
@@ -37,96 +33,80 @@ enum class BookDto {
 }
 
 @Serializable
-enum class DragonMarkDto(val mark: DragonMark){
-    @SerialName("strings.markOfHealing")     markOfHealing(DragonMark.HEALING),
-    @SerialName("strings.markOfShadow")      markOfShadow(DragonMark.SHADOW),
-    @SerialName("strings.markOfScribing")    markOfScribing(DragonMark.SCRIBING),
-    @SerialName("strings.markOfFinding")     markOfFinding(DragonMark.FINDING),
-    @SerialName("strings.markOfSentinel")    markOfSentinel(DragonMark.SENTINEL),
-    @SerialName("strings.markOfMaking")      markOfMaking(DragonMark.MAKING),
-    @SerialName("strings.markOfHospitality") markOfHospitality(DragonMark.HOSPITALITY),
-    @SerialName("strings.markOfStorm")       markOfStorm(DragonMark.STORM),
-    @SerialName("strings.markOfDetection")   markOfDetection(DragonMark.DETECTION),
-    @SerialName("strings.markOfHandling")    markOfHandling(DragonMark.HANDLING),
-    @SerialName("strings.markOfPassage")     markOfPassage(DragonMark.PASSAGE),
-    @SerialName("strings.markOfWarding")     markOfWarding(DragonMark.WARDING);
-
-    fun toDomain(): DragonMark {
-        return this.mark
-    }
+enum class DragonMarkDto(val mark: String){
+    @SerialName("strings.markOfHealing")     HEALING("HEALING"),
+    @SerialName("strings.markOfShadow")      SHADOW("SHADOW"),
+    @SerialName("strings.markOfScribing")    SCRIBING("SCRIBING"),
+    @SerialName("strings.markOfFinding")     FINDING("FINDING"),
+    @SerialName("strings.markOfSentinel")    SENTINEL("SENTINEL"),
+    @SerialName("strings.markOfMaking")      MAKING("MAKING"),
+    @SerialName("strings.markOfHospitality") HOSPITALITY("HOSPITALITY"),
+    @SerialName("strings.markOfStorm")       STORM("STORM"),
+    @SerialName("strings.markOfDetection")   DETECTION("DETECTION"),
+    @SerialName("strings.markOfHandling")    HANDLING("HANDLING"),
+    @SerialName("strings.markOfPassage")     PASSAGE("PASSAGE"),
+    @SerialName("strings.markOfWarding")     WARDING("WARDING");
 
     companion object {
-        fun fromDomain(mark: DragonMark): DragonMarkDto {
-            return entries.find {it.mark == mark} ?: markOfHealing
+        fun fromDomain(mark: String): DragonMarkDto {
+            return entries.find { it.mark == mark } ?: HEALING
         }
     }
 }
 
 @Serializable
-enum class DamageTypeDto(val damageType: DamageType){
-    @SerialName("strings.dmgRadiant")       Radiant(DamageType.RADIANT),
-    @SerialName("strings.dmgPoison")        Poison(DamageType.POISON),
-    @SerialName("strings.dmgNecro")         Necro(DamageType.NECROTIC),
-    @SerialName("strings.dmgThunder")       Thunder(DamageType.THUNDER),
-    @SerialName("strings.dmgPiercing")      Piercing(DamageType.PIERCING),
-    @SerialName("strings.dmgPsychic")       Psychic(DamageType.PSYCHIC),
-    @SerialName("strings.dmgCold")          Cold(DamageType.COLD),
-    @SerialName("strings.dmgBlud")          Blud(DamageType.BLUDGEONING),
-    @SerialName("strings.dmgSlashing")      Slashing(DamageType.SLASHING),
-    @SerialName("strings.dmgFire")          Fire(DamageType.FIRE),
-    @SerialName("strings.dmgLightning")     Lightning(DamageType.LIGHTNING),
-    @SerialName("strings.dmgForce")         Force(DamageType.FORCE),
-    @SerialName("strings.dmgAcid")          Acid(DamageType.ACID);
-
-    fun toDomain(): DamageType {
-        return this.damageType
-    }
+enum class DamageTypeDto(val damageType: String){
+    @SerialName("strings.dmgRadiant")       RADIANT("RADIANT"),
+    @SerialName("strings.dmgPoison")        POISON("POISON"),
+    @SerialName("strings.dmgNecro")         NECROTIC("NECROTIC"),
+    @SerialName("strings.dmgThunder")       THUNDER("THUNDER"),
+    @SerialName("strings.dmgPiercing")      PIERCING("PIERCING"),
+    @SerialName("strings.dmgPsychic")       PSYCHIC("PSYCHIC"),
+    @SerialName("strings.dmgCold")          COLD("COLD"),
+    @SerialName("strings.dmgBlud")          BLUDGEONING("BLUDGEONING"),
+    @SerialName("strings.dmgSlashing")      SLASHING("SLASHING"),
+    @SerialName("strings.dmgFire")          FIRE("FIRE"),
+    @SerialName("strings.dmgLightning")     LIGHTNING("LIGHTNING"),
+    @SerialName("strings.dmgForce")         FORCE("FORCE"),
+    @SerialName("strings.dmgAcid")          ACID("ACID");
 
     companion object {
-        fun fromDomain(damageType: DamageType): DamageTypeDto {
-            return entries.find {it.damageType == damageType} ?: Radiant
+        fun fromDomain(damageType: String): DamageTypeDto {
+            return entries.find {it.damageType == damageType} ?: RADIANT
         }
     }
 }
 
 @Serializable
-enum class MagicSchoolDto(val school: MagicSchool) {
-    @SerialName("Divination")       divination(MagicSchool.DIVINATION),
-    @SerialName("Abjuration")       abjuration(MagicSchool.ABJURATION),
-    @SerialName("Enchantment")      enchantment(MagicSchool.ENCHANTMENT),
-    @SerialName("Illusion")         illusion(MagicSchool.ILLUSION),
-    @SerialName("Evocation")        evocation(MagicSchool.EVOCATION),
-    @SerialName("Conjuration")      conjuration(MagicSchool.CONJURATION),
-    @SerialName("Necromancy")       necromancy(MagicSchool.NECROMANCY),
-    @SerialName("Transmutation")    transmutation(MagicSchool.TRANSMUTATION);
-
-    fun toDomain(): MagicSchool {
-        return this.school
-    }
+enum class MagicSchoolDto(val school: String) {
+    @SerialName("Divination")       DIVINATION("DIVINATION"),
+    @SerialName("Abjuration")       ABJURATION("ABJURATION"),
+    @SerialName("Enchantment")      ENCHANTMENT("ENCHANTMENT"),
+    @SerialName("Illusion")         ILLUSION("ILLUSION"),
+    @SerialName("Evocation")        EVOCATION("EVOCATION"),
+    @SerialName("Conjuration")      CONJURATION("CONJURATION"),
+    @SerialName("Necromancy")       NECROMANCY("NECROMANCY"),
+    @SerialName("Transmutation")    TRANSMUTATION("TRANSMUTATION");
 
     companion object {
-        fun fromDomain(school: MagicSchool): MagicSchoolDto {
-            return entries.find {it.school == school} ?: divination
+        fun fromDomain(school: String): MagicSchoolDto {
+            return entries.find {it.school == school} ?: DIVINATION
         }
     }
 }
 
 @Serializable
-enum class SaveTypeDto(val saveType: SaveType) {
-    @SerialName("strings.tsCos")    Con(SaveType.CON),
-    @SerialName("strings.tsInt")    Int(SaveType.INT),
-    @SerialName("strings.tsWis")    Wis(SaveType.WIS),
-    @SerialName("strings.tsForza")  Str(SaveType.STR),
-    @SerialName("strings.tsCha")    Cha(SaveType.CHA),
-    @SerialName("strings.tsDex")    Dex(SaveType.DEX);
-
-    fun toDomain(): SaveType {
-        return this.saveType
-    }
+enum class SaveTypeDto(val saveType: String) {
+    @SerialName("strings.tsCos")    CONSTITUTION("CONSTITUTION"),
+    @SerialName("strings.tsInt")    INTELLIGENCE("INTELLIGENCE"),
+    @SerialName("strings.tsWis")    WISDOM("WISDOM"),
+    @SerialName("strings.tsForza")  STRENGTH("STRENGTH"),
+    @SerialName("strings.tsCha")    CHARISMA("CHARISMA"),
+    @SerialName("strings.tsDex")    DEXTERITY("DEXTERITY");
 
     companion object {
-        fun fromDomain(saveType: SaveType): SaveTypeDto {
-            return entries.find {it.saveType == saveType} ?: Con
+        fun fromDomain(saveType: String): SaveTypeDto {
+            return entries.find {it.saveType == saveType} ?: CONSTITUTION
         }
     }
 }
@@ -180,14 +160,14 @@ data class SpellDto(
                 optional = optional.toList(),
                 range = range,
                 ritual = ritual,
-                school = school.toDomain(),
+                school = school.school,
                 subclasses = subclasses.toList(),
                 text = text.enUS ?: "",
                 time = time,
                 tag = tag.toList(),
-                damages = damage.map{ it.toDomain() },
-                saves = ts.map{ it.toDomain() },
-                dragonmarks = dragonmarks.map { it.toDomain() }
+                damages = damage.map{ it.damageType },
+                saves = ts.map{ it.saveType },
+                dragonmarks = dragonmarks.map { it.mark }
             )
         )
     }

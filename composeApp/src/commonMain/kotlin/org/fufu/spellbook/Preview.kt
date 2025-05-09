@@ -3,9 +3,7 @@ package org.fufu.spellbook
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterIcon
 import org.fufu.spellbook.character.domain.SpellSlotLevel
-import org.fufu.spellbook.spell.domain.DamageType
-import org.fufu.spellbook.spell.domain.MagicSchool
-import org.fufu.spellbook.spell.domain.SaveType
+import org.fufu.spellbook.spell.data.json.MagicSchoolDto
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 import kotlin.random.Random
@@ -18,8 +16,8 @@ fun randomTags() : List<String> {
     return tagChoices.shuffled(seededRandom).subList(0, count)
 }
 
-fun randomSchool() : MagicSchool {
-    return MagicSchool.entries.random(seededRandom)
+fun randomSchool() : String {
+    return MagicSchoolDto.entries.random(seededRandom).school
 }
 
 val PreviewBaseSpellInfo = SpellInfo(
@@ -34,13 +32,13 @@ val PreviewBaseSpellInfo = SpellInfo(
     optional = emptyList(),
     range = "example range",
     ritual = false,
-    school = MagicSchool.ILLUSION,
+    school = "ILLUSION",
     subclasses = listOf("strings.Wizard", "strings.Sorcerer"),
     text = "Description for spell.",
     time = "5 minutes",
     tag = listOf("tag1", "tag2", "tag3"),
-    damages = listOf(DamageType.ACID, DamageType.COLD),
-    saves = listOf(SaveType.STR, SaveType.CHA),
+    damages = listOf("ACID", "COLD"),
+    saves = listOf("STR", "CHA"),
     dragonmarks = emptyList()
 )
 
