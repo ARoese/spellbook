@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
 
@@ -215,31 +216,14 @@ fun SpellDetail(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text("level ")
-                            Box {
-                                var expanded by remember { mutableStateOf(false) }
-                                val scrollState = rememberScrollState()
-                                IconButton(
-                                    onClick = { expanded = true },
-                                    modifier = Modifier
-                                        .border(Dp.Hairline, Color.Black, CircleShape)
-                                ) {
-                                    Text(spellInfo.level.toString())
-                                }
-                                DropdownMenu(
-                                    expanded,
-                                    onDismissRequest = { expanded = false },
-                                    scrollState = scrollState
-                                ) {
-                                    (0..10).forEach {
-                                        DropdownMenuItem(
-                                            text = { Text(it.toString()) },
-                                            onClick = {
-                                                expanded = false
-                                                onSpellEdited(spellInfo.copy(level = it))
-                                            }
-                                        )
-                                    }
-                                }
+                            DropdownSelector(
+                                (0..12).toList(),
+                                setOf(spellInfo.level),
+                                optionPresenter = { Text("$it") },
+                                onOptionPicked = { onSpellEdited(spellInfo.copy(level = it)) },
+                                singleSelect = true
+                            ) {
+                                Text("${spellInfo.level}")
                             }
 
                             TextField(
