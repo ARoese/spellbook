@@ -31,19 +31,50 @@ data class SpellInfo(
 
 fun SpellInfo.normalized() : SpellInfo {
     return this.copy(
-        classes=classes.normalized(),
-        guilds=guilds.normalized(),
+        classes=classes.titleCased(),
+        guilds=guilds.titleCased(),
         school=school.uppercase(),
-        subclasses=subclasses.normalized(),
+        subclasses=subclasses.titleCased(),
         damages=damages.normalized(),
         saves=saves.normalized(),
-        dragonmarks=dragonmarks.normalized()
+        dragonmarks=dragonmarks.titleCased(),
+        sources=sources.titleCased()
     )
 }
 
-fun List<String>.normalized() : List<String> {
+private fun List<String>.normalized() : List<String> {
     return this.map {
-        it.lowercase()
+        it.uppercase().trim()
+    }
+}
+
+private fun String.titleCase(): String{
+    return trim()
+        .lowercase()
+        .split(" ")
+        .mapNotNull {
+            if(it.isEmpty()){
+                null
+            }else{
+                if(it in setOf(
+                        "a", "an", "and", "as", "at",
+                        "but", "by", "for", "in", "nor",
+                        "of", "on", "or", "the", "up", "to"
+                )){
+                    it
+                }else{
+                    it.replaceFirstChar {
+                        it.uppercase()
+                    }
+                }
+
+            }
+        }.joinToString(" ")
+}
+
+private fun List<String>.titleCased() : List<String> {
+    return this.map {
+        it.titleCase()
     }
 }
 

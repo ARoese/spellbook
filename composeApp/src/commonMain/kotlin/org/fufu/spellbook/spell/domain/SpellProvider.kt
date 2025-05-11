@@ -34,7 +34,7 @@ suspend fun SpellMutator.importFrom(
 
     val numSpells = lastSpells.size // not 0
     return lastSpells.map{ (i, spell) ->
-        val res = addSpell(spell)
+        val res = addSpell(spell.normalized())
         onProgress(0.5f + ((i+1)/numSpells)*0.5f)
         res
     }.toList()
