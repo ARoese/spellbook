@@ -3,7 +3,6 @@ package org.fufu.spellbook
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterIcon
 import org.fufu.spellbook.character.domain.SpellSlotLevel
-import org.fufu.spellbook.spell.data.json.MagicSchoolDto
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 import kotlin.random.Random
@@ -17,7 +16,12 @@ fun randomTags() : List<String> {
 }
 
 fun randomSchool() : String {
-    return MagicSchoolDto.entries.random(seededRandom).school
+    return setOf(
+        "abjuration",
+        "conjuration",
+        "divination",
+        "evocation"
+    ).random(seededRandom)
 }
 
 val PreviewBaseSpellInfo = SpellInfo(

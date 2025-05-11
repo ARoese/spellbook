@@ -22,6 +22,8 @@ kotlin {
 
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
+        //to prevent variables from getting optimized out
+        //freeCompilerArgs.add("-Xdebug")
     }
     
     jvm("desktop")

@@ -5,112 +5,7 @@ import kotlinx.serialization.Serializable
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 
-@Serializable
-enum class BookDto {
-    @SerialName("strings.wildemountname")   wildemount,
-    @SerialName("strings.lostlabname")      lostlab,
-    @SerialName("strings.scagname")         scag,
-    @SerialName("strings.eename")           elementalevil,
-    @SerialName("strings.xanatharname")     xanathar,
-    @SerialName("strings.strixname")        strix,
-    @SerialName("strings.fizbanname")       fizban,
-    @SerialName("strings.phbname")          phb,
-    @SerialName("strings.rimename")         rime,
-    @SerialName("strings.acqincname")       acqinc,
-    @SerialName("strings.tashaname")        tasha,
-    @SerialName("strings.ravnicaname")      ravnica,
-    @SerialName("strings.otherbook")        otherBook;
-
-    fun toName(): String {
-        return this.name
-    }
-
-    companion object {
-        fun fromDomain(src: String): BookDto {
-            return entries.find {it.name == src} ?: otherBook
-        }
-    }
-}
-
-@Serializable
-enum class DragonMarkDto(val mark: String){
-    @SerialName("strings.markOfHealing")     HEALING("HEALING"),
-    @SerialName("strings.markOfShadow")      SHADOW("SHADOW"),
-    @SerialName("strings.markOfScribing")    SCRIBING("SCRIBING"),
-    @SerialName("strings.markOfFinding")     FINDING("FINDING"),
-    @SerialName("strings.markOfSentinel")    SENTINEL("SENTINEL"),
-    @SerialName("strings.markOfMaking")      MAKING("MAKING"),
-    @SerialName("strings.markOfHospitality") HOSPITALITY("HOSPITALITY"),
-    @SerialName("strings.markOfStorm")       STORM("STORM"),
-    @SerialName("strings.markOfDetection")   DETECTION("DETECTION"),
-    @SerialName("strings.markOfHandling")    HANDLING("HANDLING"),
-    @SerialName("strings.markOfPassage")     PASSAGE("PASSAGE"),
-    @SerialName("strings.markOfWarding")     WARDING("WARDING");
-
-    companion object {
-        fun fromDomain(mark: String): DragonMarkDto {
-            return entries.find { it.mark == mark } ?: HEALING
-        }
-    }
-}
-
-@Serializable
-enum class DamageTypeDto(val damageType: String){
-    @SerialName("strings.dmgRadiant")       RADIANT("RADIANT"),
-    @SerialName("strings.dmgPoison")        POISON("POISON"),
-    @SerialName("strings.dmgNecro")         NECROTIC("NECROTIC"),
-    @SerialName("strings.dmgThunder")       THUNDER("THUNDER"),
-    @SerialName("strings.dmgPiercing")      PIERCING("PIERCING"),
-    @SerialName("strings.dmgPsychic")       PSYCHIC("PSYCHIC"),
-    @SerialName("strings.dmgCold")          COLD("COLD"),
-    @SerialName("strings.dmgBlud")          BLUDGEONING("BLUDGEONING"),
-    @SerialName("strings.dmgSlashing")      SLASHING("SLASHING"),
-    @SerialName("strings.dmgFire")          FIRE("FIRE"),
-    @SerialName("strings.dmgLightning")     LIGHTNING("LIGHTNING"),
-    @SerialName("strings.dmgForce")         FORCE("FORCE"),
-    @SerialName("strings.dmgAcid")          ACID("ACID");
-
-    companion object {
-        fun fromDomain(damageType: String): DamageTypeDto {
-            return entries.find {it.damageType == damageType} ?: RADIANT
-        }
-    }
-}
-
-@Serializable
-enum class MagicSchoolDto(val school: String) {
-    @SerialName("Divination")       DIVINATION("DIVINATION"),
-    @SerialName("Abjuration")       ABJURATION("ABJURATION"),
-    @SerialName("Enchantment")      ENCHANTMENT("ENCHANTMENT"),
-    @SerialName("Illusion")         ILLUSION("ILLUSION"),
-    @SerialName("Evocation")        EVOCATION("EVOCATION"),
-    @SerialName("Conjuration")      CONJURATION("CONJURATION"),
-    @SerialName("Necromancy")       NECROMANCY("NECROMANCY"),
-    @SerialName("Transmutation")    TRANSMUTATION("TRANSMUTATION");
-
-    companion object {
-        fun fromDomain(school: String): MagicSchoolDto {
-            return entries.find {it.school == school} ?: DIVINATION
-        }
-    }
-}
-
-@Serializable
-enum class SaveTypeDto(val saveType: String) {
-    @SerialName("strings.tsCos")    CONSTITUTION("CONSTITUTION"),
-    @SerialName("strings.tsInt")    INTELLIGENCE("INTELLIGENCE"),
-    @SerialName("strings.tsWis")    WISDOM("WISDOM"),
-    @SerialName("strings.tsForza")  STRENGTH("STRENGTH"),
-    @SerialName("strings.tsCha")    CHARISMA("CHARISMA"),
-    @SerialName("strings.tsDex")    DEXTERITY("DEXTERITY");
-
-    companion object {
-        fun fromDomain(saveType: String): SaveTypeDto {
-            return entries.find {it.saveType == saveType} ?: CONSTITUTION
-        }
-    }
-}
-
+// TODO: use this in database text field
 @Serializable
 data class MultiLingualStringDto (
     @SerialName("enUS") val enUS: String? = null,
@@ -123,7 +18,7 @@ data class MultiLingualStringDto (
 
 @Serializable
 data class SpellDto(
-    @SerialName("book")         val book: Array<BookDto>,
+    @SerialName("sources")      val sources: Array<String>,
     @SerialName("classes")      val classes: Array<String>,
     @SerialName("components")   val components: MultiLingualStringDto,
     @SerialName("duration")     val duration: String,
@@ -134,23 +29,23 @@ data class SpellDto(
     @SerialName("optional")     val optional: Array<String>,
     @SerialName("range")        val range: String,
     @SerialName("ritual")       val ritual: Boolean,
-    @SerialName("school")       val school: MagicSchoolDto,
+    @SerialName("school")       val school: String,
     @SerialName("subclasses")   val subclasses: Array<String>,
     @SerialName("text")         val text: MultiLingualStringDto,
     @SerialName("time")         val time: String,
     @SerialName("tag")          val tag: Array<String>,
-    @SerialName("damage")       val damage: Array<DamageTypeDto>,
-    @SerialName("ts")           val ts: Array<SaveTypeDto>,
-    @SerialName("dragonmarks")  val dragonmarks: Array<DragonMarkDto>,
+    @SerialName("damage")       val damage: Array<String>,
+    @SerialName("ts")           val ts: Array<String>,
+    @SerialName("dragonmarks")  val dragonmarks: Array<String>,
+    @SerialName("versions")     val versions: Array<String>
 ){
     fun toDomain() : Spell {
         return Spell(
             key,
             // TODO: configurably pull the correct language from multilinguals
             SpellInfo(
-                sources = book.map{it.toName()},
-                // TODO: do not assume 5e. Add something to the json spec that gives this
-                versions = listOf("5e"),
+                sources = sources.toList(),
+                versions = versions.toList(),
                 classes = classes.toList(),
                 components = components.enUS ?: "",
                 duration = duration,
@@ -160,14 +55,14 @@ data class SpellDto(
                 optional = optional.toList(),
                 range = range,
                 ritual = ritual,
-                school = school.school,
+                school = school,
                 subclasses = subclasses.toList(),
                 text = text.enUS ?: "",
                 time = time,
                 tag = tag.toList(),
-                damages = damage.map{ it.damageType },
-                saves = ts.map{ it.saveType },
-                dragonmarks = dragonmarks.map { it.mark }
+                damages = damage.toList(),
+                saves = ts.toList(),
+                dragonmarks = dragonmarks.toList()
             )
         )
     }
@@ -178,7 +73,7 @@ data class SpellDto(
 
         other as SpellDto
 
-        if (!book.contentEquals(other.book)) return false
+        if (!sources.contentEquals(other.sources)) return false
         if (!classes.contentEquals(other.classes)) return false
         if (components != other.components) return false
         if (duration != other.duration) return false
@@ -202,7 +97,7 @@ data class SpellDto(
     }
 
     override fun hashCode(): Int {
-        var result = book.contentHashCode()
+        var result = sources.contentHashCode()
         result = 31 * result + classes.contentHashCode()
         result = 31 * result + components.hashCode()
         result = 31 * result + duration.hashCode()
@@ -227,7 +122,7 @@ data class SpellDto(
     companion object {
         fun fromDomain(spell: Spell) : SpellDto {
             return SpellDto(
-                book = spell.info.sources.map { BookDto.fromDomain(it) }.toTypedArray(),
+                sources = spell.info.sources.toTypedArray(),
                 classes = spell.info.classes.toTypedArray(),
                 components = MultiLingualStringDto(spell.info.components),
                 duration = spell.info.duration,
@@ -238,14 +133,15 @@ data class SpellDto(
                 optional = spell.info.optional.toTypedArray(),
                 range = spell.info.range,
                 ritual = spell.info.ritual,
-                school = MagicSchoolDto.fromDomain(spell.info.school),
+                school = spell.info.school,
                 subclasses = spell.info.subclasses.toTypedArray(),
                 text = MultiLingualStringDto(spell.info.text),
                 time = spell.info.time,
                 tag = spell.info.tag.toTypedArray(),
-                damage = spell.info.damages.map{ DamageTypeDto.fromDomain(it) }.toTypedArray(),
-                ts = spell.info.saves.map { SaveTypeDto.fromDomain(it) }.toTypedArray(),
-                dragonmarks = spell.info.dragonmarks.map{ DragonMarkDto.fromDomain(it) }.toTypedArray()
+                damage = spell.info.damages.toTypedArray(),
+                ts = spell.info.saves.toTypedArray(),
+                dragonmarks = spell.info.dragonmarks.toTypedArray(),
+                versions = spell.info.versions.toTypedArray()
             )
         }
     }
