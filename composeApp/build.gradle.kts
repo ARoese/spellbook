@@ -1,6 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,6 +11,23 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
+    id("com.codingfeline.buildkonfig").version("0.17.1")
+}
+
+buildkonfig {
+    packageName = "org.fufu.spellbook"
+    // objectName = "YourAwesomeConfig"
+    // exposeObjectWithName = "YourAwesomePublicConfig"
+
+    val isDebugName = "isDebug"
+    defaultConfigs {
+        buildConfigField(BOOLEAN, isDebugName, false.toString())
+    }
+
+    defaultConfigs("dev") {
+        buildConfigField(BOOLEAN, isDebugName, true.toString())
+    }
+
 }
 
 kotlin {

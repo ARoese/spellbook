@@ -6,7 +6,12 @@ import io.github.vinceglb.filekit.FileKit
 import org.fufu.spellbook.di.initKoin
 
 fun main(){
-    FileKit.init(appId = "org.fufu.spellbook")
+    val appId = if(BuildKonfig.isDebug){
+        "org.fufu.spellbook.debug"
+    }else{
+        "org.fufu.spellbook"
+    }
+    FileKit.init(appId = appId)
     initKoin()
     application {
         Window(
