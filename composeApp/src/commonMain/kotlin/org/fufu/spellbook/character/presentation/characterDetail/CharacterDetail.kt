@@ -216,9 +216,13 @@ fun SpellListVariantDisplay(
             else -> {_ -> Unit}
         }
 
-        val necessarySpellLevels = character.spellSlots
-            .filter { it.value.maxSlots != 0 }
-            .keys
+        val necessarySpellLevels = when(variant.type){
+            SpellListType.PREPARED -> character.spellSlots
+                .filter { it.value.maxSlots != 0 }
+                .keys
+            else -> emptySet()
+        }
+
 
         SpellList(variant.state,
             onSpellSelected = { intend(Intent.ViewSpell(it)) },
