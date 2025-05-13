@@ -68,9 +68,10 @@ fun SpellListFilterSelector(
             Box{
                 val textFieldFocusRequester = remember { FocusRequester() }
                 LaunchedEffect(textFieldExpanded){
-                    textFieldFocusRequester.requestFocus()
+                    if(textFieldExpanded){
+                        textFieldFocusRequester.requestFocus()
+                    }
                 }
-                var wasFocused by remember { mutableStateOf(false) }
                 TextField(
                     state.filter.name ?: "",
                     {
@@ -80,12 +81,6 @@ fun SpellListFilterSelector(
                     },
                     modifier = Modifier
                         .focusRequester(focusRequester = textFieldFocusRequester)
-                        .onFocusChanged {
-                            if(!it.isFocused && wasFocused && textFieldExpanded){
-                                textFieldExpanded = false
-                            }
-                            wasFocused = it.isFocused
-                        }
                         .fillMaxWidth(),
                     singleLine = true
                 )
