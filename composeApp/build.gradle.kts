@@ -139,9 +139,15 @@ compose.desktop {
         mainClass = "org.fufu.spellbook.MainKt"
 
         nativeDistributions {
+            modules("java.naming")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "org.fufu.spellbook"
             packageVersion = "1.0.0"
+            windows {
+                upgradeUuid = "EE6E75A4-5486-4127-AA3E-C61812A81919"
+                perUserInstall = true
+            }
+
         }
     }
 }
