@@ -35,6 +35,7 @@ import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterIcon
 import org.fufu.spellbook.character.domain.SpellSlotLevel
 import org.fufu.spellbook.composables.DropdownSelector
+import kotlin.math.abs
 import kotlin.math.min
 
 @Composable
@@ -221,7 +222,7 @@ fun SpellSlotList(
                         onChange = {
                             val newLevel = SpellSlotLevel(
                                 it,
-                                min(it, spellLevel.slots)
+                                min(it, spellLevel.slots + abs(it - spellLevel.maxSlots) )
                             )
                             onValueChange(
                                 spellSlots.plus(e.key to newLevel)
