@@ -51,7 +51,10 @@ fun EditingCharacterDetailScreenRoot(
         when(intent){
             Intent.Back -> onBack()
             is Intent.DeleteCharacter -> viewModel.onDeleteCharacter(intent.character)
-            is Intent.SaveCharacter -> viewModel.onSaveCharacter(intent.character)
+            is Intent.SaveCharacter -> {
+                viewModel.onSaveCharacter(intent.character)
+                onBack()
+            }
             is Intent.EditCharacter -> viewModel.onCharacterChanged(intent.character)
         }
     }
