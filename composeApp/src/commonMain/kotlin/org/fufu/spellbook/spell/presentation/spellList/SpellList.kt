@@ -40,7 +40,7 @@ fun orderSpellList(
     shouldGroupByLevel: Boolean
 ) : List<Spell> {
     return spells
-        .sortedBy { it.info.name }
+        .sortedBy { it.info.name.lowercase().filter { it.isLetterOrDigit() } }
         .let {
             if(shouldGroupByLevel)
             { it.sortedBy { e -> e.info.level } }
