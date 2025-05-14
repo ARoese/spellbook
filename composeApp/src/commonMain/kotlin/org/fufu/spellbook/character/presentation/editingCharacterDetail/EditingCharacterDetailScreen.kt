@@ -139,6 +139,11 @@ fun ConcreteEditingCharacterDetailScreen(
             character.name,
             onValueChange = { intend(Intent.EditCharacter(character.copy(name = it))) }
         )
+        Text("Class")
+        TextField(
+            character.characterClass,
+            onValueChange = { intend(Intent.EditCharacter(character.copy(characterClass = it))) }
+        )
         Text("Level")
         NumberField(
             character.level,

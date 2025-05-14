@@ -76,6 +76,10 @@ fun CharacterDetailScreenRoot(
         )
     )
 
+    classSpellListVM.useFilter(
+        state.classSpellListFilter
+    )
+
     val preparedSpellListState by preparedSpellListVM.state.collectAsStateWithLifecycle()
     val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
     val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
@@ -102,7 +106,7 @@ fun CharacterDetailScreenRoot(
             is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell.key, intent.prepared)
             is Intent.ViewSpell -> onViewSpell(intent.spell)
             is Intent.SetSpellSlotLevel -> viewModel.onSetSpellSlot(intent.level, intent.slotLevel)
-            is Intent.SetListFilter -> classSpellListVM.useFilter(intent.filter.copy(onlyIds = null))
+            is Intent.SetListFilter -> viewModel.onSetClassSpellListFilter(intent.filter.copy(onlyIds = null))
         }
     }
 }

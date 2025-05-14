@@ -13,12 +13,14 @@ import kotlinx.coroutines.launch
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
 import org.fufu.spellbook.character.domain.SpellSlotLevel
+import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 
 data class CharacterDetailState(
     val character: Character? = null,
     val selectedSpellList: SpellListType = SpellListType.PREPARED,
-    val loading: Boolean = true
+    val loading: Boolean = true,
+    val classSpellListFilter: SpellListFilter = SpellListFilter()
 )
 
 data class ConcreteCharacterDetailState(
@@ -76,7 +78,10 @@ class CharacterDetailVM(
                 _state.update{
                     it.copy(
                         character = character,
-                        loading = false
+                        loading = false,
+                        classSpellListFilter = it.classSpellListFilter.copy(
+                            classes = character?.characterClass?.let{cl -> setOf(cl)}
+                        )
                     )
                 }
             }.launchIn(viewModelScope)
@@ -128,6 +133,12 @@ class CharacterDetailVM(
                     )
                 )
             }
+        }
+    }
+
+    fun onSetClassSpellListFilter(newFilter: SpellListFilter){
+        _state.update {
+            it.copy(classSpellListFilter = newFilter)
         }
     }
 }
