@@ -209,7 +209,10 @@ fun SpellDetail(
                         spellInfo.name,
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
-                        isEditing = isEditing
+                        isEditing = isEditing,
+                        onChange = {
+                            onSpellEdited(spellInfo.copy(name = it))
+                        }
                     )
 
                     if (isEditing) {
