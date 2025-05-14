@@ -283,12 +283,16 @@ fun SpellDetail(
             )
 
             // spell text
-            EditableText(
-                spellInfo.text,
-                style = MaterialTheme.typography.bodyMedium,
-                isEditing = isEditing,
-                onChange = { onSpellEdited(spellInfo.copy(text = it)) }
-            )
+            if(state.isEditing){
+                EditableText(
+                    spellInfo.text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    isEditing = isEditing,
+                    onChange = { onSpellEdited(spellInfo.copy(text = it)) }
+                )
+            }else{
+                SpellText(spellInfo.text)
+            }
         }
     }
 }
