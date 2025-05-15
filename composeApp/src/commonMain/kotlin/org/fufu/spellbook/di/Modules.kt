@@ -25,9 +25,6 @@ import org.koin.dsl.binds
 import org.koin.dsl.module
 
 const val MAIN_SPELL_LIST = "mainSpellList"
-const val CHARACTER_KNOWN_SPELL_LIST = "characterKnownSpellList"
-const val CHARACTER_PREPARED_SPELL_LIST = "characterPreparedSpellList"
-const val CHARACTER_CLASS_SPELL_LIST = "characterClassSpellList"
 
 // provides database class implementations
 expect val databaseModule: Module
@@ -57,20 +54,20 @@ val sharedModule = module{
     )
 
     viewModel{ (sid:Int) -> SpellDetailVM(sid, get()) }
-    viewModel{ (cid:Int) -> CharacterDetailVM(cid, get()) }
+    viewModel{
+        (cid:Int) ->
+            CharacterDetailVM(
+                cid,
+                get(),
+                SpellListVM(get()),
+                SpellListVM(get()),
+                SpellListVM(get())
+            )
+    }
     viewModel{ (cid:Int) -> EditingCharacterDetailVM(cid, get()) }
     viewModel{ CharacterListVM(get()) }
     viewModel{ ImportScreenVM(get(), null) }
     viewModel(qualifier = qualifier(MAIN_SPELL_LIST)){
-        SpellListVM(get())
-    }
-    viewModel(qualifier = qualifier(CHARACTER_KNOWN_SPELL_LIST)){
-        SpellListVM(get())
-    }
-    viewModel(qualifier = qualifier(CHARACTER_PREPARED_SPELL_LIST)){
-        SpellListVM(get())
-    }
-    viewModel(qualifier = qualifier(CHARACTER_CLASS_SPELL_LIST)){
         SpellListVM(get())
     }
 }

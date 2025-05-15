@@ -149,4 +149,10 @@ class SpellListVM(
             it.copy(filter = newFilter)
         }
     }
+
+    fun updateFilter(doUpdate: (SpellListFilter) -> SpellListFilter){
+        _state.update {
+            it.copy(filter = doUpdate(it.filter))
+        }
+    }
 }

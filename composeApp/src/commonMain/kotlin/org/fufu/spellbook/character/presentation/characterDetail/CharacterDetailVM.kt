@@ -15,12 +15,12 @@ import org.fufu.spellbook.character.domain.CharacterMutator
 import org.fufu.spellbook.character.domain.SpellSlotLevel
 import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellListState
+import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 
 data class CharacterDetailState(
     val character: Character? = null,
     val selectedSpellList: SpellListType = SpellListType.PREPARED,
-    val loading: Boolean = true,
-    val classSpellListFilter: SpellListFilter = SpellListFilter()
+    val loading: Boolean = true
 )
 
 data class ConcreteCharacterDetailState(
@@ -58,7 +58,10 @@ data class SpellListVariant(
 
 class CharacterDetailVM(
     private val characterId : Int,
-    private val provider : CharacterMutator
+    private val provider : CharacterMutator,
+    val preparedSpellList: SpellListVM,
+    val knownSpellList: SpellListVM,
+    val classSpellList: SpellListVM
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CharacterDetailState())
@@ -75,13 +78,33 @@ class CharacterDetailVM(
     private fun observeCharacter(){
         provider.getCharacter(characterId)
             .onEach{ character ->
+                preparedSpellList.useFilter(
+                    SpellListFilter(
+                        onlyIds = character?.spells?.filter { it.value }?.keys ?: emptySet()
+                    )
+                )
+
+                knownSpellList.useFilter(
+                    SpellListFilter(
+                        onlyIds = character?.spells?.keys ?: emptySet()
+                    )
+                )
+
+                val lastClass = _state.value.character?.characterClass
+                val newClass = character?.characterClass
+                // so updates to character that don't change the class
+                // do not make the user need to fight with the class filter
+                if(lastClass != newClass){
+                    val classes = newClass?.let { setOf(it) } ?: emptySet()
+                    classSpellList.updateFilter {
+                        it.copy(classes = classes)
+                    }
+                }
+
                 _state.update{
                     it.copy(
                         character = character,
-                        loading = false,
-                        classSpellListFilter = it.classSpellListFilter.copy(
-                            classes = character?.characterClass?.let{cl -> setOf(cl)}
-                        )
+                        loading = false
                     )
                 }
             }.launchIn(viewModelScope)
@@ -133,12 +156,6 @@ class CharacterDetailVM(
                     )
                 )
             }
-        }
-    }
-
-    fun onSetClassSpellListFilter(newFilter: SpellListFilter){
-        _state.update {
-            it.copy(classSpellListFilter = newFilter)
         }
     }
 }

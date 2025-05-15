@@ -32,9 +32,6 @@ import org.fufu.spellbook.character.domain.knowsSpell
 import org.fufu.spellbook.composables.ClickableToken
 import org.fufu.spellbook.composables.KnownToken
 import org.fufu.spellbook.composables.PreparedToken
-import org.fufu.spellbook.di.CHARACTER_CLASS_SPELL_LIST
-import org.fufu.spellbook.di.CHARACTER_KNOWN_SPELL_LIST
-import org.fufu.spellbook.di.CHARACTER_PREPARED_SPELL_LIST
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.presentation.spellList.SpellList
 import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
@@ -52,37 +49,10 @@ fun CharacterDetailScreenRoot(
     onClickEditCharacter: (Int) -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val preparedSpellListVM = koinViewModel<SpellListVM>(
-        qualifier = qualifier(CHARACTER_PREPARED_SPELL_LIST)
-    )
-    val knownSpellListVM = koinViewModel<SpellListVM>(
-        qualifier = qualifier(CHARACTER_KNOWN_SPELL_LIST)
-    )
-    val classSpellListVM = koinViewModel<SpellListVM>(
-        qualifier = qualifier(CHARACTER_CLASS_SPELL_LIST)
-    )
 
-    preparedSpellListVM.useFilter(
-        SpellListFilter(
-            onlyIds = state.character?.let{ character ->
-                character.spells.filter { it.value }.keys
-            } ?: emptySet()
-        )
-    )
-
-    knownSpellListVM.useFilter(
-        SpellListFilter(
-            onlyIds = state.character?.spells?.keys ?: emptySet()
-        )
-    )
-
-    classSpellListVM.useFilter(
-        state.classSpellListFilter
-    )
-
-    val preparedSpellListState by preparedSpellListVM.state.collectAsStateWithLifecycle()
-    val knownSpellListState by knownSpellListVM.state.collectAsStateWithLifecycle()
-    val classSpellListState by classSpellListVM.state.collectAsStateWithLifecycle()
+    val preparedSpellListState by viewModel.preparedSpellList.state.collectAsStateWithLifecycle()
+    val knownSpellListState by viewModel.knownSpellList.state.collectAsStateWithLifecycle()
+    val classSpellListState by viewModel.classSpellList.state.collectAsStateWithLifecycle()
 
     val variant by derivedStateOf {
         when(state.selectedSpellList){
@@ -106,7 +76,7 @@ fun CharacterDetailScreenRoot(
             is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell.key, intent.prepared)
             is Intent.ViewSpell -> onViewSpell(intent.spell)
             is Intent.SetSpellSlotLevel -> viewModel.onSetSpellSlot(intent.level, intent.slotLevel)
-            is Intent.SetListFilter -> viewModel.onSetClassSpellListFilter(intent.filter.copy(onlyIds = null))
+            is Intent.SetListFilter -> viewModel.classSpellList.useFilter(intent.filter.copy(onlyIds = null))
         }
     }
 }
