@@ -81,7 +81,7 @@ class ImportScreenVM(
             destination.importFrom(prov) { progress ->
                 _state.update {it.copy(importProgress = progress)}
             }
-            _state.update { it.copy(importing = false) }
+            _state.update { ImportScreenState() }
         }
     }
 
