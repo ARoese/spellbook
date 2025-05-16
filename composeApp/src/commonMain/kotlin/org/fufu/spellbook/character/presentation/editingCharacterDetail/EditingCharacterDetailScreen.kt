@@ -115,12 +115,16 @@ fun EditingCharacterDetailScreen(
 
 @Composable
 fun NumberField(contents: Int, onValueChange: (Int) -> Unit){
+    var actualStringContent by remember { mutableStateOf(contents.toString()) }
     TextField(
-        contents.toString(),
+        actualStringContent,
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Number
         ),
-        onValueChange = { onValueChange(it.toIntOrNull() ?: contents) }
+        onValueChange = {
+            actualStringContent = it.filter { it.isDigit() }
+            actualStringContent.toIntOrNull()?.let(onValueChange)
+        }
     )
 }
 
