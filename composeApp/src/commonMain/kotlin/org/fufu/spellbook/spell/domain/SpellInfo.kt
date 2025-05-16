@@ -45,6 +45,8 @@ fun SpellInfo.normalized() : SpellInfo {
 private fun List<String>.normalized() : List<String> {
     return this.map {
         it.uppercase().trim()
+            .replace(",", "")
+            .replace("|", "")
     }
 }
 
