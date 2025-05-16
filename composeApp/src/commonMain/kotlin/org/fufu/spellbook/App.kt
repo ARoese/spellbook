@@ -132,7 +132,7 @@ fun App() {
             startDestination = Route.RouteGraph
         ){
             navigation<Route.RouteGraph>(
-                startDestination = Route.CharacterList
+                startDestination = Route.MainSpellList
             ){
                 composable<Route.MainSpellList>(
                     //exitTransition = { slideOutHorizontally()},
