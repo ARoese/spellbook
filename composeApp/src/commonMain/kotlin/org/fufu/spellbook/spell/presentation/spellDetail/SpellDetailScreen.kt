@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
+import androidx.compose.material.Switch
 import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -148,38 +149,138 @@ fun LoadingSpellDetail(
 }
 
 @Composable
-fun VersionAndSourceDisplay(
-    spellInfo: SpellInfo
+fun CleanSmallStringListDisplay(
+    title: String,
+    list: List<String>
 ){
-    if(spellInfo.versions.isNotEmpty()){
-        val versionsString = spellInfo.versions
-            .joinToString(", ")
-            .let {
-                if (spellInfo.versions.size > 1)
-                    "versions: ( $it )"
-                else
-                    "version: $it"
-            }
-        Text(
-            versionsString,
-            style = MaterialTheme.typography.labelSmall
+    if(list.isEmpty()) return
+    val cleanString = list
+        .joinToString(", ") { it.trim() }
+        .let {
+            if (list.size > 1)
+                "$title: ( $it )"
+            else
+                "$title: $it"
+        }
+
+    Text(
+        cleanString,
+        style = MaterialTheme.typography.labelSmall
+    )
+}
+
+@Composable
+fun EditableStringListDisplay(
+    title: String,
+    list: List<String>,
+    isEditing: Boolean,
+    onChange: (List<String>) -> Unit
+){
+    if(isEditing){
+        Text("$title:")
+        StringListEditor(
+            list,
+            onChange
         )
+    }else{
+        CleanSmallStringListDisplay(
+            title,
+            list
+        )
+    }
+}
+
+@Composable
+fun StringListEditor(
+    list: List<String>,
+    onChange: (List<String>) -> Unit
+){
+    val commaSeparated = list.joinToString(", ")
+    var actualTextState by remember { mutableStateOf(commaSeparated) }
+
+    fun onChangeInternal(str: String){
+        actualTextState = str
+        val newList = str.split(",")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+
+        onChange(newList)
     }
 
-    if(spellInfo.sources.isNotEmpty()){
-        val sourcesString = spellInfo.sources
-            .joinToString(", ")
-            .let {
-                if (spellInfo.sources.size > 1)
-                    "sources: ( $it )"
-                else
-                    "source: $it"
-            }
-        Text(
-            sourcesString,
-            style = MaterialTheme.typography.labelSmall
-        )
-    }
+    TextField(
+        actualTextState,
+        onValueChange = { onChangeInternal(it) }
+    )
+}
+
+@Composable
+fun ListDisplays(
+    state: ConcreteSpellDetailState,
+    onSpellEdited: (SpellInfo) -> Unit
+){
+    EditableStringListDisplay(
+        "Versions",
+        state.spellInfo.versions,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(versions = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Sources",
+        state.spellInfo.sources,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(sources = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Subclasses",
+        state.spellInfo.subclasses,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(subclasses = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Optional Subclass",
+        state.spellInfo.optional,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(optional = it)) }
+    )
+
+    EditableStringListDisplay(
+        "DragonMarks",
+        state.spellInfo.dragonmarks,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(dragonmarks = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Guilds",
+        state.spellInfo.guilds,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(guilds = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Tags",
+        state.spellInfo.tag,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(tag = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Damages",
+        state.spellInfo.damages,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(damages = it)) }
+    )
+
+    EditableStringListDisplay(
+        "Saves",
+        state.spellInfo.saves,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(saves = it)) }
+    )
+
 }
 
 @Composable
@@ -236,6 +337,21 @@ fun SpellDetail(
                                     onSpellEdited(spellInfo.copy(school = it))
                                 }
                             )
+
+                            Column {
+                                val ritualText = if(spellInfo.ritual){
+                                    "Ritual"
+                                }else{
+                                    "Non-Ritual"
+                                }
+                                Text(ritualText)
+                                Switch(
+                                    checked = spellInfo.ritual,
+                                    onCheckedChange = {
+                                        onSpellEdited(spellInfo.copy(ritual = it))
+                                    }
+                                )
+                            }
                         }
                     } else {
                         Text(
@@ -245,7 +361,7 @@ fun SpellDetail(
                         )
                     }
 
-                    VersionAndSourceDisplay(spellInfo)
+                    ListDisplays(state, onSpellEdited)
                 }
             }
 
