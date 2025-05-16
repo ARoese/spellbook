@@ -73,10 +73,7 @@ class SpellDetailVM(
     )
     val state = _state
         .onStart {
-            // if id is 0, it means we're making a new spell
-            if(spellId != 0){
-                observeSpell()
-            }
+            observeSpell()
         }
         .stateIn(
             viewModelScope,
@@ -84,19 +81,37 @@ class SpellDetailVM(
             _state.value
         )
 
-    private var isObserving : Boolean = false
+    private var observeSpellJob: Job? = null
     private fun observeSpell(){
-        if(isObserving){
+        observeSpellJob?.cancel()
+        // if id is 0, it means we're making a new spell
+        if(spellId == 0){
             return
         }
-        isObserving = true
-        provider.getSpell(spellId)
+        observeSpellJob = provider.getSpell(spellId)
             .onEach { actualSpell ->
                 _state.update{
                     SpellDetailState(actualSpell, loading = false)
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    fun duplicateSpell() {
+        observeSpellJob?.cancel()
+        spellId = 0
+        _state.update {
+            val newSpell = if(it.originalSpell != null){
+                it.originalSpell.copy(
+                    key = 0,
+                    it.originalSpell.info.copy(
+                        name = "${it.originalSpell.info.name} copy")
+                )
+            }else{
+                Spell(0, DefaultSpellInfo())
+            }
+            it.copy(originalSpell = newSpell, spellInfo = newSpell.info, isEditing = true)
+        }
     }
 
     private var updateJob: Job? = null

@@ -41,6 +41,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
+import org.jetbrains.compose.resources.painterResource
+import spellbook.composeapp.generated.resources.Res
+import spellbook.composeapp.generated.resources.content_copy
 
 @Composable
 fun SpellDetailScreenRoot(
@@ -66,6 +69,9 @@ fun SpellDetailScreenRoot(
             if(vmRes != null){
                 onCloseClicked()
             }
+        },
+        onCopyClicked = {
+            viewModel.duplicateSpell()
         }
     )
 }
@@ -76,6 +82,7 @@ fun SpellDetailScreen(
     onCloseClicked: () -> Unit = {},
     onSpellEdited: (SpellInfo) -> Unit = {},
     onEditClicked: () -> Unit = {},
+    onCopyClicked: () -> Unit = {},
     onDeleteClicked: () -> Unit = {}
 ){
     val editButtonIcon = if(state.isEditing){
@@ -99,6 +106,12 @@ fun SpellDetailScreen(
                         onClick = onEditClicked,
                     ) {
                         Icon(editButtonIcon, "Edit")
+                    }
+
+                    IconButton(
+                        onClick = onCopyClicked
+                    ){
+                        Icon(painterResource(Res.drawable.content_copy), "Edit")
                     }
 
                     IconButton(
