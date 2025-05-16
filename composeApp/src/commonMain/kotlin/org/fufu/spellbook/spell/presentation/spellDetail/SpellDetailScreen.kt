@@ -413,11 +413,10 @@ fun SpellDetail(
 
             // spell text
             if(state.isEditing){
-                EditableText(
-                    spellInfo.text,
-                    style = MaterialTheme.typography.bodyMedium,
-                    isEditing = isEditing,
-                    onChange = { onSpellEdited(spellInfo.copy(text = it)) }
+                androidx.compose.material3.TextField(
+                    state.spellInfo.text,
+                    onValueChange = { onSpellEdited(state.spellInfo.copy(text=it)) },
+                    minLines = 4
                 )
             }else{
                 SpellText(spellInfo.text)
