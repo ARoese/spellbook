@@ -124,7 +124,9 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
 }
 
 @Composable
-fun App() {
+fun App(
+    requestWindowForSpell: ((sid: Int) -> Unit)? = null
+) {
     MaterialTheme {
         val navController = rememberNavController()
         NavHost(
@@ -171,7 +173,8 @@ fun App() {
                             detailViewModel,
                             onCloseClicked = {
                                 navController.popBackStack()
-                            }
+                            },
+                            onPopoutClicked = requestWindowForSpell?.let{ { it(spellID) } }
                         )
                     }
                 }

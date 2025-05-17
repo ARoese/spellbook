@@ -4,12 +4,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.IconButton
 import androidx.compose.material.Switch
 import androidx.compose.material.TextField
@@ -42,26 +45,32 @@ import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import spellbook.composeapp.generated.resources.Res
 import spellbook.composeapp.generated.resources.content_copy
+import spellbook.composeapp.generated.resources.open_in_new
 
 @Composable
 fun SpellDetailScreenRoot(
     viewModel: SpellDetailVM,
-    onCloseClicked: () -> Unit
+    onCloseClicked: () -> Unit,
+    onPopoutClicked: (() -> Unit)? = null
     ){
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    fun doCloseFunction(){
+        // if the viewModel lets us, forward it to navigation
+        val vmRes = viewModel.onAction(
+            SpellDetailVM.Action.OnCloseClicked
+        )
+        if (vmRes != null) {
+            onCloseClicked()
+        }
+    }
+
     SpellDetailScreen(
         state,
-        onCloseClicked = { // if the viewModel lets us, forward it to navigation
-            val vmRes = viewModel.onAction(
-                SpellDetailVM.Action.OnCloseClicked
-            )
-            if (vmRes != null) {
-                onCloseClicked()
-            }
-        },
+        onCloseClicked = { doCloseFunction() },
         onSpellEdited = { viewModel.onAction(SpellDetailVM.Action.OnSpellEdited(it)) },
         onEditClicked = { viewModel.onAction(SpellDetailVM.Action.OnEditClicked) },
         onDeleteClicked = {
@@ -72,6 +81,12 @@ fun SpellDetailScreenRoot(
         },
         onCopyClicked = {
             viewModel.duplicateSpell()
+        },
+        onPopoutClicked = onPopoutClicked?.let{
+            {
+                it()
+                doCloseFunction()
+            }
         }
     )
 }
@@ -80,6 +95,7 @@ fun SpellDetailScreenRoot(
 fun SpellDetailScreen(
     state: SpellDetailState,
     onCloseClicked: () -> Unit = {},
+    onPopoutClicked: (() -> Unit)? = null,
     onSpellEdited: (SpellInfo) -> Unit = {},
     onEditClicked: () -> Unit = {},
     onCopyClicked: () -> Unit = {},
@@ -90,6 +106,20 @@ fun SpellDetailScreen(
     }else{
         Icons.Filled.Edit
     }
+
+    val floatingActionButton: @Composable () -> Unit =
+        if(onPopoutClicked != null && (state.originalSpell?.key ?: 0) != 0 ) {
+            @Composable {
+                FloatingActionButton(
+                    onClick = { onPopoutClicked() }
+                ) {
+                    Icon(painterResource(Res.drawable.open_in_new), "Popout")
+                }
+            }
+        }else {
+            @Composable {}
+        }
+
     Scaffold (
         topBar = {
             Box(modifier = Modifier.fillMaxWidth()){
@@ -121,7 +151,8 @@ fun SpellDetailScreen(
                     }
                 }
             }
-        }
+        },
+        floatingActionButton = floatingActionButton
     ) { padding ->
         Box(
             modifier = Modifier
@@ -421,6 +452,8 @@ fun SpellDetail(
             }else{
                 SpellText(spellInfo.text)
             }
+
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }
