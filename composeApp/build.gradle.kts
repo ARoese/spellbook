@@ -147,6 +147,7 @@ compose.desktop {
                 upgradeUuid = "EE6E75A4-5486-4127-AA3E-C61812A81919"
                 perUserInstall = true
                 iconFile = project.file("src/commonMain/composeResources/drawable/app_icon.ico")
+                shortcut = true
             }
         }
     }
