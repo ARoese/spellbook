@@ -35,9 +35,6 @@ import org.fufu.spellbook.composables.PreparedToken
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.presentation.spellList.SpellList
 import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
-import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.qualifier.qualifier
 import kotlin.math.max
 import kotlin.math.min
 

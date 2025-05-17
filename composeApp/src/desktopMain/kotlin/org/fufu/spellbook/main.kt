@@ -1,10 +1,5 @@
 package org.fufu.spellbook
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.ListItem
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -12,14 +7,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.FileKit
 import org.fufu.spellbook.di.initKoin
 import org.fufu.spellbook.spell.presentation.spellDetail.LoadingSpellDetail
-import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailScreenRoot
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailVM
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf

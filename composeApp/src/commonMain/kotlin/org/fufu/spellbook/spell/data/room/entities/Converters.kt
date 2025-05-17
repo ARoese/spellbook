@@ -1,8 +1,6 @@
 package org.fufu.spellbook.spell.data.room.entities
 
 import androidx.room.TypeConverter
-import org.fufu.spellbook.toEnumUsingName
-import org.fufu.spellbook.toStringUsingName
 
 class Converters{
     @TypeConverter
