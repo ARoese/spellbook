@@ -397,8 +397,6 @@ fun SpellDetail(
                             fontStyle = FontStyle.Italic
                         )
                     }
-
-                    ListDisplays(state, onSpellEdited)
                 }
             }
 
@@ -445,6 +443,10 @@ fun SpellDetail(
             }else{
                 SpellText(spellInfo.text)
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            ListDisplays(state, onSpellEdited)
 
             Spacer(modifier = Modifier.height(100.dp))
         }
