@@ -14,8 +14,10 @@ plugins {
     id("com.codingfeline.buildkonfig").version("0.17.1")
 }
 
+val fufuPackageName = "org.fufu.spellbook"
+
 buildkonfig {
-    packageName = "org.fufu.spellbook"
+    packageName = fufuPackageName
     // objectName = "YourAwesomeConfig"
     // exposeObjectWithName = "YourAwesomePublicConfig"
 
@@ -43,16 +45,16 @@ kotlin {
         //to prevent variables from getting optimized out
         //freeCompilerArgs.add("-Xdebug")
     }
-    
+
     jvm("desktop")
 
     room {
         schemaDirectory("$projectDir/schemas")
     }
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -103,16 +105,19 @@ kotlin {
     }
 }
 
+// NOTE: Make sure to update versionCode when you update this
+val versionString = "1.1.0"
+
 android {
-    namespace = "org.fufu.spellbook"
+    namespace = fufuPackageName
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "org.fufu.spellbook"
+        applicationId = fufuPackageName
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = versionString
     }
     packaging {
         resources {
@@ -141,8 +146,8 @@ compose.desktop {
         nativeDistributions {
             modules("java.naming")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "org.fufu.spellbook"
-            packageVersion = "1.0.0"
+            packageName = fufuPackageName
+            packageVersion = versionString
             windows {
                 upgradeUuid = "EE6E75A4-5486-4127-AA3E-C61812A81919"
                 perUserInstall = true
