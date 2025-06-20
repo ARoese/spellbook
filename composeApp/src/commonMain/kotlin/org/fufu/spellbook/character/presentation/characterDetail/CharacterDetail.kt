@@ -1,5 +1,6 @@
 package org.fufu.spellbook.character.presentation.characterDetail
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.SpellSlotLevel
@@ -94,7 +96,7 @@ fun SpellSlotLevelDisplay(
     level: SpellSlotLevel,
     onChange: (SpellSlotLevel) -> Unit
 ){
-    Row {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)){
         fun decrement(){
             onChange(level.copy(slots=max(0, level.slots-1)))
         }
@@ -104,15 +106,14 @@ fun SpellSlotLevelDisplay(
         }
 
         (1..level.maxSlots).forEach {
-            if(it <= level.slots){
-                IconButton(onClick = { decrement() }){
-                    Icon(Icons.Filled.CheckCircle, "checkCircle")
-                }
+            val size = 30.dp
+            val enabled = it <= level.slots
+            val onClick: (Boolean) -> Unit = if(enabled){
+                { decrement() }
             }else{
-                IconButton(onClick = { increment() }){
-                    Icon(Icons.Outlined.AddCircle, "add Circle")
-                }
+                { increment() }
             }
+            SimpleCircleBoolButton(enabled, onClick, size)
         }
     }
 }
