@@ -7,36 +7,60 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+
+data class DiceColorMap(
+    val map: Map<Int, Color>,
+    val default: Color
+)
+
+@Composable
+fun getDiceColorMap(): DiceColorMap {
+    val lightDiceColorMap = DiceColorMap(
+        mapOf(
+            4 to Color(0xFF000080), // blue
+            6 to Color(0xFF800000), // red
+            8 to Color(0xFF804480), // purple
+            12 to Color(0xFF226022), // green
+            //20 to Color(0xFF000000), // dark yellow
+        ),
+        MaterialTheme.colorScheme.onSurface
+    )
+
+    val darkDiceColorMap = DiceColorMap(
+        mapOf(
+            4 to Color(0xFF6984D8), // blue
+            6 to Color(0xFFBE4540), // red
+            8 to Color(0xFF804480), // purple
+            12 to Color(0xFF34A034), // green
+            //20 to Color(0xFF000000), // dark yellow
+        ),
+        MaterialTheme.colorScheme.onSurface
+    )
+
+    return if (usingDarkTheme()) darkDiceColorMap else lightDiceColorMap
+}
+
+@Composable
+fun usingDarkTheme(): Boolean {
+    // TODO: add setting that controls this
+    return isSystemInDarkTheme()
+}
 
 @Composable
 fun WithCustomTheme(content: @Composable () -> Unit){
-    /*
-    val lightColors = MaterialTheme.colors.copy(
-        primary = Color(0xFF1EB980)
+    val lightColors = lightColorScheme(
+        //primary = Color(0xFF1EB980)
     )
 
-    val darkColors = MaterialTheme.colors.copy(
-        primary = Color(0xFF66ffc7)
+    val darkColors = darkColorScheme(
+        //primary = Color(0xFF66ffc7)
     )
 
-    val colors = if (isSystemInDarkTheme()) darkColors else lightColors
-    val typography = Typography(
-        h1 = TextStyle(
-            fontWeight = FontWeight.W100,
-            fontSize = 96.sp
-        ),
-        button = TextStyle(
-            fontWeight = FontWeight.W600,
-            fontSize = 14.sp
-        )
-    )
-     */
+    val colorScheme = if (usingDarkTheme()) darkColors else lightColors
+    val typography = Typography()
     MaterialTheme(
-        //colors = colors,
-        //typography = typography
+        colorScheme = colorScheme,
+        typography = typography
     ){
         content()
     }

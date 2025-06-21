@@ -12,7 +12,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,8 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T>DropdownSelector(
     options: List<T>,
@@ -39,12 +43,15 @@ fun <T>DropdownSelector(
         val scrollState = rememberScrollState()
         val rotation by animateFloatAsState(if(expanded){180f}else{0f})
         Box{
+            val colors = ButtonDefaults.buttonColors()
             Button(
                 onClick = { expanded = true },
-                content = buttonContent
+                content = buttonContent,
+                colors = colors
             )
             Icon(
-                Icons.Default.ArrowDropDown,
+                rememberVectorPainter(Icons.Default.ArrowDropDown),
+                tint = { colors.contentColor },
                 "dropdown",
                 modifier = Modifier
                     .align(Alignment.CenterEnd)

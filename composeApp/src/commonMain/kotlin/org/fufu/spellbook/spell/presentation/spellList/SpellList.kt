@@ -156,7 +156,7 @@ fun SpellListStickyHeader(
 ){
     Box(
         modifier= Modifier
-            .background(color = Color.LightGray)
+            .background(color = MaterialTheme.colorScheme.secondaryContainer)
             .fillMaxWidth()
     ){
         centerContent?.let{
@@ -168,6 +168,7 @@ fun SpellListStickyHeader(
         }
         Text(
             text,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
             modifier = Modifier.align(Alignment.CenterEnd)
         )
     }

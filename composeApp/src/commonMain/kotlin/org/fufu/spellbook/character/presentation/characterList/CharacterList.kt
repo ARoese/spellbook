@@ -12,8 +12,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -102,13 +105,7 @@ fun CharacterCard(
             .clickable(
                 true,
                 onClick = onClick
-            ),
-        colors = CardColors(
-            containerColor = Color.LightGray,
-            contentColor = Color.Black,
-            disabledContentColor = Color.Gray,
-            disabledContainerColor = Color.Black
-        )
+            )
     ){
         Box(
             contentAlignment = Alignment.Center,

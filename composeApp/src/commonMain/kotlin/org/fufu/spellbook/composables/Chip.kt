@@ -24,9 +24,9 @@ enum class ChipSize {
 @Composable
 fun Chip(
     content: String,
-    contentColor: Color = Color.Black,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondary,
     size: ChipSize = ChipSize.REGULAR,
-    fillColor: Color = Color.LightGray,
+    fillColor: Color = MaterialTheme.colorScheme.secondary,
     border : BorderStroke? = null
 ){
     Box(
@@ -61,19 +61,23 @@ fun PreparedToken(
     enabled: Boolean = true,
     size: ChipSize = ChipSize.REGULAR
 ){
-    val actualColor = if(!enabled){
-        Color.LightGray
-    } else if (prepared) {
-        Color.Blue
-    } else {
-        Color.Black
+    val (bg, textColor, outline) = if(enabled) {
+        if(prepared){
+            Triple(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary, MaterialTheme.colorScheme.primary)
+        }else{
+            Triple(Color.Transparent, MaterialTheme.colorScheme.onSurface, MaterialTheme.colorScheme.onSurface)
+        }
     }
+    else {
+        Triple(Color.Transparent, MaterialTheme.colorScheme.onSurfaceVariant, Color.Transparent)
+    }
+
     Chip(
         "Prepared",
-        actualColor,
+        textColor,
         size,
-        Color.Transparent,
-        BorderStroke(2.dp, actualColor)
+        bg,
+        BorderStroke(2.dp, outline)
     )
 }
 
@@ -82,13 +86,18 @@ fun KnownToken(
     known: Boolean,
     size: ChipSize = ChipSize.REGULAR
 ){
-    val actualColor = if (known) Color.Blue else Color.Black
+    val (bg, textColor, outline) = if(known){
+            Triple(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary, MaterialTheme.colorScheme.primary)
+        }else{
+            Triple(Color.Transparent, MaterialTheme.colorScheme.onSurface, MaterialTheme.colorScheme.onSurface)
+        }
+
     Chip(
         "Known",
-        actualColor,
+        textColor,
         size,
-        Color.Transparent,
-        BorderStroke(2.dp, actualColor)
+        bg,
+        BorderStroke(2.dp, outline)
     )
 }
 
@@ -111,5 +120,5 @@ fun TagChip(
     tag: String,
     size: ChipSize = ChipSize.REGULAR
 ){
-    Chip(tag, Color.Black, size, fillColor = Color.LightGray)
+    Chip(tag, size=size)
 }

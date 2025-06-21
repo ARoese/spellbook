@@ -94,7 +94,7 @@ fun Backable(
 
 @Composable
 fun BottomNavBar(navController: NavHostController, currentRoute: Route){
-    NavigationBar(containerColor = Color.LightGray) {
+    NavigationBar() {
         NavigationBarItem(
             selected = currentRoute == Route.MainSpellList,
             label = { Text("Spells")},
@@ -126,7 +126,6 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
 fun App(
     requestWindowForSpell: ((sid: Int) -> Unit)? = null
 ) {
-    WithCustomTheme {
         val navController = rememberNavController()
         NavHost(
             navController = navController,
@@ -250,7 +249,6 @@ fun App(
                 }
             }
         }
-    }
 }
 
 @Composable

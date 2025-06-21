@@ -1,5 +1,7 @@
 package org.fufu.spellbook
 
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -28,41 +30,47 @@ fun main(){
     FileKit.init(appId = appId)
     initKoin()
     application {
-        var spellsToDisplay by remember { mutableStateOf(emptyList<Int>()) }
+        WithCustomTheme {
+            var spellsToDisplay by remember { mutableStateOf(emptyList<Int>()) }
 
-        spellsToDisplay.forEach { spellId ->
-            var windowName by remember { mutableStateOf("Spell View") }
-            key(spellId){
-                Window(
-                    onCloseRequest = { spellsToDisplay = spellsToDisplay.minus(spellId) },
-                    title = windowName,
-                    icon = painterResource(Res.drawable.app_icon)
-                ) {
-                    window.size = Dimension(400, 400)
-                    val vm = koinViewModel<SpellDetailVM>(
-                        parameters = { parametersOf(spellId) }
-                    )
-                    val spellState by vm.state.collectAsStateWithLifecycle()
-                    windowName = spellState.spellInfo?.name ?: "Spell View"
+            spellsToDisplay.forEach { spellId ->
+                var windowName by remember { mutableStateOf("Spell View") }
+                key(spellId){
+                    Window(
+                        onCloseRequest = { spellsToDisplay = spellsToDisplay.minus(spellId) },
+                        title = windowName,
+                        icon = painterResource(Res.drawable.app_icon)
+                    ) {
+                        window.size = Dimension(400, 400)
+                        val vm = koinViewModel<SpellDetailVM>(
+                            parameters = { parametersOf(spellId) }
+                        )
+                        val spellState by vm.state.collectAsStateWithLifecycle()
+                        windowName = spellState.spellInfo?.name ?: "Spell View"
 
-                    LoadingSpellDetail(
-                        spellState
-                    )
+                        Scaffold {
+                            LoadingSpellDetail(
+                                spellState
+                            )
+                        }
+
+                    }
+
                 }
             }
-        }
-        Window(
-            onCloseRequest = ::exitApplication,
-            title = "Spell Book",
-            icon = painterResource(Res.drawable.app_icon)
-        ) {
-            App(
-                requestWindowForSpell = {
-                    if(it != 0){
-                        spellsToDisplay = spellsToDisplay.plus(it)
+            Window(
+                onCloseRequest = ::exitApplication,
+                title = "Spell Book",
+                icon = painterResource(Res.drawable.app_icon)
+            ) {
+                App(
+                    requestWindowForSpell = {
+                        if(it != 0){
+                            spellsToDisplay = spellsToDisplay.plus(it)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }

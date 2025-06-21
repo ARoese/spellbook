@@ -4,9 +4,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,29 +35,32 @@ fun FilledOutlinedCircleShape(
     // but this works and is more clear
     val internalFillSize = lerp(0.dp, fillableSize, filledFraction) + 1.dp
     Box(
-        modifier = Modifier
-            .width(size)
-            .height(size)
-            .clip(CircleShape)
-            .background(outlineColor)
-    ){}
-
-    Box(
-        modifier = Modifier
-            .width(size - outlineThickness)
-            .height(size - outlineThickness)
-            .clip(CircleShape)
-            .background(backgroundColor)
-    ){}
-
-    if(internalFillSize > 2.dp){
+        contentAlignment = Alignment.Center,
+    ){
         Box(
             modifier = Modifier
-                .width(internalFillSize)
-                .height(internalFillSize)
                 .clip(CircleShape)
-                .background(fillColor)
+                .size(size)
+                .background(outlineColor)
         ){}
+
+        Box(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(size - outlineThickness)
+
+                .background(backgroundColor)
+        ){}
+
+        if(internalFillSize > 2.dp){
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .size(internalFillSize)
+
+                    .background(fillColor)
+            ){}
+        }
     }
 }
 
@@ -66,7 +72,14 @@ fun SimpleCircleBoolButton(
 ){
     val outlineThickness = lerp(0.dp, size, 0.1f)
     CircleBoolButton(
-        state, onClick, true, size, outlineThickness
+        state,
+        onClick,
+        true,
+        size,
+        outlineThickness,
+        outlineColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+        fillColor = MaterialTheme.colorScheme.onSecondaryContainer
     )
 }
 

@@ -9,6 +9,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import org.fufu.spellbook.DiceColorMap
+import org.fufu.spellbook.getDiceColorMap
 
 sealed interface SpellTextThing {
     data class JustText(val text: String) : SpellTextThing
@@ -48,17 +50,10 @@ fun explodeSpellText(text: String): List<SpellTextThing> {
     return recurse(text).filterNotNull()
 }
 
-private val specialDieColors: Map<Int, Color> = mapOf(
-    4 to Color(0xFF000080), // blue
-    6 to Color(0xFF800000), // red
-    8 to Color(0xFF804480), // purple
-    12 to Color(0xFF226022), // green
-    //20 to Color(0xFF000000), // dark yellow
-)
-
+@Composable
 private fun AnnotatedString.Builder.buildFromRoll(roll: SpellTextThing.Roll) {
-    val black = Color(0xFF000000)
-    val color = specialDieColors[roll.dieFaceCount] ?: black
+    val colorMap = getDiceColorMap()
+    val color = colorMap.map[roll.dieFaceCount] ?: colorMap.default
     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold, color = color)){
         append("${roll.diceCount ?: ""}d${roll.dieFaceCount}")
     }
