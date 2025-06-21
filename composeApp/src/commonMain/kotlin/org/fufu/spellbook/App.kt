@@ -4,7 +4,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
@@ -127,7 +126,7 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
 fun App(
     requestWindowForSpell: ((sid: Int) -> Unit)? = null
 ) {
-    MaterialTheme {
+    WithCustomTheme {
         val navController = rememberNavController()
         NavHost(
             navController = navController,
