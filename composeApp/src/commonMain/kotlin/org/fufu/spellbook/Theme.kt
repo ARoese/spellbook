@@ -49,7 +49,7 @@ fun usingDarkTheme(): Boolean {
 @Composable
 fun WithCustomTheme(content: @Composable () -> Unit){
     val lightColors = lightColorScheme(
-        //primary = Color(0xFF1EB980)
+        secondaryContainer = Color(0xFFD7D7D7)
     )
 
     val darkColors = darkColorScheme(
