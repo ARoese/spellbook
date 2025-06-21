@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.FileKit
 import org.fufu.spellbook.di.initKoin
@@ -33,10 +34,29 @@ fun main(){
         WithCustomTheme {
             var spellsToDisplay by remember { mutableStateOf(emptyList<Int>()) }
 
+            val mainWindowState = rememberWindowState()
+            Window(
+                state = mainWindowState,
+                onCloseRequest = ::exitApplication,
+                title = "Spell Book",
+                icon = painterResource(Res.drawable.app_icon)
+            ) {
+                App(
+                    requestWindowForSpell = {
+                        if(it != 0){
+                            spellsToDisplay = spellsToDisplay.plus(it)
+                        }
+                    }
+                )
+            }
+
             spellsToDisplay.forEach { spellId ->
                 var windowName by remember { mutableStateOf("Spell View") }
                 key(spellId){
+                    val state = rememberWindowState()
+                    state.isMinimized = mainWindowState.isMinimized
                     Window(
+                        state = state,
                         onCloseRequest = { spellsToDisplay = spellsToDisplay.minus(spellId) },
                         title = windowName,
                         icon = painterResource(Res.drawable.app_icon)
@@ -57,19 +77,6 @@ fun main(){
                     }
 
                 }
-            }
-            Window(
-                onCloseRequest = ::exitApplication,
-                title = "Spell Book",
-                icon = painterResource(Res.drawable.app_icon)
-            ) {
-                App(
-                    requestWindowForSpell = {
-                        if(it != 0){
-                            spellsToDisplay = spellsToDisplay.plus(it)
-                        }
-                    }
-                )
             }
         }
     }
