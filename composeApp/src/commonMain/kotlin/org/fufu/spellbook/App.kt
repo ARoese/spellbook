@@ -65,13 +65,20 @@ fun NavHostController.popNavigateDistinct(newRoute: Route, currentRoute: Route){
 @Composable
 fun Backable(
     navController: NavHostController,
-    content: @Composable () -> Unit
+    content: @Composable (onBack: (() -> Unit)) -> Unit
 ){
     val focusRequester = remember { FocusRequester() }
     // prevents double-backs
     var triggered by remember { mutableStateOf(false) }
     LaunchedEffect(null){
         focusRequester.requestFocus()
+    }
+
+    fun doBack(){
+        if(!triggered){
+            navController.popBackStack()
+            triggered = true
+        }
     }
 
     Box(
@@ -88,7 +95,7 @@ fun Backable(
                 }
             }
     ){
-        content()
+        content({doBack()})
     }
 }
 
@@ -166,12 +173,10 @@ fun App(
                     )
                     //backStack.destination.parent.
 
-                    Backable(navController){
+                    Backable(navController){ onBack ->
                         SpellDetailScreenRoot(
                             detailViewModel,
-                            onCloseClicked = {
-                                navController.popBackStack()
-                            },
+                            onCloseClicked = onBack,
                             onPopoutClicked = requestWindowForSpell?.let{ { it(spellID) } }
                         )
                     }
@@ -210,12 +215,10 @@ fun App(
                         parameters = { parametersOf(characterID) }
                     )
 
-                    Backable(navController){
+                    Backable(navController){ onBack ->
                         CharacterDetailScreenRoot(
                             detailViewModel,
-                            onBack = {
-                                navController.popBackStack()
-                            },
+                            onBack = onBack,
                             onViewSpell = {
                                 navController.navigate(Route.SpellDetail(it.key))
                             },
@@ -231,10 +234,10 @@ fun App(
                         parameters = { parametersOf(characterID) }
                     )
 
-                    Backable(navController){
+                    Backable(navController){ onBack ->
                         EditingCharacterDetailScreenRoot(
                             editingDetailViewModel,
-                            onBack = {navController.popBackStack()}
+                            onBack = onBack
                         )
                     }
                 }
