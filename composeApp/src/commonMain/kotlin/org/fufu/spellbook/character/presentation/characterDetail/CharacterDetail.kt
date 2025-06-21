@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -225,6 +226,12 @@ fun CharacterDetailScreen(
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    state.character?.name ?: "",
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = {
                         state.character?.let {
@@ -280,10 +287,12 @@ fun CharacterDetail(
     val character = state.character
     Box(modifier = Modifier.fillMaxSize()){
         Column {
-            Text("Name: ${character.name}")
-            Text("Class: ${character.characterClass}")
-            Text("Level: ${character.level}")
-            Text("Max prepared spells: ${character.maxPreparedSpells}")
+            /*
+            Text(
+                "(${character.characterClass} ${character.level})",
+                style = MaterialTheme.typography.titleSmall
+            )
+             */
             SpellListVariantDisplay(
                 variant = variant,
                 character = state.character,
