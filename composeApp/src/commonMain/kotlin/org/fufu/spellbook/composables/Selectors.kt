@@ -3,8 +3,13 @@ package org.fufu.spellbook.composables
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -27,6 +32,25 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun SelectableContainer(
+    selected: Boolean,
+    content: @Composable () -> Unit
+){
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Box(
+            modifier = Modifier
+                .height(40.dp)
+                .width(10.dp)
+                .background(if(selected) MaterialTheme.colorScheme.primary else Color.Unspecified)
+        ){}
+        Spacer(modifier = Modifier.width(2.dp))
+        content()
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,14 +90,10 @@ fun <T>DropdownSelector(
             scrollState = scrollState
         ) {
             options.forEach {
-                val background = if (it in (selected ?: emptySet())) {
-                    Color.LightGray
-                } else {
-                    Color.Unspecified
-                }
+                val selected = it in (selected ?: emptySet())
+
                 DropdownMenuItem(
-                    modifier = Modifier.background(background),
-                    text = { optionPresenter(it) },
+                    text = { SelectableContainer(selected, {optionPresenter(it)}) },
                     onClick = {
                         if (singleSelect) {
                             expanded = false
