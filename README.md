@@ -14,6 +14,9 @@ Android and Desktop (Windows & Linux) thanks to Compose Multiplatform
 ## Other
 I recommend this project be opened, edited, and run via android studio
 
+## Version Bump Procedure
+edit versionString and versionCode in src/build.gradle.kts
+
 ## Build
 Build distribution:
 `.\gradlew packageDistributionForCurrentOS`

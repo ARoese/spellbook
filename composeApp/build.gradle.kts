@@ -113,6 +113,7 @@ kotlin {
 
 // NOTE: Make sure to update versionCode when you update this
 val versionString = "1.1.0"
+val versionCode = 2
 
 android {
     namespace = fufuPackageName
@@ -122,7 +123,7 @@ android {
         applicationId = fufuPackageName
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
+        versionCode = versionCode
         versionName = versionString
     }
     packaging {
