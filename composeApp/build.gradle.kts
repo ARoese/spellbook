@@ -92,6 +92,12 @@ kotlin {
             implementation("io.github.vinceglb:filekit-core:0.10.0-beta01")
             implementation("io.github.vinceglb:filekit-dialogs-compose:0.10.0-beta01")
 
+            // DataStore library
+            implementation(libs.androidx.datastore)
+            // The Preferences DataStore library
+            implementation(libs.androidx.datastore.preferences)
+            // this needs to be here for the preferences library. It's not implicit...
+            implementation(libs.androidx.datastore.preferences.proto)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

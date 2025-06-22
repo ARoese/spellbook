@@ -20,6 +20,9 @@ interface Route {
     data object ImportScreen: Route
 
     @Serializable
+    data object SettingsScreen: Route
+
+    @Serializable
     data class CharacterDetail(val characterID : Int): Route
 
     @Serializable

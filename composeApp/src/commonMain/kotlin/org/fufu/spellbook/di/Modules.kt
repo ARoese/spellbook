@@ -53,6 +53,8 @@ val sharedModule = module{
         )
     )
 
+    single{  }
+
     viewModel{ (sid:Int) -> SpellDetailVM(sid, get()) }
     viewModel{
         (cid:Int) ->

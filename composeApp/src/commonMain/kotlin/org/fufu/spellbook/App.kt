@@ -45,6 +45,7 @@ import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingC
 import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailVM
 import org.fufu.spellbook.di.MAIN_SPELL_LIST
 import org.fufu.spellbook.navigation.Route
+import org.fufu.spellbook.settings.SettingsScreen
 import org.fufu.spellbook.spell.presentation.ImportScreenRoot
 import org.fufu.spellbook.spell.presentation.ImportScreenVM
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailScreenRoot
@@ -115,15 +116,15 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
             icon = { Icon(Icons.Filled.Person, contentDescription = "Characters")}
         )
         NavigationBarItem(
-            selected = false,
+            selected = currentRoute == Route.ImportScreen,
             label = { Text("Import") },
             onClick = {navController.popNavigateDistinct(Route.ImportScreen, currentRoute)},
             icon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "import") }
         )
         NavigationBarItem(
-            selected = false,
+            selected = currentRoute == Route.SettingsScreen,
             label = { Text("Settings")},
-            onClick = {},
+            onClick = {navController.popNavigateDistinct(Route.SettingsScreen, currentRoute)},
             icon = { Icon(Icons.Filled.Settings, contentDescription = "Settings")}
         )
     }
@@ -248,6 +249,13 @@ fun App(
                     ImportScreenRoot(
                         importViewModel,
                         navBar = { BottomNavBar(navController, Route.ImportScreen) }
+                    )
+                }
+                composable<Route.SettingsScreen>(
+
+                ){
+                    SettingsScreen(
+                        navBar = { BottomNavBar(navController, Route.SettingsScreen) }
                     )
                 }
             }
