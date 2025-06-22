@@ -3,13 +3,11 @@ package org.fufu.spellbook.spell.presentation.spellDetail
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import org.fufu.spellbook.DiceColorMap
 import org.fufu.spellbook.getDiceColorMap
 
 sealed interface SpellTextThing {

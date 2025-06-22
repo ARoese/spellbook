@@ -6,18 +6,9 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import org.fufu.spellbook.settings.DarkModePreference
-import org.fufu.spellbook.settings.PreferencesKeys
 import org.fufu.spellbook.settings.getPreferencesIsDarkMode
-import org.koin.compose.koinInject
 
 data class DiceColorMap(
     val map: Map<Int, Color>,
