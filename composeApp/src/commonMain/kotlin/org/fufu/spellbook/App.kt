@@ -134,6 +134,7 @@ fun BottomNavBar(navController: NavHostController, currentRoute: Route){
 fun App(
     requestWindowForSpell: ((sid: Int) -> Unit)? = null
 ) {
+    WithCustomTheme {
         val navController = rememberNavController()
         NavHost(
             navController = navController,
@@ -260,6 +261,7 @@ fun App(
                 }
             }
         }
+    }
 }
 
 @Composable
