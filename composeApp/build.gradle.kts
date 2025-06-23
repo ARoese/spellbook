@@ -152,6 +152,7 @@ compose.desktop {
 
         nativeDistributions {
             modules("java.naming")
+            modules("jdk.unsupported")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = fufuPackageName
             packageVersion = versionString
