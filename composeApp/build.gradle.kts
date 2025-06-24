@@ -150,9 +150,12 @@ compose.desktop {
     application {
         mainClass = "org.fufu.spellbook.MainKt"
 
+        buildTypes.release.proguard {
+            this.isEnabled = false
+        }
+
         nativeDistributions {
-            modules("java.naming")
-            modules("jdk.unsupported")
+            modules("java.naming", "jdk.unsupported")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = fufuPackageName
             packageVersion = versionString
