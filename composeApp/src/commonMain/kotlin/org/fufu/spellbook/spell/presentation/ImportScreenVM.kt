@@ -83,7 +83,7 @@ class ImportScreenVM(
         importJob?.cancel("canceled")
         _state.update { it.copy(importing = true) }
         importJob = CoroutineScope(Dispatchers.IO).launch {
-            destination.importFrom(prov) { progress ->
+            destination.importFrom(prov, scope = viewModelScope) { progress ->
                 _state.update {it.copy(importProgress = progress)}
             }
             _state.update { ImportScreenState() }
