@@ -1,21 +1,34 @@
-package org.fufu.spellbook.spell.presentation
+package org.fufu.spellbook.spell.presentation.importScreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
 import org.fufu.spellbook.composables.DropdownSelector
+import org.fufu.spellbook.navigation.Route
 
 @Composable
 fun EditableJsonImportSource(
@@ -53,7 +66,7 @@ fun EditableImportSource(
         fun present(src: ImportSource) : String {
             return when(src){
                 is ImportSource.JSON -> "json"
-                ImportSource.SELECT -> "SELECT"
+                ImportSource.SELECT -> "Select import source"
                 ImportSource.WIKIDOT -> "wikidot"
                 ImportSource.SRD5E -> "5e 2014 SRD"
             }
@@ -85,6 +98,7 @@ fun EditableImportSource(
 @Composable
 fun ImportScreenRoot(
     viewModel: ImportScreenVM,
+    navigateTo: (Route) -> Unit,
     navBar: @Composable () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -93,8 +107,36 @@ fun ImportScreenRoot(
         state = state,
         onChangeSource = {viewModel.onChangeSource(it)},
         onDoImport = {viewModel.doImport()},
+        navigateTo = navigateTo,
         navBar = navBar
     )
+}
+
+@Composable
+fun ImportOptionsDropDown(
+    navigateTo: (Route) -> Unit
+){
+    var expanded by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+    ) {
+        IconButton(onClick = { expanded = !expanded }) {
+            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+        }
+        DropdownMenu(
+            expanded,
+            onDismissRequest = { expanded = false }
+        ){
+            DropdownMenuItem(
+                text = { Text("De-Import") },
+                onClick = {
+                    expanded = false
+                    navigateTo(Route.DeImportScreen)
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -102,9 +144,15 @@ fun ImportScreen(
     state: ImportScreenState,
     onChangeSource: (ImportSource) -> Unit = {},
     onDoImport: () -> Unit = {},
+    navigateTo: (Route) -> Unit = {},
     navBar: @Composable () -> Unit
 ){
     Scaffold(
+        topBar = {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
+                ImportOptionsDropDown(navigateTo)
+            }
+        },
         bottomBar = navBar
     ){ padding ->
         Box(modifier=Modifier.padding(padding)){

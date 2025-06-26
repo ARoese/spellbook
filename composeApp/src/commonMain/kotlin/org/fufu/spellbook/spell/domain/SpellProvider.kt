@@ -27,7 +27,7 @@ private fun importTagFor(i: Int): String{
     return "Import-$i"
 }
 
-private fun importNumFromSource(source: String): Int? {
+fun importNumFromSource(source: String): Int? {
     return source
         .split("-")
         .takeIf { it.size == 2 } // if is form (.*-\d*)

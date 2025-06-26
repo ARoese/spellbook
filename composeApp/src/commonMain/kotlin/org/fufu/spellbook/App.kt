@@ -45,8 +45,10 @@ import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingC
 import org.fufu.spellbook.di.MAIN_SPELL_LIST
 import org.fufu.spellbook.navigation.Route
 import org.fufu.spellbook.settings.SettingsScreen
-import org.fufu.spellbook.spell.presentation.ImportScreenRoot
-import org.fufu.spellbook.spell.presentation.ImportScreenVM
+import org.fufu.spellbook.spell.presentation.deImport.DeImportScreenRoot
+import org.fufu.spellbook.spell.presentation.deImport.DeImportScreenVM
+import org.fufu.spellbook.spell.presentation.importScreen.ImportScreenRoot
+import org.fufu.spellbook.spell.presentation.importScreen.ImportScreenVM
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailScreenRoot
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailVM
 import org.fufu.spellbook.spell.presentation.spellList.SpellListScreenRoot
@@ -248,8 +250,18 @@ fun App(
                     val importViewModel = koinViewModel<ImportScreenVM>()
                     ImportScreenRoot(
                         importViewModel,
-                        navBar = { BottomNavBar(navController, Route.ImportScreen) }
+                        navBar = { BottomNavBar(navController, Route.ImportScreen) },
+                        navigateTo = { navController.navigate(it) }
                     )
+                }
+                composable<Route.DeImportScreen> {
+                    val deImportViewModel = koinViewModel<DeImportScreenVM>()
+                    Backable(navController){ onBack ->
+                        DeImportScreenRoot(
+                            deImportViewModel,
+                            onBack = onBack
+                        )
+                    }
                 }
                 composable<Route.SettingsScreen>(
 

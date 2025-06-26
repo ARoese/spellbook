@@ -12,7 +12,8 @@ import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingC
 import org.fufu.spellbook.spell.data.room.DBSpellMutator
 import org.fufu.spellbook.spell.domain.SpellMutator
 import org.fufu.spellbook.spell.domain.SpellProvider
-import org.fufu.spellbook.spell.presentation.ImportScreenVM
+import org.fufu.spellbook.spell.presentation.deImport.DeImportScreenVM
+import org.fufu.spellbook.spell.presentation.importScreen.ImportScreenVM
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailVM
 import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 import org.koin.core.context.startKoin
@@ -69,6 +70,7 @@ val sharedModule = module{
     viewModel{ (cid:Int) -> EditingCharacterDetailVM(cid, get()) }
     viewModel{ CharacterListVM(get()) }
     viewModel{ ImportScreenVM(get(), null) }
+    viewModel{ DeImportScreenVM(get()) }
     viewModel(qualifier = qualifier(MAIN_SPELL_LIST)){
         SpellListVM(get())
     }

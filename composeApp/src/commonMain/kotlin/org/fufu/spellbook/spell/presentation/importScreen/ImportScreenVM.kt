@@ -1,4 +1,4 @@
-package org.fufu.spellbook.spell.presentation
+package org.fufu.spellbook.spell.presentation.importScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
