@@ -40,6 +40,11 @@ fun EditableJsonImportSource(
 }
 
 @Composable
+fun SRD5eImportSource(){
+    Text("Import from the 5e SRD")
+}
+
+@Composable
 fun EditableImportSource(
     source: ImportSource,
     onChangeSource: (ImportSource) -> Unit
@@ -50,12 +55,14 @@ fun EditableImportSource(
                 is ImportSource.JSON -> "json"
                 ImportSource.SELECT -> "SELECT"
                 ImportSource.WIKIDOT -> "wikidot"
+                ImportSource.SRD5E -> "5e 2014 SRD"
             }
         }
         DropdownSelector(
             options = listOf(
                 ImportSource.JSON(null),
                 ImportSource.WIKIDOT,
+                ImportSource.SRD5E
             ),
             selected = emptySet(),
             singleSelect = true,
@@ -70,6 +77,7 @@ fun EditableImportSource(
             is ImportSource.WIKIDOT -> {
                 Text("This is not yet implemented")
             }
+            is ImportSource.SRD5E -> SRD5eImportSource()
         }
     }
 }

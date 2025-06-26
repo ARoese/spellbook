@@ -98,7 +98,16 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             // this needs to be here for the preferences library. It's not implicit...
             implementation(libs.androidx.datastore.preferences.proto)
+
+            implementation("me.zodd:KsonMulti")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.1")
+            implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
         }
+        commonTest.dependencies {
+            implementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
+
+        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.skiko.awt.runtime.windows.x64)
