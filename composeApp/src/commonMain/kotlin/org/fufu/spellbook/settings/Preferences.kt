@@ -6,6 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import org.koin.compose.koinInject
@@ -20,24 +21,21 @@ enum class DarkModePreference{
     LIGHT
 }
 
-@Composable
-fun getPreferencesIsDarkMode(): DarkModePreference? {
-    val dataStore = koinInject<DataStore<Preferences>>()
-    return dataStore.data.map {
+
+fun getPreferencesIsDarkMode(datastore: DataStore<Preferences>): Flow<DarkModePreference> {
+    return datastore.data.map {
         when(it[PreferencesKeys.IS_DARK_MODE]){
             true -> DarkModePreference.DARK
             false -> DarkModePreference.LIGHT
             null -> DarkModePreference.SYSTEM
         }
-    }.collectAsState(null).value
+    }
 }
 
-@Composable
-fun setPreferencesIsDarkMode(newState: DarkModePreference) {
-    val dataStore = koinInject<DataStore<Preferences>>()
+fun setPreferencesIsDarkMode(datastore: DataStore<Preferences>, newState: DarkModePreference) {
     //TODO: make this properly async. This is fast enough for now, though
     runBlocking {
-        dataStore.edit {
+        datastore.edit {
             val darkModeKey = PreferencesKeys.IS_DARK_MODE
             when(newState){
                 DarkModePreference.DARK -> it[darkModeKey] = true

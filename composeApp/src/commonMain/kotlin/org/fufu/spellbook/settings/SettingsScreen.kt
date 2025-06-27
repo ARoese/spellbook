@@ -10,19 +10,19 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import org.koin.compose.koinInject
 
 @Composable
 fun DarkModeSettingControl(){
-    val isDarkModePref = getPreferencesIsDarkMode()
-    var darkMode by remember { mutableStateOf(isDarkModePref) }
-    darkMode?.let { setPreferencesIsDarkMode(it) }
-    isDarkModePref?.let { darkMode = isDarkModePref }
+    val datastore = koinInject<DataStore<Preferences>>()
+    val darkMode by getPreferencesIsDarkMode(datastore)
+        .collectAsState(DarkModePreference.SYSTEM)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -35,7 +35,7 @@ fun DarkModeSettingControl(){
             choices.forEachIndexed { i, p ->
                 SegmentedButton(
                     darkMode == p,
-                    onClick = {darkMode = p},
+                    onClick = { setPreferencesIsDarkMode(datastore, p)},
                     shape = SegmentedButtonDefaults.itemShape(i, n),
                     label = {
                         Text(

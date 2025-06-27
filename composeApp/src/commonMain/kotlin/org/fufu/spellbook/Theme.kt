@@ -6,9 +6,14 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import org.fufu.spellbook.settings.DarkModePreference
 import org.fufu.spellbook.settings.getPreferencesIsDarkMode
+import org.koin.compose.koinInject
 
 data class DiceColorMap(
     val map: Map<Int, Color>,
@@ -44,7 +49,10 @@ fun getDiceColorMap(): DiceColorMap {
 
 @Composable
 fun usingDarkTheme(): Boolean {
-    return when(getPreferencesIsDarkMode()){
+    val datastore = koinInject<DataStore<Preferences>>()
+    val darkmode by getPreferencesIsDarkMode(datastore)
+        .collectAsState(DarkModePreference.SYSTEM)
+    return when(darkmode){
         DarkModePreference.DARK -> true
         DarkModePreference.SYSTEM, null -> isSystemInDarkTheme()
         DarkModePreference.LIGHT -> false
