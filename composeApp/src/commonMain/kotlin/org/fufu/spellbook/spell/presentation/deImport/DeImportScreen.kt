@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.spell.domain.importNumFromSource
+import org.fufu.spellbook.xor
 
 sealed interface Intent{
     data object DeImport : Intent
@@ -81,7 +82,7 @@ fun DeImportProcess(
                 selected = state.selectedImportKeys,
                 optionPresenter = { Text(it) },
                 onOptionPicked = {
-                    val newKeys = state.selectedImportKeys.plus(it)
+                    val newKeys = state.selectedImportKeys.xor(setOf(it))
                     intend(Intent.SetSelectedImportKeys(newKeys))
                 },
                 singleSelect = false,
