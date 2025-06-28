@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kson.KsonApi
+import org.fufu.spellbook.composables.ComposeLoadable
 import org.fufu.spellbook.spell.data.json.JsonSpellProvider
 import org.fufu.spellbook.spell.data.srd5eapi.SRD5eSpellProvider
 import org.fufu.spellbook.spell.data.srd5eapi.makeClient
@@ -32,9 +33,9 @@ sealed interface ImportSource {
 }
 
 data class ImportScreenState(
-    val availableSpells: List<Spell> = emptyList(),
+    val availableSpells: ComposeLoadable<List<Spell>> = ComposeLoadable(emptyList()),
+    val currentSpells: ComposeLoadable<List<Spell>> = ComposeLoadable(),
     val importSource: ImportSource = ImportSource.SELECT,
-    val loading: Boolean = false,
     val importing: Boolean = false,
     val importProgress: Float = 0f
 )
@@ -49,7 +50,8 @@ class ImportScreenVM(
 
     val state = _state
         .onStart {
-            observeSpells()
+            observeImportSpells()
+            observeCurrentSpells()
         }
         .stateIn(
             viewModelScope,
@@ -57,18 +59,27 @@ class ImportScreenVM(
             _state.value
         )
 
-    private var observeSpellsJob : Job? = null;
-    private fun observeSpells(){
-        observeSpellsJob?.cancel()
+    private var observeImportSpellsJob : Job? = null;
+    private fun observeImportSpells(){
+        observeImportSpellsJob?.cancel()
         val provider = provider ?: return
-        _state.update { it.copy(availableSpells = emptyList(), loading = true) }
-        observeSpellsJob = provider.getSpells().onEach{ spells ->
-            _state.update { it.copy(availableSpells = spells, loading = false) }
+        _state.update { it.copy(availableSpells = ComposeLoadable()) }
+        observeImportSpellsJob = provider.getSpells().onEach{ spells ->
+            _state.update { it.copy(availableSpells = ComposeLoadable(spells)) }
+        }.launchIn(viewModelScope)
+    }
+
+    private var observeCurrentSpellsJob : Job? = null;
+    private fun observeCurrentSpells(){
+        observeCurrentSpellsJob?.cancel()
+        _state.update { it.copy(currentSpells = ComposeLoadable()) }
+        observeCurrentSpellsJob = destination.getSpells().onEach{ spells ->
+            _state.update { it.copy(currentSpells = ComposeLoadable(spells)) }
         }.launchIn(viewModelScope)
     }
 
     fun onChangeSource(source: ImportSource){
-        _state.update { it.copy(importSource = source, availableSpells = emptyList()) }
+        _state.update { it.copy(importSource = source, availableSpells = ComposeLoadable(emptyList())) }
         when(source){
             is ImportSource.JSON -> source.file?.let{useProvider(JsonSpellProvider(it))}
             ImportSource.WIKIDOT -> return
@@ -78,12 +89,12 @@ class ImportScreenVM(
     }
 
     private var importJob: Job? = null
-    fun doImport() {
+    fun doImport(ids: Set<Int>? = null) {
         val prov = provider ?: return
         importJob?.cancel("canceled")
         _state.update { it.copy(importing = true) }
         importJob = CoroutineScope(Dispatchers.IO).launch {
-            destination.importFrom(prov, scope = viewModelScope) { progress ->
+            destination.importFrom(prov, ids=ids, scope = viewModelScope) { progress ->
                 _state.update {it.copy(importProgress = progress)}
             }
             _state.update { ImportScreenState() }
@@ -92,6 +103,6 @@ class ImportScreenVM(
 
     private fun useProvider(provider: SpellProvider){
         this.provider = provider
-        observeSpells()
+        observeImportSpells()
     }
 }

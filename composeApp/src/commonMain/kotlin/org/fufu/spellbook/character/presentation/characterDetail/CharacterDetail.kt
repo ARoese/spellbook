@@ -34,8 +34,8 @@ import org.fufu.spellbook.composables.ClickableToken
 import org.fufu.spellbook.composables.KnownToken
 import org.fufu.spellbook.composables.PreparedToken
 import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellList
-import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
 import kotlin.math.max
 import kotlin.math.min
 

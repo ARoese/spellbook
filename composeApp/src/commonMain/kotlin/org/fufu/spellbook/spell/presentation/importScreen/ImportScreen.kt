@@ -29,17 +29,93 @@ import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.name
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.navigation.Route
+import org.fufu.spellbook.spell.domain.ImportPolicy
+
+@Composable
+fun ImportScreenRoot(
+    viewModel: ImportScreenVM,
+    navigateTo: (Route) -> Unit,
+    navBar: @Composable () -> Unit
+){
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    ImportScreen(
+        state = state,
+        navBar = navBar
+    ){
+        when(it){
+            is Intent.ChangeSource -> viewModel.onChangeSource(it.newSource)
+            is Intent.DoImport -> viewModel.doImport(it.ids)
+            is Intent.NavigateTo -> navigateTo(it.route)
+        }
+    }
+}
+
+sealed interface Intent{
+    data class DoImport(val ids: Set<Int>?): Intent
+    data class NavigateTo(val route: Route): Intent
+    data class ChangeSource(val newSource: ImportSource): Intent
+}
+
+@Composable
+fun ImportScreen(
+    state: ImportScreenState,
+    navBar: @Composable () -> Unit,
+    intend: (Intent) -> Unit
+){
+    Scaffold(
+        topBar = {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
+                ImportOptionsDropDown(intend)
+            }
+        },
+        bottomBar = navBar
+    ){ padding ->
+        Box(modifier=Modifier.padding(padding)){
+            Column {
+                EditableImportSource(
+                    state.importSource, intend
+                )
+                if(state.importSource is ImportSource.SELECT){
+                    return@Box
+                }
+                if(state.importing){
+                    CircularProgressIndicator(
+                        progress = { state.importProgress },
+                    )
+                    Text("Importing...")
+                    return@Box
+                }
+
+                state.currentSpells.combine(state.availableSpells).map(
+                    ifNotLoaded = {CircularProgressIndicator()}
+                ){ (currentSpells, availableSpells) ->
+                    Text("There are ${availableSpells.size} spells available to import")
+                    val uniqueSpells = ImportPolicy(matchByName = true)
+                        .filterShouldImport(currentSpells, availableSpells)
+                        .map { it.key }
+                    Text("Only the ${uniqueSpells.size} unique spells will be imported")
+                    if(uniqueSpells.isNotEmpty()){
+                        Button(onClick = {intend(Intent.DoImport(uniqueSpells.toSet()))}){
+                            Text("Import!")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun EditableJsonImportSource(
     source: ImportSource.JSON,
-    onChangeSource: (ImportSource) -> Unit
+    intend: (Intent) -> Unit
 ){
     Box{
         val launcher = rememberFilePickerLauncher(
             mode = FileKitMode.Single
         ) { file ->
-            onChangeSource(ImportSource.JSON(file))
+            intend(Intent.ChangeSource(ImportSource.JSON(file)))
         }
         Row{
             Button(
@@ -60,7 +136,7 @@ fun SRD5eImportSource(){
 @Composable
 fun EditableImportSource(
     source: ImportSource,
-    onChangeSource: (ImportSource) -> Unit
+    intend: (Intent) -> Unit
 ){
     Column {
         fun present(src: ImportSource) : String {
@@ -81,12 +157,12 @@ fun EditableImportSource(
             singleSelect = true,
             optionPresenter = { Text(present(it)) },
             buttonContent = { Text(present(source)) },
-            onOptionPicked = { onChangeSource(it) }
+            onOptionPicked = { intend(Intent.ChangeSource(it)) }
         )
         //ImportSourceDropDown(source, onChangeSource)
         when(source){
             is ImportSource.SELECT -> {}
-            is ImportSource.JSON -> EditableJsonImportSource(source, onChangeSource)
+            is ImportSource.JSON -> EditableJsonImportSource(source, intend)
             is ImportSource.WIKIDOT -> {
                 Text("This is not yet implemented")
             }
@@ -96,25 +172,8 @@ fun EditableImportSource(
 }
 
 @Composable
-fun ImportScreenRoot(
-    viewModel: ImportScreenVM,
-    navigateTo: (Route) -> Unit,
-    navBar: @Composable () -> Unit
-){
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    ImportScreen(
-        state = state,
-        onChangeSource = {viewModel.onChangeSource(it)},
-        onDoImport = {viewModel.doImport()},
-        navigateTo = navigateTo,
-        navBar = navBar
-    )
-}
-
-@Composable
 fun ImportOptionsDropDown(
-    navigateTo: (Route) -> Unit
+    intend: (Intent) -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
     Box(
@@ -132,55 +191,9 @@ fun ImportOptionsDropDown(
                 text = { Text("De-Import") },
                 onClick = {
                     expanded = false
-                    navigateTo(Route.DeImportScreen)
+                    intend(Intent.NavigateTo(Route.DeImportScreen))
                 }
             )
-        }
-    }
-}
-
-@Composable
-fun ImportScreen(
-    state: ImportScreenState,
-    onChangeSource: (ImportSource) -> Unit = {},
-    onDoImport: () -> Unit = {},
-    navigateTo: (Route) -> Unit = {},
-    navBar: @Composable () -> Unit
-){
-    Scaffold(
-        topBar = {
-            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd){
-                ImportOptionsDropDown(navigateTo)
-            }
-        },
-        bottomBar = navBar
-    ){ padding ->
-        Box(modifier=Modifier.padding(padding)){
-            Column {
-                EditableImportSource(
-                    state.importSource,
-                    onChangeSource = onChangeSource
-                )
-                if(state.importSource is ImportSource.SELECT){
-                    return@Box
-                }
-
-                if(state.loading){
-                    CircularProgressIndicator()
-                }else if(state.importing){
-                    CircularProgressIndicator(
-                        progress = { state.importProgress },
-                    )
-                    Text("Importing...")
-                }else{
-                    Text("There are ${state.availableSpells.size} spells available to import")
-                    if(state.availableSpells.isNotEmpty()){
-                        Button(onClick = onDoImport){
-                            Text("Import!")
-                        }
-                    }
-                }
-            }
         }
     }
 }

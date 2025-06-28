@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.DropdownSelector
+import org.fufu.spellbook.composables.withFullScreenLoading
 import org.fufu.spellbook.spell.domain.importNumFromSource
 import org.fufu.spellbook.xor
 

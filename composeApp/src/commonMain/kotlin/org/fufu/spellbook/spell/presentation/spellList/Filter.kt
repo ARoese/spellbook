@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import org.fufu.spellbook.composables.BooleanSelector
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.nullingXor
+import org.fufu.spellbook.spell.domain.SpellListFilter
 
 @Composable
 fun SpellListFilterSelector(

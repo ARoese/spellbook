@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
 import org.fufu.spellbook.character.domain.SpellSlotLevel
-import org.fufu.spellbook.spell.presentation.spellList.SpellListFilter
+import org.fufu.spellbook.spell.domain.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 

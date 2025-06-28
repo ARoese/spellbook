@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.FloatingAddButton
 import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellListFilter
 
 @Composable
 fun SpellListScreenRoot(

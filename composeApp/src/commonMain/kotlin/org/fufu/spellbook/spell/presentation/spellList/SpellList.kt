@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import org.fufu.spellbook.composables.ChipSize
 import org.fufu.spellbook.composables.TagChip
 import org.fufu.spellbook.spell.domain.Spell
+import org.fufu.spellbook.spell.domain.SpellListFilter
 
 // sorted by name, then by level. Levels are grouped together, and
 // within that, names are sorted alphabetically
