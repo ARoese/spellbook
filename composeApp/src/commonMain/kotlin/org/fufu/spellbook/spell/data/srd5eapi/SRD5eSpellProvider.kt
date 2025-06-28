@@ -35,10 +35,10 @@ fun makeClient(): HttpClient {
             })
         }
         engine {
-            maxConnectionsCount = 40
+            maxConnectionsCount = 4
             endpoint {
-                maxConnectionsPerRoute = 100
-                pipelineMaxSize = 50
+                maxConnectionsPerRoute = 4
+                pipelineMaxSize = 10
                 keepAliveTime = 10000
                 connectTimeout = 10000
                 connectAttempts = 5
