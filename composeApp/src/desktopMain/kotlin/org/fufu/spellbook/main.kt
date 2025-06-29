@@ -69,7 +69,7 @@ fun main(){
 
                         Scaffold {
                             LoadingSpellDetail(
-                                spellState
+                                spellState, {}, {}
                             )
                         }
 

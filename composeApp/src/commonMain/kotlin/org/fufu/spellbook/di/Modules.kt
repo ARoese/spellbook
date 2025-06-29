@@ -2,6 +2,7 @@ package org.fufu.spellbook.di
 
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import kson.KsonApi
 import org.fufu.spellbook.SpellBookDatabase
 import org.fufu.spellbook.character.data.room.DBCharacterMutator
 import org.fufu.spellbook.character.domain.CharacterMutator
@@ -10,6 +11,9 @@ import org.fufu.spellbook.character.presentation.characterDetail.CharacterDetail
 import org.fufu.spellbook.character.presentation.characterList.CharacterListVM
 import org.fufu.spellbook.character.presentation.editingCharacterDetail.EditingCharacterDetailVM
 import org.fufu.spellbook.spell.data.room.DBSpellMutator
+import org.fufu.spellbook.spell.data.srd5eapi.SRD5eConditionProvider
+import org.fufu.spellbook.spell.data.srd5eapi.makeClient
+import org.fufu.spellbook.spell.domain.ConditionProvider
 import org.fufu.spellbook.spell.domain.SpellMutator
 import org.fufu.spellbook.spell.domain.SpellProvider
 import org.fufu.spellbook.spell.presentation.deImport.DeImportScreenVM
@@ -54,9 +58,11 @@ val sharedModule = module{
         )
     )
 
-    single{  }
 
-    viewModel{ (sid:Int) -> SpellDetailVM(sid, get()) }
+    single{ SRD5eConditionProvider(KsonApi(makeClient())) }
+        .bind(ConditionProvider::class)
+
+    viewModel{ (sid:Int) -> SpellDetailVM(sid, get(), get()) }
     viewModel{
         (cid:Int) ->
             CharacterDetailVM(

@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.fufu.spellbook.spell.domain.Condition
+import org.fufu.spellbook.spell.domain.ConditionProvider
 import org.fufu.spellbook.spell.domain.DefaultSpellInfo
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
@@ -23,6 +25,8 @@ import javax.naming.OperationNotSupportedException
 data class SpellDetailState(
     val originalSpell: Spell?,
     val spellInfo: SpellInfo? = originalSpell?.info,
+    val viewedCondition: Condition? = null,
+    val conditions: Set<String>? = null,
     val isEditing: Boolean = false,
     val loading: Boolean = true
 )
@@ -30,6 +34,8 @@ data class SpellDetailState(
 data class ConcreteSpellDetailState(
     val originalSpell: Spell,
     val spellInfo: SpellInfo = originalSpell.info,
+    val viewedCondition: Condition? = null,
+    val conditions: Set<String>? = null,
     val isEditing: Boolean = false,
     val loading: Boolean = true
 )
@@ -46,6 +52,8 @@ fun SpellDetailState.toConcrete() : ConcreteSpellDetailState {
     return ConcreteSpellDetailState(
         this.originalSpell!!,
         this.spellInfo!!,
+        this.viewedCondition,
+        this.conditions,
         this.isEditing,
         this.loading
     )
@@ -53,14 +61,16 @@ fun SpellDetailState.toConcrete() : ConcreteSpellDetailState {
 
 class SpellDetailVM(
     private var spellId: Int,
-    private val provider: SpellProvider
+    private val provider: SpellProvider,
+    private val conditionsProvider: ConditionProvider
 ) : ViewModel() {
-    public val mutable = provider is SpellMutator
+    val mutable = provider is SpellMutator
     sealed interface Action{
         data object OnCloseClicked : Action
         data object OnEditClicked : Action
         data class OnSpellEdited(val newInfo: SpellInfo) : Action
         data object OnDeleteClicked : Action
+        data class OnViewCondition(val conditionName: String): Action
     }
 
     private val _state = MutableStateFlow(
@@ -74,6 +84,7 @@ class SpellDetailVM(
     val state = _state
         .onStart {
             observeSpell()
+            observeConditions()
         }
         .stateIn(
             viewModelScope,
@@ -91,10 +102,37 @@ class SpellDetailVM(
         observeSpellJob = provider.getSpell(spellId)
             .onEach { actualSpell ->
                 _state.update{
-                    SpellDetailState(actualSpell, loading = false)
+                    it.copy(
+                        originalSpell = actualSpell,
+                        spellInfo = actualSpell?.info,
+                        loading = false
+                    )
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    private var observeConditionsJob: Job? = null
+    private fun observeConditions(){
+        observeConditionsJob?.cancel()
+        observeConditionsJob = conditionsProvider.getConditions()
+            .onEach { conditions ->
+                _state.update { it.copy(conditions=conditions) }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    fun showCondition(conditionName: String){
+        viewModelScope.launch {
+            val condition = conditionsProvider
+                .getFullCondition(conditionName)
+                .stateIn(viewModelScope).value
+            _state.update { it.copy(viewedCondition = condition) }
+        }
+    }
+
+    fun hideCondition(){
+        _state.update { it.copy(viewedCondition = null) }
     }
 
     fun duplicateSpell() {
@@ -184,6 +222,7 @@ class SpellDetailVM(
 
                 return action
             }
+            else -> null
         }
     }
 

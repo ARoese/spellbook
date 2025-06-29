@@ -16,10 +16,12 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.composables.DropdownSelector
+import org.fufu.spellbook.spell.domain.Condition
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
 import org.jetbrains.compose.resources.painterResource
@@ -80,10 +83,29 @@ fun SpellDetailScreenRoot(
                 it()
                 doCloseFunction()
             }
+        },
+        onConditionClicked = {
+            viewModel.showCondition(conditionName = it)
+        },
+        onConditionHidden = {
+            viewModel.hideCondition()
         }
     )
 }
 
+@Composable
+fun ConditionDetail(condition: Condition){
+    Column(modifier = Modifier.padding(10.dp)){
+        Text(
+            "${condition.name}:",
+            fontWeight = FontWeight.Bold
+        )
+        Text(condition.desc)
+        Spacer(modifier = Modifier.height(40.dp))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpellDetailScreen(
     state: SpellDetailState,
@@ -92,7 +114,9 @@ fun SpellDetailScreen(
     onSpellEdited: (SpellInfo) -> Unit = {},
     onEditClicked: () -> Unit = {},
     onCopyClicked: () -> Unit = {},
-    onDeleteClicked: () -> Unit = {}
+    onDeleteClicked: () -> Unit = {},
+    onConditionClicked: (String) -> Unit = {},
+    onConditionHidden: () -> Unit = {}
 ){
     val editButtonIcon = if(state.isEditing){
         Icons.Filled.Check
@@ -147,13 +171,21 @@ fun SpellDetailScreen(
         },
         floatingActionButton = floatingActionButton
     ) { padding ->
+        if(state.viewedCondition != null){
+            ModalBottomSheet(
+                onDismissRequest = onConditionHidden
+            ){
+                ConditionDetail(state.viewedCondition)
+            }
+        }
         Box(
             modifier = Modifier
                 .padding(padding)
         ) {
             LoadingSpellDetail(
                 state,
-                onSpellEdited = onSpellEdited
+                onSpellEdited = onSpellEdited,
+                onConditionClicked = onConditionClicked
             )
         }
     }
@@ -164,7 +196,8 @@ fun SpellDetailScreen(
 @Composable
 fun LoadingSpellDetail(
     state: SpellDetailState,
-    onSpellEdited: (SpellInfo) -> Unit = {}
+    onSpellEdited: (SpellInfo) -> Unit = {},
+    onConditionClicked: (String) -> Unit
 ){
     // check and handle loading status and nullability of stuff
     if(state.loading){
@@ -179,7 +212,8 @@ fun LoadingSpellDetail(
         }else{
             SpellDetail(
                 state.toConcrete(),
-                onSpellEdited
+                onSpellEdited,
+                onConditionClicked = onConditionClicked
             )
         }
     }
@@ -323,7 +357,8 @@ fun ListDisplays(
 @Composable
 fun SpellDetail(
     state: ConcreteSpellDetailState,
-    onSpellEdited: (SpellInfo) -> Unit = {}
+    onSpellEdited: (SpellInfo) -> Unit = {},
+    onConditionClicked: (String) -> Unit = {}
 ){
     val spellInfo = state.spellInfo
     val isEditing = state.isEditing
@@ -441,7 +476,11 @@ fun SpellDetail(
                     minLines = 4
                 )
             }else{
-                SpellText(spellInfo.text)
+                SpellText(
+                    spellInfo.text,
+                    state.conditions ?: emptySet(),
+                    onConditionClicked
+                )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
