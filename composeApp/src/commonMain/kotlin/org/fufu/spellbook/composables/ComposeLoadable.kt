@@ -19,8 +19,15 @@ data class ComposeLoadable<T>(
 
     @Composable
     fun ifNotLoaded(content: @Composable () -> Unit){
-        if(loading || concreteState == null){
+        if(loading){
             content()
+        }
+    }
+
+    @Composable
+    fun ifLoadedNull(action: () -> Unit){
+        if(!loading && concreteState == null){
+            action()
         }
     }
 
@@ -36,17 +43,19 @@ data class ComposeLoadable<T>(
     @Composable
     fun map(
         ifNotLoaded: @Composable () -> Unit,
-        ifLoaded: @Composable (T) -> Unit
+        ifLoadedNull: () -> Unit = {},
+        ifLoaded: @Composable (T) -> Unit,
     ){
         this.ifLoaded(ifLoaded)
         this.ifNotLoaded(ifNotLoaded)
+        this.ifLoadedNull(ifLoadedNull)
     }
 }
 
 @Composable
 fun <T> withFullScreenLoading(loadable: ComposeLoadable<T>, content: @Composable (T) -> Unit){
     loadable.map(
-        {
+        ifNotLoaded = {
             Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator()
             }

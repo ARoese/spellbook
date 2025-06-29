@@ -1,6 +1,5 @@
 package org.fufu.spellbook.character.presentation.characterDetail
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +14,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,20 +21,10 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.SpellSlotLevel
-import org.fufu.spellbook.character.domain.hasPreparedSpell
-import org.fufu.spellbook.character.domain.knowsSpell
-import org.fufu.spellbook.composables.ClickableToken
-import org.fufu.spellbook.composables.KnownToken
-import org.fufu.spellbook.composables.PreparedToken
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellListFilter
-import org.fufu.spellbook.spell.presentation.spellList.SpellList
-import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 fun CharacterDetailScreenRoot(
@@ -91,125 +78,6 @@ sealed interface Intent {
 }
 
 @Composable
-fun SpellSlotLevelDisplay(
-    level: SpellSlotLevel,
-    onChange: (SpellSlotLevel) -> Unit
-){
-    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)){
-        fun decrement(){
-            onChange(level.copy(slots=max(0, level.slots-1)))
-        }
-
-        fun increment(){
-            onChange(level.copy(slots=min(level.slots+1, level.maxSlots)))
-        }
-
-        (1..level.maxSlots).forEach {
-            val size = 30.dp
-            val enabled = it <= level.slots
-            val onClick: (Boolean) -> Unit = if(enabled){
-                { decrement() }
-            }else{
-                { increment() }
-            }
-            SimpleCircleBoolButton(enabled, onClick, size)
-        }
-    }
-}
-
-@Composable
-fun SpellListVariantDisplay(
-    variant: SpellListVariant,
-    character: Character,
-    intend: (Intent) -> Unit
-){
-    Column {
-        NavigationBar {
-            NavigationBarItem(
-                onClick = { intend(Intent.ChangeListVariant(SpellListType.PREPARED)) },
-                label = { Text("Prepared") },
-                selected = variant.type == SpellListType.PREPARED,
-                icon = {},
-                alwaysShowLabel = true
-            )
-            NavigationBarItem(
-                onClick = { intend(Intent.ChangeListVariant(SpellListType.KNOWN)) },
-                label = { Text("Known") },
-                selected = variant.type == SpellListType.KNOWN,
-                icon = {},
-                alwaysShowLabel = true
-            )
-            NavigationBarItem(
-                onClick = { intend(Intent.ChangeListVariant(SpellListType.CLASS)) },
-                label = { Text("Class") },
-                selected = variant.type == SpellListType.CLASS,
-                icon = {},
-                alwaysShowLabel = true
-            )
-        }
-        val rightSideButton : @Composable ((Spell) -> Unit)? = when(variant.type){
-            SpellListType.PREPARED -> null
-            SpellListType.KNOWN -> { spell ->
-                val prepared = character.hasPreparedSpell(spell.key)
-                val hasMaxPrepared = character.spells.count { it.value } >=
-                        character.maxPreparedSpells
-                val isEnabled = !hasMaxPrepared || prepared
-                ClickableToken(
-                    enabled = isEnabled,
-                    onClick = {intend(Intent.SetSpellPreparedness(spell, !prepared))}
-                ) {
-                    PreparedToken(prepared = prepared, enabled = isEnabled)
-                }
-            }
-            SpellListType.CLASS -> { spell ->
-                val known = character.knowsSpell(spell.key)
-                ClickableToken(
-                    onClick = {intend(Intent.SetSpellLearnedness(spell, !known))}
-                ) {
-                    KnownToken(known = known)
-                }
-            }
-        }
-
-        val headerContent : @Composable (Int) -> Unit = when(variant.type){
-            SpellListType.PREPARED -> { level ->
-                character.spellSlots[level]?.let { slotLevel ->
-                    if(slotLevel.maxSlots != 0){
-                        SpellSlotLevelDisplay(
-                            slotLevel,
-                            onChange = { newLevel ->
-                                intend(Intent.SetSpellSlotLevel(level, newLevel))
-                            }
-                        )
-                    }
-                }
-            }
-            else -> {_ -> Unit}
-        }
-
-        val necessarySpellLevels = when(variant.type){
-            SpellListType.PREPARED -> character.spellSlots
-                .filter { it.value.maxSlots != 0 }
-                .keys
-            else -> emptySet()
-        }
-
-
-        SpellList(variant.state,
-            onSpellSelected = { intend(Intent.ViewSpell(it)) },
-            rightSideButton,
-            headerContent = headerContent,
-            showFilterOptions = variant.type == SpellListType.CLASS,
-            onChangeFilter = {
-                intend(Intent.SetListFilter(it))
-            },
-            shouldGroupByLevel = true,
-            necessarySpellLevels = necessarySpellLevels
-        )
-    }
-}
-
-@Composable
 fun CharacterDetailScreen(
     state: CharacterDetailState,
     variant: SpellListVariant,
@@ -225,14 +93,14 @@ fun CharacterDetailScreen(
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    state.character?.name ?: "",
+                    state.character.concreteState?.name ?: "",
                     modifier = Modifier.align(Alignment.CenterVertically),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(
                     onClick = {
-                        state.character?.let {
+                        state.character.concreteState?.let {
                             intend(Intent.EditCharacter(it.id))
                         }
                     }
@@ -243,59 +111,30 @@ fun CharacterDetailScreen(
         }
     ){ padding ->
         Box(modifier = Modifier.padding(padding)){
-            LoadingCharacterDetail(
-                state,
-                variant,
-                intend
-            )
-        }
-    }
-}
-
-@Composable
-fun LoadingCharacterDetail(
-    state: CharacterDetailState,
-    variant: SpellListVariant,
-    intend: (Intent) -> Unit
-){
-    // check and handle loading status and nullability of stuff
-    if(state.loading){
-        Box(modifier = Modifier.fillMaxSize()){
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-    }else{
-        if(!state.canBecomeConcrete()){
-            intend(Intent.Back)
-        }else{
-            CharacterDetail(
-                state.toConcrete(),
-                variant,
-                intend
-            )
+            CharacterDetail(state,variant,intend)
         }
     }
 }
 
 @Composable
 fun CharacterDetail(
-    state: ConcreteCharacterDetailState,
+    state: CharacterDetailState,
     variant: SpellListVariant,
     intend: (Intent) -> Unit
 ){
-    val character = state.character
-    Box(modifier = Modifier.fillMaxSize()){
-        Column {
-            /*
-            Text(
-                "(${character.characterClass} ${character.level})",
-                style = MaterialTheme.typography.titleSmall
-            )
-             */
-            SpellListVariantDisplay(
-                variant = variant,
-                character = state.character,
-                intend
-            )
+    state.character.map(
+        ifNotLoaded = {
+            Box(modifier = Modifier.fillMaxSize()){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        },
+        ifLoadedNull = { intend(Intent.Back) }
+    ){ character ->
+        Box(modifier = Modifier.fillMaxSize()){
+            Column {
+                val view = SpellListVariantView(variant, character, intend)
+                view.Display()
+            }
         }
     }
 }

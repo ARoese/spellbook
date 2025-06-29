@@ -13,37 +13,15 @@ import kotlinx.coroutines.launch
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterMutator
 import org.fufu.spellbook.character.domain.SpellSlotLevel
+import org.fufu.spellbook.composables.ComposeLoadable
 import org.fufu.spellbook.spell.domain.SpellListFilter
 import org.fufu.spellbook.spell.presentation.spellList.SpellListState
 import org.fufu.spellbook.spell.presentation.spellList.SpellListVM
 
 data class CharacterDetailState(
-    val character: Character? = null,
-    val selectedSpellList: SpellListType = SpellListType.PREPARED,
-    val loading: Boolean = true
+    val character: ComposeLoadable<Character> = ComposeLoadable(),
+    val selectedSpellList: SpellListType = SpellListType.PREPARED
 )
-
-data class ConcreteCharacterDetailState(
-    val character: Character,
-    val selectedSpellList: SpellListType = SpellListType.PREPARED,
-    val loading: Boolean = false
-)
-
-fun CharacterDetailState.canBecomeConcrete() : Boolean {
-    return character != null
-}
-
-fun CharacterDetailState.toConcrete() : ConcreteCharacterDetailState {
-    if(!canBecomeConcrete()){
-        throw KotlinNullPointerException("null character is not allowed")
-    }
-
-    return ConcreteCharacterDetailState(
-        character!!,
-        selectedSpellList,
-        loading
-    )
-}
 
 enum class SpellListType{
     PREPARED,
@@ -90,7 +68,7 @@ class CharacterDetailVM(
                     )
                 )
 
-                val lastClass = _state.value.character?.characterClass
+                val lastClass = _state.value.character.concreteState?.characterClass
                 val newClass = character?.characterClass
                 // so updates to character that don't change the class
                 // do not make the user need to fight with the class filter
@@ -103,8 +81,7 @@ class CharacterDetailVM(
 
                 _state.update{
                     it.copy(
-                        character = character,
-                        loading = false
+                        character = ComposeLoadable(character)
                     )
                 }
             }.launchIn(viewModelScope)
@@ -117,7 +94,7 @@ class CharacterDetailVM(
     }
 
     fun onSetSpellLearned(spell: Int, learned: Boolean){
-        state.value.character?.let { character ->
+        state.value.character.concreteState?.let { character ->
             viewModelScope.launch {
                 provider.setCharacter(
                     character.copy(
@@ -133,7 +110,7 @@ class CharacterDetailVM(
     }
 
     fun onSetSpellPrepared(spell: Int, prepared: Boolean){
-        state.value.character?.let { character ->
+        state.value.character.concreteState?.let { character ->
             viewModelScope.launch {
                 provider.setCharacter(
                     character.copy(
@@ -147,7 +124,7 @@ class CharacterDetailVM(
     }
 
     fun onSetSpellSlot(level: Int, slotLevel: SpellSlotLevel){
-        state.value.character?.let { character ->
+        state.value.character.concreteState?.let { character ->
             viewModelScope.launch {
                 val newSpellSlots = character.spellSlots.plus(level to slotLevel)
                 provider.setCharacter(
