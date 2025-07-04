@@ -79,6 +79,7 @@ val PreviewCharacters = (1..21)
             spellSlots = (1..9)
                 .associateWith { seededRandom.nextInt(until=6)+1 }
                 .mapValues { SpellSlotLevel(it.value, seededRandom.nextInt(it.value)) },
-            characterIcon = CharacterIcon.options().random(seededRandom)
+            characterIcon = CharacterIcon.options().random(seededRandom),
+            preparedSpellLists = emptyMap()
         )
     }

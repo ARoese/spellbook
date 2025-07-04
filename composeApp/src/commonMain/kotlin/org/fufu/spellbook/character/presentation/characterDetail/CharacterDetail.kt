@@ -57,11 +57,13 @@ fun CharacterDetailScreenRoot(
                 viewModel.onSetSpellListType(intent.type)
             }
             is Intent.EditCharacter -> onClickEditCharacter(intent.characterId)
-            is Intent.SetSpellLearnedness -> viewModel.onSetSpellLearned(intent.spell.key, intent.learned)
-            is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell.key, intent.prepared)
+            is Intent.SetSpellLearnedness -> viewModel.onSetSpellLearned(intent.spell, intent.learned)
+            is Intent.SetSpellPreparedness -> viewModel.onSetSpellPrepared(intent.spell, intent.prepared)
+            is Intent.SetSpellsPreparedness -> viewModel.onSetSpellsPrepared(intent.spells)
             is Intent.ViewSpell -> onViewSpell(intent.spell)
             is Intent.SetSpellSlotLevel -> viewModel.onSetSpellSlot(intent.level, intent.slotLevel)
             is Intent.SetListFilter -> viewModel.classSpellList.useFilter(intent.filter.copy(onlyIds = null))
+            is Intent.SetSpellPrepLists -> viewModel.setSpellPrepLists(intent.lists)
         }
     }
 }
@@ -71,10 +73,12 @@ sealed interface Intent {
     data object Back : Intent
     data class EditCharacter(val characterId: Int) : Intent
     data class ChangeListVariant(val type: SpellListType) : Intent
-    data class SetSpellLearnedness(val spell: Spell, val learned: Boolean) : Intent
-    data class SetSpellPreparedness(val spell: Spell, val prepared: Boolean) : Intent
+    data class SetSpellLearnedness(val spell: Int, val learned: Boolean) : Intent
+    data class SetSpellPreparedness(val spell: Int, val prepared: Boolean) : Intent
+    data class SetSpellsPreparedness(val spells: Map<Int, Boolean>) : Intent
     data class SetSpellSlotLevel(val level: Int, val slotLevel: SpellSlotLevel) : Intent
     data class SetListFilter(val filter: SpellListFilter) : Intent
+    data class SetSpellPrepLists(val lists: Map<String, Set<Int>>) : Intent
 }
 
 @Composable

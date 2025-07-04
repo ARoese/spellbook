@@ -32,13 +32,20 @@ data class Character (
     val level: Int,
     val maxPreparedSpells: Int,
     val spellSlots: Map<Int, SpellSlotLevel>,
+    val preparedSpellLists: Map<String, Set<Int>>,
     val characterIcon: String
 )
 
 fun Character.normalized(): Character {
     return this.copy(
         characterClass=characterClass.lowercase(),
-        subclass=subclass.lowercase()
+        subclass=subclass.lowercase(),
+        preparedSpellLists = preparedSpellLists
+            .mapValues {
+                it.value.filter { spellId ->
+                    this.knowsSpell(spellId)
+                }.toSet()
+        }
     )
 }
 
@@ -64,8 +71,6 @@ data class CharacterIcon (val icon: String) {
     fun fromString() : ImageVector {
         return mapping[icon]?.let{ vectorResource(it) } ?: Icons.Default.Close
     }
-
-
 }
 
 val defaultCharacter: Character = Character(
@@ -77,7 +82,8 @@ val defaultCharacter: Character = Character(
     level = 0,
     maxPreparedSpells = 0,
     spellSlots = emptyMap(),
-    characterIcon = "Icon1"
+    characterIcon = "Icon1",
+    preparedSpellLists = emptyMap()
 )
 
 fun Character.hasPreparedSpell(id: Int) : Boolean {

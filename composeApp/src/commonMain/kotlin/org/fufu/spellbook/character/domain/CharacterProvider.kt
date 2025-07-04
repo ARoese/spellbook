@@ -7,6 +7,7 @@ import org.fufu.spellbook.PreviewCharacters
 interface CharacterProvider {
     fun getCharacters() : Flow<List<Character>>
     fun getCharacter(id: Int) : Flow<Character?>
+
 }
 
 interface CharacterMutator : CharacterProvider {

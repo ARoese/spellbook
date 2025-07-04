@@ -16,7 +16,11 @@ data class CharacterEntity (
     val characterIcon: String,
 )
 
-fun CharacterEntity.fromEntity(spellSlots: Map<Int, SpellSlotLevel>, spells: Map<Int, Boolean>) : Character {
+fun CharacterEntity.fromEntity(
+    spellSlots: Map<Int, SpellSlotLevel>,
+    spells: Map<Int, Boolean>,
+    spellPrepLists: Map<String, Set<Int>>
+) : Character {
     return Character(
         id = id,
         name = name,
@@ -26,7 +30,8 @@ fun CharacterEntity.fromEntity(spellSlots: Map<Int, SpellSlotLevel>, spells: Map
         level = level,
         maxPreparedSpells = maxPreparedSpells,
         spellSlots = spellSlots,
-        characterIcon = characterIcon
+        characterIcon = characterIcon,
+        preparedSpellLists = spellPrepLists
     )
 }
 

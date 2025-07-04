@@ -109,6 +109,18 @@ class CharacterDetailVM(
         }
     }
 
+    fun onSetSpellsPrepared(spells: Map<Int, Boolean>){
+        state.value.character.concreteState?.let { character ->
+            viewModelScope.launch {
+                provider.setCharacter(
+                    character.copy(
+                        spells = spells
+                    )
+                )
+            }
+        }
+    }
+
     fun onSetSpellPrepared(spell: Int, prepared: Boolean){
         state.value.character.concreteState?.let { character ->
             viewModelScope.launch {
@@ -120,6 +132,14 @@ class CharacterDetailVM(
                     )
                 )
             }
+        }
+    }
+
+    fun setSpellPrepLists(newLists: Map<String, Set<Int>>){
+        val character = _state.value.character.concreteState ?: return
+        viewModelScope.launch {
+            val newCharacter = character.copy(preparedSpellLists = newLists)
+            provider.setCharacter(newCharacter)
         }
     }
 

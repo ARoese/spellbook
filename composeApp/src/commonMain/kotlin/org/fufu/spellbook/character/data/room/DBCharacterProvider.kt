@@ -48,7 +48,8 @@ class DBCharacterMutator(
         characterDao.setCharacter(
             character.toEntity(),
             spellSlotEntities,
-            spellEntities
+            spellEntities,
+            character.preparedSpellLists
         )
     }
 
