@@ -54,7 +54,7 @@ fun usingDarkTheme(): Boolean {
         .collectAsState(DarkModePreference.SYSTEM)
     return when(darkmode){
         DarkModePreference.DARK -> true
-        DarkModePreference.SYSTEM, null -> isSystemInDarkTheme()
+        DarkModePreference.SYSTEM -> isSystemInDarkTheme()
         DarkModePreference.LIGHT -> false
     }
 }
