@@ -102,6 +102,8 @@ kotlin {
             implementation("me.zodd:KsonMulti")
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.1")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
+            implementation("org.slf4j:slf4j-api:2.0.17")
+            implementation("ch.qos.logback:logback-classic:1.5.18")
         }
         commonTest.dependencies {
             implementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
@@ -138,6 +140,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
         }
     }
     buildTypes {
