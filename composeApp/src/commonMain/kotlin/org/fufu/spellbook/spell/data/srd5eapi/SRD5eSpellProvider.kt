@@ -14,12 +14,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNamingStrategy
 import kson.KsonApi
 import kson.models.Spells
-import okio.withLock
+import org.fufu.spellbook.CachedSuspend
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.SpellProvider
 import org.fufu.spellbook.spell.domain.normalized
-import java.util.concurrent.locks.ReentrantLock
 
 @OptIn(kotlinx.serialization.ExperimentalSerializationApi::class)
 fun makeClient(): HttpClient {
@@ -43,32 +42,6 @@ fun makeClient(): HttpClient {
                 connectTimeout = 10000
                 connectAttempts = 5
             }
-        }
-    }
-}
-
-class CachedSuspend<T>(val initializer: (suspend () -> T)){
-    private var cached: T? = null
-    private var initializerInvoked = false
-    private val initializerLock = ReentrantLock()
-    private suspend fun initializerSafe(): T {
-        if(initializerInvoked){
-            throw Exception("Cyclical dependency or double-initialize in cached suspend detected")
-        }
-        initializerInvoked = true
-        return initializer()
-    }
-
-    suspend fun get(): T {
-        // skip lock acquisition if cached value is already non-null
-        cached?.let { return it }
-
-        initializerLock.withLock {
-            // tasks waiting on the lock should check if the value
-            // was computed in the mean-time
-            cached?.let { return it }
-
-            return initializerSafe().also { cached = it }
         }
     }
 }

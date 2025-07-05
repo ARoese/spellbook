@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kson.KsonApi
 import kson.models.Conditions
+import org.fufu.spellbook.CachedSuspend
 import org.fufu.spellbook.spell.domain.Condition
 import org.fufu.spellbook.spell.domain.ConditionProvider
 
