@@ -61,6 +61,8 @@ kotlin {
 
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+
+            implementation("com.github.tony19:logback-android:3.0.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -103,7 +105,6 @@ kotlin {
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.1")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
             implementation("org.slf4j:slf4j-api:2.0.17")
-            implementation("ch.qos.logback:logback-classic:1.5.18")
         }
         commonTest.dependencies {
             implementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
@@ -114,6 +115,8 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.skiko.awt.runtime.windows.x64)
             implementation(libs.kotlinx.coroutines.swing)
+
+            implementation("ch.qos.logback:logback-classic:1.5.18")
         }
 
         dependencies {
