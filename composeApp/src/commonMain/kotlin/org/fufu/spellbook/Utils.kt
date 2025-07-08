@@ -1,8 +1,11 @@
 package org.fufu.spellbook
 
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
+import kotlin.coroutines.CoroutineContext
 
 inline fun <reified T : Enum<T>>toStringUsingName(enum: T) : String{
     return enum.name
@@ -32,7 +35,21 @@ fun <T> nullingXor(self: Set<T>?, other: T): Set<T>? {
 class CachedSuspend<T>(val initializer: (suspend () -> T)){
     private var cached: T? = null
     private val initializerMutex = Mutex()
-    private val mutexOwner = Any()
+
+
+    private class ReentrancyMarker(
+        val localReentrancyKey: CoroutineContext.Key<ReentrancyMarker>
+    ) : CoroutineContext.Element {
+        override val key: CoroutineContext.Key<*>
+            get() = localReentrancyKey
+
+    }
+
+    // it's important that this object is not singleton. Otherwise, another
+    // CachedSuspend sharing that singleton key will falsely think it's
+    // cyclical.
+    private val reentrancyKey = object : CoroutineContext.Key<ReentrancyMarker>{}
+    private val reentrancyMarker = ReentrancyMarker(reentrancyKey)
 
     /**
      *  Get the cached value, or compute the value and return it.
@@ -43,20 +60,20 @@ class CachedSuspend<T>(val initializer: (suspend () -> T)){
         // skip lock acquisition if cached value is already non-null
         cached?.let { return it }
 
-        try{
-            initializerMutex.withLock(mutexOwner){
-                // tasks waiting on the lock should check if the value
-                // was computed in the mean-time
-                cached?.let { return it }
-
-                return initializer().also { cached = it }
-            }
-        }catch(e: IllegalStateException){
-            throw IllegalStateException(
-                "Cyclical dependency or double-initialize in cached suspend detected",
-                e
-            )
+        val context = currentCoroutineContext()
+        if (context[reentrancyKey] != null) {
+            throw IllegalStateException("Cyclical dependency or recursive initializer call detected")
         }
 
+        initializerMutex.withLock{
+            // tasks waiting on the lock should check if the value
+            // was computed in the mean-time
+            cached?.let { return it }
+
+            val ctx = context + reentrancyMarker
+            return withContext(ctx){
+                initializer().also { cached = it }
+            }
+        }
     }
 }
