@@ -126,8 +126,8 @@ kotlin {
 }
 
 // NOTE: Make sure to update versionCode when you update this
-val versionString = "1.3.0"
-val versionCode = 5
+val versionString = "1.3.1"
+val versionCode = 6
 
 android {
     namespace = fufuPackageName
