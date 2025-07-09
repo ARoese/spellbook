@@ -69,7 +69,10 @@ fun main(){
 
                         Scaffold {
                             LoadingSpellDetail(
-                                spellState, {}, {}
+                                spellState,
+                                {},
+                                { vm.showCondition(it) },
+                                { vm.hideCondition() }
                             )
                         }
 

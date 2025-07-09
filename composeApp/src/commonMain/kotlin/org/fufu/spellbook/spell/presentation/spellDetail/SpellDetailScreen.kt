@@ -171,13 +171,6 @@ fun SpellDetailScreen(
         },
         floatingActionButton = floatingActionButton
     ) { padding ->
-        if(state.viewedCondition != null){
-            ModalBottomSheet(
-                onDismissRequest = onConditionHidden
-            ){
-                ConditionDetail(state.viewedCondition)
-            }
-        }
         Box(
             modifier = Modifier
                 .padding(padding)
@@ -185,7 +178,8 @@ fun SpellDetailScreen(
             LoadingSpellDetail(
                 state,
                 onSpellEdited = onSpellEdited,
-                onConditionClicked = onConditionClicked
+                onConditionClicked = onConditionClicked,
+                onConditionHidden = onConditionHidden
             )
         }
     }
@@ -193,11 +187,13 @@ fun SpellDetailScreen(
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadingSpellDetail(
     state: SpellDetailState,
     onSpellEdited: (SpellInfo) -> Unit = {},
-    onConditionClicked: (String) -> Unit
+    onConditionClicked: (String) -> Unit,
+    onConditionHidden: () -> Unit = {}
 ){
     // check and handle loading status and nullability of stuff
     if(state.loading){
@@ -210,6 +206,13 @@ fun LoadingSpellDetail(
                 Text("Spell Missing")
             }
         }else{
+            if(state.viewedCondition != null){
+                ModalBottomSheet(
+                    onDismissRequest = onConditionHidden
+                ){
+                    ConditionDetail(state.viewedCondition)
+                }
+            }
             SpellDetail(
                 state.toConcrete(),
                 onSpellEdited,
