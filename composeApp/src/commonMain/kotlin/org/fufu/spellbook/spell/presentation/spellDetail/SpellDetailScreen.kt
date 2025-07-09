@@ -46,51 +46,57 @@ import spellbook.composeapp.generated.resources.Res
 import spellbook.composeapp.generated.resources.content_copy
 import spellbook.composeapp.generated.resources.open_in_new
 
+fun SpellDetailVM.handleIntent(
+    intent: Intent,
+    onPopoutClicked: (() -> Unit)?,
+    onBack: () -> Unit
+){
+    when(intent){
+        is Intent.OnCloseClicked -> this.closeClicked()
+        is Intent.SetEditing -> this.setEditing(intent.editing)
+        is Intent.OnSpellEdited -> this.spellEdited(intent.newInfo)
+        is Intent.OnDeleteClicked -> this.deleteClicked()
+        is Intent.OnViewCondition -> this.showCondition(intent.conditionName)
+        is Intent.OnDuplicateSpell -> this.duplicateSpell()
+        is Intent.OnHideCondition -> this.hideCondition()
+        is Intent.OnPopoutClicked -> onPopoutClicked?.let{
+            it()
+            onBack()
+        }
+
+        Intent.OnSaveSpell -> this.saveSpell()
+    }
+}
+
 @Composable
 fun SpellDetailScreenRoot(
     viewModel: SpellDetailVM,
-    onCloseClicked: () -> Unit,
+    onBack: () -> Unit,
     onPopoutClicked: (() -> Unit)? = null
     ){
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    fun doCloseFunction(){
-        // if the viewModel lets us, forward it to navigation
-        val vmRes = viewModel.onAction(
-            SpellDetailVM.Action.OnCloseClicked
-        )
-        if (vmRes != null) {
-            onCloseClicked()
-        }
-    }
+    val canPopout = onPopoutClicked != null
+            && (state.originalSpell?.key ?: 0) != 0
 
     SpellDetailScreen(
         state,
-        onCloseClicked = { doCloseFunction() },
-        onSpellEdited = { viewModel.onAction(SpellDetailVM.Action.OnSpellEdited(it)) },
-        onEditClicked = { viewModel.onAction(SpellDetailVM.Action.OnEditClicked) },
-        onDeleteClicked = {
-            val vmRes = viewModel.onAction(SpellDetailVM.Action.OnDeleteClicked)
-            if(vmRes != null){
-                onCloseClicked()
-            }
-        },
-        onCopyClicked = {
-            viewModel.duplicateSpell()
-        },
-        onPopoutClicked = onPopoutClicked?.let{
-            {
-                it()
-                doCloseFunction()
-            }
-        },
-        onConditionClicked = {
-            viewModel.showCondition(conditionName = it)
-        },
-        onConditionHidden = {
-            viewModel.hideCondition()
-        }
-    )
+        canPopout
+    ){
+        viewModel.handleIntent(it, onPopoutClicked, onBack)
+    }
+}
+
+sealed interface Intent{
+    data object OnCloseClicked : Intent
+    data class SetEditing(val editing: Boolean) : Intent
+    data class OnSpellEdited(val newInfo: SpellInfo) : Intent
+    data object OnDeleteClicked : Intent
+    data class OnViewCondition(val conditionName: String): Intent
+    data object OnDuplicateSpell: Intent
+    data object OnHideCondition: Intent
+    data object OnPopoutClicked: Intent
+    data object OnSaveSpell: Intent
 }
 
 @Composable
@@ -105,18 +111,11 @@ fun ConditionDetail(condition: Condition){
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SpellDetailScreen(
     state: SpellDetailState,
-    onCloseClicked: () -> Unit = {},
-    onPopoutClicked: (() -> Unit)? = null,
-    onSpellEdited: (SpellInfo) -> Unit = {},
-    onEditClicked: () -> Unit = {},
-    onCopyClicked: () -> Unit = {},
-    onDeleteClicked: () -> Unit = {},
-    onConditionClicked: (String) -> Unit = {},
-    onConditionHidden: () -> Unit = {}
+    canPopout: Boolean = false,
+    intend: (Intent) -> Unit
 ){
     val editButtonIcon = if(state.isEditing){
         Icons.Filled.Check
@@ -125,10 +124,10 @@ fun SpellDetailScreen(
     }
 
     val floatingActionButton: @Composable () -> Unit =
-        if(onPopoutClicked != null && (state.originalSpell?.key ?: 0) != 0 ) {
+        if(canPopout) {
             @Composable {
                 FloatingActionButton(
-                    onClick = { onPopoutClicked() }
+                    onClick = { intend(Intent.OnPopoutClicked) }
                 ) {
                     Icon(painterResource(Res.drawable.open_in_new), "Popout")
                 }
@@ -142,7 +141,7 @@ fun SpellDetailScreen(
             Box(modifier = Modifier.fillMaxWidth()){
                 if(state.isEditing){
                     IconButton(
-                        onClick = onDeleteClicked
+                        onClick = {intend(Intent.OnDeleteClicked)}
                     ){
                         Icon(Icons.Filled.Delete, "Delete")
                     }
@@ -150,19 +149,25 @@ fun SpellDetailScreen(
 
                 Row(modifier = Modifier.align(Alignment.CenterEnd)){
                     IconButton(
-                        onClick = onEditClicked,
+                        onClick = {
+                            if(state.isEditing){
+                                intend(Intent.OnSaveSpell)
+                            }else{
+                                intend(Intent.SetEditing(true))
+                            }
+                                  },
                     ) {
                         Icon(editButtonIcon, "Edit")
                     }
 
                     IconButton(
-                        onClick = onCopyClicked
+                        onClick = {intend(Intent.OnDuplicateSpell)}
                     ){
                         Icon(painterResource(Res.drawable.content_copy), "Edit")
                     }
 
                     IconButton(
-                        onClick = onCloseClicked,
+                        onClick = {intend(Intent.OnCloseClicked)},
                     ) {
                         Icon(Icons.Filled.Close, "Close")
                     }
@@ -177,9 +182,7 @@ fun SpellDetailScreen(
         ) {
             LoadingSpellDetail(
                 state,
-                onSpellEdited = onSpellEdited,
-                onConditionClicked = onConditionClicked,
-                onConditionHidden = onConditionHidden
+                intend
             )
         }
     }
@@ -191,34 +194,31 @@ fun SpellDetailScreen(
 @Composable
 fun LoadingSpellDetail(
     state: SpellDetailState,
-    onSpellEdited: (SpellInfo) -> Unit = {},
-    onConditionClicked: (String) -> Unit,
-    onConditionHidden: () -> Unit = {}
+    intend: (Intent) -> Unit
 ){
-    // check and handle loading status and nullability of stuff
-    if(state.loading){
-        Box(modifier = Modifier.fillMaxSize()){
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-    }else{
-        if(!state.canBecomeConcrete()){
+    state.spellInfo.map(
+        ifNotLoaded = {
             Box(modifier = Modifier.fillMaxSize()){
-                Text("Spell Missing")
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-        }else{
-            if(state.viewedCondition != null){
-                ModalBottomSheet(
-                    onDismissRequest = onConditionHidden
-                ){
-                    ConditionDetail(state.viewedCondition)
-                }
-            }
-            SpellDetail(
-                state.toConcrete(),
-                onSpellEdited,
-                onConditionClicked = onConditionClicked
-            )
+        },
+        ifLoadedNull = {
+            intend(Intent.OnCloseClicked)
         }
+    ){ spellInfo ->
+        if(state.viewedCondition != null){
+            ModalBottomSheet(
+                onDismissRequest = {intend(Intent.OnHideCondition)}
+            ){
+                ConditionDetail(state.viewedCondition)
+            }
+        }
+        SpellDetail(
+            spellInfo,
+            isEditing = state.isEditing,
+            conditions = state.conditions,
+            intend
+        )
     }
 }
 
@@ -289,82 +289,82 @@ fun StringListEditor(
 
 @Composable
 fun ListDisplays(
-    state: ConcreteSpellDetailState,
+    spellInfo: SpellInfo,
+    isEditing: Boolean,
     onSpellEdited: (SpellInfo) -> Unit
 ){
     EditableStringListDisplay(
         "Versions",
-        state.spellInfo.versions,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(versions = it)) }
+        spellInfo.versions,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(versions = it)) }
     )
 
     EditableStringListDisplay(
         "Sources",
-        state.spellInfo.sources,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(sources = it)) }
+        spellInfo.sources,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(sources = it)) }
     )
 
     EditableStringListDisplay(
         "Subclasses",
-        state.spellInfo.subclasses,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(subclasses = it)) }
+        spellInfo.subclasses,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(subclasses = it)) }
     )
 
     EditableStringListDisplay(
         "Optional Subclass",
-        state.spellInfo.optional,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(optional = it)) }
+        spellInfo.optional,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(optional = it)) }
     )
 
     EditableStringListDisplay(
         "DragonMarks",
-        state.spellInfo.dragonmarks,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(dragonmarks = it)) }
+        spellInfo.dragonmarks,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(dragonmarks = it)) }
     )
 
     EditableStringListDisplay(
         "Guilds",
-        state.spellInfo.guilds,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(guilds = it)) }
+        spellInfo.guilds,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(guilds = it)) }
     )
 
     EditableStringListDisplay(
         "Tags",
-        state.spellInfo.tag,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(tag = it)) }
+        spellInfo.tag,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(tag = it)) }
     )
 
     EditableStringListDisplay(
         "Damages",
-        state.spellInfo.damages,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(damages = it)) }
+        spellInfo.damages,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(damages = it)) }
     )
 
     EditableStringListDisplay(
         "Saves",
-        state.spellInfo.saves,
-        state.isEditing,
-        onChange = { onSpellEdited(state.spellInfo.copy(saves = it)) }
+        spellInfo.saves,
+        isEditing,
+        onChange = { onSpellEdited(spellInfo.copy(saves = it)) }
     )
 
 }
 
 @Composable
 fun SpellDetail(
-    state: ConcreteSpellDetailState,
-    onSpellEdited: (SpellInfo) -> Unit = {},
-    onConditionClicked: (String) -> Unit = {}
+    spellInfo: SpellInfo,
+    isEditing: Boolean,
+    conditions: Set<String>?,
+    intend: (Intent) -> Unit
 ){
-    val spellInfo = state.spellInfo
-    val isEditing = state.isEditing
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -387,7 +387,7 @@ fun SpellDetail(
                         fontWeight = FontWeight.Bold,
                         isEditing = isEditing,
                         onChange = {
-                            onSpellEdited(spellInfo.copy(name = it))
+                            intend(Intent.OnSpellEdited(spellInfo.copy(name = it)))
                         }
                     )
 
@@ -400,7 +400,7 @@ fun SpellDetail(
                                 (0..12).toList(),
                                 setOf(spellInfo.level),
                                 optionPresenter = { Text("$it") },
-                                onOptionPicked = { onSpellEdited(spellInfo.copy(level = it)) },
+                                onOptionPicked = { intend(Intent.OnSpellEdited(spellInfo.copy(level = it))) },
                                 singleSelect = true
                             ) {
                                 Text("${spellInfo.level}")
@@ -409,7 +409,7 @@ fun SpellDetail(
                             TextField(
                                 spellInfo.school,
                                 onValueChange = {
-                                    onSpellEdited(spellInfo.copy(school = it))
+                                    intend(Intent.OnSpellEdited(spellInfo.copy(school = it)))
                                 }
                             )
 
@@ -423,7 +423,7 @@ fun SpellDetail(
                                 Switch(
                                     checked = spellInfo.ritual,
                                     onCheckedChange = {
-                                        onSpellEdited(spellInfo.copy(ritual = it))
+                                        intend(Intent.OnSpellEdited(spellInfo.copy(ritual = it)))
                                     }
                                 )
                             }
@@ -445,25 +445,25 @@ fun SpellDetail(
                         "Casting Time",
                         EditableValue(
                             spellInfo.time,
-                            onChange = { onSpellEdited(spellInfo.copy(time = it)) })
+                            onChange = { intend(Intent.OnSpellEdited(spellInfo.copy(time = it))) })
                     ),
                     Pair(
                         "Range",
                         EditableValue(
                             spellInfo.range,
-                            onChange = { onSpellEdited(spellInfo.copy(range = it)) })
+                            onChange = { intend(Intent.OnSpellEdited(spellInfo.copy(range = it))) })
                     ),
                     Pair(
                         "Components",
                         EditableValue(
                             spellInfo.components,
-                            onChange = { onSpellEdited(spellInfo.copy(components = it)) })
+                            onChange = { intend(Intent.OnSpellEdited(spellInfo.copy(components = it))) })
                     ),
                     Pair(
                         "Duration",
                         EditableValue(
                             spellInfo.duration,
-                            onChange = { onSpellEdited(spellInfo.copy(duration = it)) }
+                            onChange = { intend(Intent.OnSpellEdited(spellInfo.copy(duration = it))) }
                         )
                     )
                 ),
@@ -472,23 +472,25 @@ fun SpellDetail(
             )
 
             // spell text
-            if(state.isEditing){
+            if(isEditing){
                 androidx.compose.material3.TextField(
-                    state.spellInfo.text,
-                    onValueChange = { onSpellEdited(state.spellInfo.copy(text=it)) },
+                    spellInfo.text,
+                    onValueChange = { intend(Intent.OnSpellEdited(spellInfo.copy(text=it))) },
                     minLines = 4
                 )
             }else{
                 SpellText(
                     spellInfo.text,
-                    state.conditions ?: emptySet(),
-                    onConditionClicked
+                    conditions ?: emptySet(),
+                    {
+                        intend(Intent.OnViewCondition(it))
+                    }
                 )
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            ListDisplays(state, onSpellEdited)
+            ListDisplays(spellInfo, isEditing, onSpellEdited = { intend(Intent.OnSpellEdited(it)) })
 
             Spacer(modifier = Modifier.height(100.dp))
         }

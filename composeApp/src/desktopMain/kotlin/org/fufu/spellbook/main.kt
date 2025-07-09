@@ -14,6 +14,7 @@ import io.github.vinceglb.filekit.FileKit
 import org.fufu.spellbook.di.initKoin
 import org.fufu.spellbook.spell.presentation.spellDetail.LoadingSpellDetail
 import org.fufu.spellbook.spell.presentation.spellDetail.SpellDetailVM
+import org.fufu.spellbook.spell.presentation.spellDetail.handleIntent
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -54,9 +55,12 @@ fun main(){
                 key(spellId){
                     val state = rememberWindowState()
                     state.isMinimized = mainWindowState.isMinimized
+                    fun onClose(){
+                        spellsToDisplay = spellsToDisplay.minus(spellId)
+                    }
                     Window(
                         state = state,
-                        onCloseRequest = { spellsToDisplay = spellsToDisplay.minus(spellId) },
+                        onCloseRequest = { onClose() },
                         title = windowName,
                         icon = painterResource(Res.drawable.app_icon)
                     ) {
@@ -65,19 +69,16 @@ fun main(){
                             parameters = { parametersOf(spellId) }
                         )
                         val spellState by vm.state.collectAsStateWithLifecycle()
-                        windowName = spellState.spellInfo?.name ?: "Spell View"
+                        windowName = spellState.spellInfo.concreteState?.name ?: "Spell View"
 
                         Scaffold {
                             LoadingSpellDetail(
-                                spellState,
-                                {},
-                                { vm.showCondition(it) },
-                                { vm.hideCondition() }
-                            )
+                                spellState
+                            ){
+                                vm.handleIntent(it, {}, {onClose()})
+                            }
                         }
-
                     }
-
                 }
             }
         }

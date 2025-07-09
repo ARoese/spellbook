@@ -125,13 +125,13 @@ val previewSpell = PreviewSpells[5]
 @Preview(showBackground = true)
 @Composable
 fun SpellDetailScreenPreview(){
-    SpellDetailScreen(SpellDetailState(previewSpell, isEditing = false, loading = false))
+    SpellDetailScreen(SpellDetailState(previewSpell, isEditing = false)){}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SpellDetailEditingScreenPreview(){
-    SpellDetailScreen(SpellDetailState(previewSpell, isEditing = true, loading = false))
+    SpellDetailScreen(SpellDetailState(previewSpell, isEditing = true)){}
 }
 
 @Preview(showBackground = true)

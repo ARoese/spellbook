@@ -179,7 +179,7 @@ fun App(
                     Backable(navController){ onBack ->
                         SpellDetailScreenRoot(
                             detailViewModel,
-                            onCloseClicked = onBack,
+                            onBack = onBack,
                             onPopoutClicked = requestWindowForSpell?.let{ { it(spellID) } }
                         )
                     }
