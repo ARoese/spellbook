@@ -3,15 +3,21 @@ description: "Checks out branch, installs java, gradle, and cache"
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         submodules: recursive
-    - uses: actions/setup-java@v4
+    - uses: actions/setup-java@v5
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - uses: actions/setup-java@v5
       with:
         java-version: '21'
         distribution: 'temurin'
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v4
 
-    - uses: gradle/actions/setup-gradle@v4
+    - uses: gradle/actions/setup-gradle@v6
       with:
         # PRs from forks can read cache but not write — prevents cache poisoning
         cache-read-only: ${{ github.event_name == 'pull_request' }}

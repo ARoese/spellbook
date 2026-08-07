@@ -12,33 +12,42 @@ jobs:
       contents: write
 
     steps:
-      - uses: $/.github/actions/setup-build
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/setup-build
       - name: "Build msi installer"
         run: ./gradlew.bat packageReleaseMsi
 
+      - run: |
+          mkdir release-files
+          mv composeApp/build/compose/binaries/main-release/msi/*.msi release-files/spellbook-installer-${{ github.event.release.tag_name }}.msi
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.event.release.tag_name }} composeApp/build/binaries/main-release/msi/*.msi
+        run: gh release upload ${{ github.event.release.tag_name }} release-files/*.msi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: windows release build
-          path: composeApp/build/binaries/main-release/msi/*.msi
+          path: release-files/*.msi
 
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
 
     steps:
-      - uses: $/.github/actions/setup-build
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: ./.github/actions/setup-build
       - name: "Build releases"
-        run: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseApk packageReleaseUberJarForCurrentOS
+        run: ./gradlew --info createReleaseDistributable packageReleaseDeb packageReleaseApk packageReleaseUberJarForCurrentOS
 
       - run: |
           mkdir release-files
-          mv composeApp/build/outputs/apk/release/composeApp-release-unsigned.apk release-files/spellbook-${{ github.event.release.tag_name }}.apk
+          mv composeApp/build/outputs/apk*/release/*.apk release-files/spellbook-${{ github.event.release.tag_name }}.apk
           mv composeApp/build/compose/binaries/main-release/deb/org.fufu.spellbook_*.deb release-files/spellbook-${{ github.event.release.tag_name }}.deb
           mv composeApp/build/compose/jars/org.fufu.spellbook-linux-x64-*-release.jar release-files/spellbook-${{ github.event.release.tag_name }}.jar
           tar -czvf release-files/spellbook-${{ github.event.release.tag_name }}.tar.gz composeApp/build/compose/binaries/main-release/app
@@ -47,7 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ github.event.release.tag_name }} release-files/*
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release builds
           path: release-files/*
