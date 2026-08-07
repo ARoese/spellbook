@@ -165,7 +165,7 @@ private fun cleanUpSpellText(text: String): String{
     return text
         .replace("\t", "  ")
         .replace("\r\n", "\n")
-        //.replace("\n", "\n\n")
+        .replace("\n", "\n\n")
 }
 
 @Composable
