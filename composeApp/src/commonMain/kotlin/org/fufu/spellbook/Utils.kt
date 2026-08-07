@@ -1,6 +1,13 @@
 package org.fufu.spellbook
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -27,6 +34,37 @@ fun <T> nullingXor(self: Set<T>?, other: Set<T>): Set<T>? {
 fun <T> nullingXor(self: Set<T>?, other: T): Set<T>? {
     val oneSet = setOf(other)
     return (self?.xor(oneSet) ?: oneSet).ifEmpty { null }
+}
+
+/**
+ * Allow horizontal scrolling using the scroll wheel without needing to hold shift
+ * requires that the normal horizontalScroll modifier also be applied after, using the same scrollState
+ */
+fun Modifier.horizontalScrollViaVerticalWheel(
+    scrollState: ScrollState,
+    coroutineScope: CoroutineScope
+): Modifier = this.pointerInput(scrollState) {
+    awaitPointerEventScope {
+        var scrollTarget = 0f
+        while (true) {
+            val event = awaitPointerEvent()
+            if (event.type == PointerEventType.Scroll) {
+                val change = event.changes.firstOrNull()
+                if (change != null && change.scrollDelta != Offset.Zero) {
+                    // Map vertical wheel delta (y) to horizontal scroll position (x)
+                    val delta = change.scrollDelta.y * 80f // adjust multiplier for speed
+                    scrollTarget = (scrollTarget + delta)
+                        .coerceAtLeast(0f)
+                        .coerceAtMost(scrollState.maxValue.toFloat())
+                    coroutineScope.launch {
+                        scrollState.animateScrollTo(scrollTarget.toInt())
+                    }
+
+                    change.consume()
+                }
+            }
+        }
+    }
 }
 
 /** Represents a lazily-initialized value which will suspend on its first usage,

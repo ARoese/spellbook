@@ -1,18 +1,10 @@
 package org.fufu.spellbook.character.presentation.characterDetail
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -21,8 +13,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -30,23 +20,21 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.hasPreparedSpell
 import org.fufu.spellbook.character.domain.knowsSpell
 import org.fufu.spellbook.composables.ClickableToken
-import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.composables.KnownToken
 import org.fufu.spellbook.composables.PreparedToken
+import org.fufu.spellbook.horizontalScrollViaVerticalWheel
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.presentation.spellList.SpellList
 
@@ -195,10 +183,13 @@ class SpellListVariantView(
         Column {
             var isNameFieldVisible by remember { mutableStateOf(false) }
             var deleting by remember { mutableStateOf(false) }
+            val scrollState = rememberScrollState()
+            val crts = rememberCoroutineScope()
             Row {
                 Row(
                     modifier = Modifier
-                        .horizontalScroll(rememberScrollState())
+                        .horizontalScrollViaVerticalWheel(scrollState, crts)
+                        .horizontalScroll(scrollState)
                         .weight(1f),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ){

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -22,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import org.fufu.spellbook.composables.BooleanSelector
 import org.fufu.spellbook.composables.DropdownSelector
+import org.fufu.spellbook.horizontalScrollViaVerticalWheel
 import org.fufu.spellbook.nullingXor
 import org.fufu.spellbook.spell.domain.SpellListFilter
 
@@ -42,9 +43,11 @@ fun SpellListFilterSelector(
         var textFieldExpanded by remember { mutableStateOf(false) }
         Row{
             val scrollState = rememberScrollState()
+            val crtS = rememberCoroutineScope()
             Row(
                 modifier = Modifier
                     .horizontalScroll(scrollState)
+                    .horizontalScrollViaVerticalWheel(scrollState, crtS)
                     .weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ){
@@ -102,7 +105,7 @@ fun SpellListFilterSelector(
 }
 
 @Composable
-fun RowScope.SpellListFilterSelectorItems(
+fun SpellListFilterSelectorItems(
     state: SpellListState,
     onChangeFilter: (SpellListFilter) -> Unit = {},
     onClickNameSearch: () -> Unit = {}
