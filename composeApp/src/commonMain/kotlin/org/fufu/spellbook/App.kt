@@ -2,6 +2,7 @@ package org.fufu.spellbook
 
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -103,7 +105,7 @@ fun Backable(
 
 @Composable
 fun BottomNavBar(navController: NavHostController, currentRoute: Route){
-    NavigationBar() {
+    NavigationBar {
         NavigationBarItem(
             selected = currentRoute == Route.MainSpellList,
             label = { Text("Spells")},
@@ -139,15 +141,13 @@ fun App(
         val navController = rememberNavController()
         NavHost(
             navController = navController,
-            startDestination = Route.RouteGraph
+            startDestination = Route.RouteGraph,
+            Modifier.background(MaterialTheme.colorScheme.background),
         ){
             navigation<Route.RouteGraph>(
                 startDestination = Route.MainSpellList
             ){
-                composable<Route.MainSpellList>(
-                    //exitTransition = { slideOutHorizontally()},
-                    //popEnterTransition = { slideInHorizontally() }
-                ){
+                composable<Route.MainSpellList>{
                     val listViewModel = koinViewModel<SpellListVM>(
                         qualifier = qualifier(MAIN_SPELL_LIST)
                     )
@@ -184,14 +184,7 @@ fun App(
                         )
                     }
                 }
-                composable<Route.CharacterList>(
-                    //enterTransition = { slideInHorizontally { initialOffset ->
-                    //    initialOffset
-                    //} },
-                    //exitTransition = { slideOutHorizontally { initialOffset ->
-                    //    initialOffset
-                    //} }
-                ){
+                composable<Route.CharacterList>{
                     val characterListViewModel = koinViewModel<CharacterListVM>()
 
                     CharacterListRoot(
@@ -205,14 +198,7 @@ fun App(
                         }
                     )
                 }
-                composable<Route.CharacterDetail>(
-//                    enterTransition = { slideInHorizontally { initialOffset ->
-//                        initialOffset
-//                    } },
-//                    exitTransition = { slideOutHorizontally { initialOffset ->
-//                        initialOffset
-//                    } }
-                ){ backStack ->
+                composable<Route.CharacterDetail>{ backStack ->
                     val characterID = backStack.toRoute<Route.CharacterDetail>().characterID
                     val detailViewModel = koinViewModel<CharacterDetailVM>(
                         parameters = { parametersOf(characterID) }
@@ -244,9 +230,7 @@ fun App(
                         )
                     }
                 }
-                composable<Route.ImportScreen>(
-
-                ){
+                composable<Route.ImportScreen>{
                     val importViewModel = koinViewModel<ImportScreenVM>()
                     ImportScreenRoot(
                         importViewModel,
@@ -263,9 +247,7 @@ fun App(
                         )
                     }
                 }
-                composable<Route.SettingsScreen>(
-
-                ){
+                composable<Route.SettingsScreen>{
                     SettingsScreen(
                         navBar = { BottomNavBar(navController, Route.SettingsScreen) }
                     )
