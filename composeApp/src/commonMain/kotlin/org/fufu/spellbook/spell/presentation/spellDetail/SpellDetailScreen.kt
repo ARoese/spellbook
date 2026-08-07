@@ -307,6 +307,13 @@ fun ListDisplays(
     )
 
     EditableStringListDisplay(
+        "Classes",
+        state.spellInfo.classes,
+        state.isEditing,
+        onChange = { onSpellEdited(state.spellInfo.copy(classes = it)) }
+    )
+
+    EditableStringListDisplay(
         "Subclasses",
         state.spellInfo.subclasses,
         state.isEditing,
