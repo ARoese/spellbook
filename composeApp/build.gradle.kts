@@ -127,17 +127,16 @@ kotlin {
 
 // NOTE: Make sure to update versionCode when you update this
 val versionString = "1.3.2"
-val versionCode = 7
+val gVersionCode = 7
 
 android {
     namespace = fufuPackageName
     compileSdk = libs.versions.android.compileSdk.get().toInt()
-
     defaultConfig {
         applicationId = fufuPackageName
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = versionCode
+        versionCode = gVersionCode
         versionName = versionString
     }
     packaging {
