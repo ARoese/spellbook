@@ -12,7 +12,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: $/actions/setup-build
+      - uses: $/.github/actions/setup-build
       - name: "Build msi installer"
         run: ./gradlew.bat packageReleaseMsi
 
@@ -32,7 +32,7 @@ jobs:
       contents: write
 
     steps:
-      - uses: $/actions/setup-build
+      - uses: $/.github/actions/setup-build
       - name: "Build releases"
         run: ./gradlew createReleaseDistributable packageReleaseDeb packageReleaseApk packageReleaseUberJarForCurrentOS
 
