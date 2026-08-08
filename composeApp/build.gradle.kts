@@ -105,6 +105,7 @@ kotlin {
             implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.1")
             implementation("io.ktor:ktor-client-content-negotiation:2.3.1")
             implementation("org.slf4j:slf4j-api:2.0.17")
+            implementation("io.github.sunny-chung:composable-table:1.3.1")
         }
         commonTest.dependencies {
             implementation("org.jetbrains.kotlin:kotlin-test:2.1.10")

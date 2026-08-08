@@ -1,17 +1,24 @@
 package org.fufu.spellbook.spell.presentation.spellDetail
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeightIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.sunnychung.lib.android.composabletable.ux.Table
+import org.fufu.spellbook.horizontalScrollViaVerticalWheel
 
 data class EditableValue<T>(val value: T, val onChange: (T)->Unit)
 
@@ -20,24 +27,33 @@ fun DisplayBlock(
     datums: Map<String, String>,
     modifier: Modifier = Modifier
 ){
-    Row(modifier = modifier){
-        Column(horizontalAlignment = Alignment.End){
-            datums.keys
-                .map{"$it: "}
-                .forEach {
-                    Text(
-                        it,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.End
-                    )
-                }
-        }
-        Column{
-            datums.values.forEach{
-                Text(it)
+    val list = datums.toList()
+    val scrollState = rememberScrollState()
+    val crsc = rememberCoroutineScope()
+    Table(
+        rowCount = datums.size,
+        columnCount = 2,
+        modifier = modifier
+            .requiredHeightIn(0.dp, 300.dp)
+            .horizontalScrollViaVerticalWheel(scrollState, crsc),
+        horizontalScrollState = scrollState
+    ) { row, col ->
+        val datum = list.getOrNull(row)
+        if(datum != null){
+            val (key,value) = datum;
+            if (col == 0) {
+                Text(
+                    "$key:",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier.wrapContentSize(Alignment.CenterEnd).padding(end=8.dp)
+                )
+            } else {
+                Text(value)
             }
         }
     }
+
 }
 
 @Composable
