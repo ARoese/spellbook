@@ -44,4 +44,4 @@ I do not publish to the Google Play Store. In order to install on android, you n
 I recommend this project be opened, edited, and run via android studio
 
 ## Version Bump Procedure
-edit versionString and versionCode in src/build.gradle.kts
+edit spellbook and spellbookVersionCode in gradle/libs.versions.toml

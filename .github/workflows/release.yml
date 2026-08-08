@@ -17,11 +17,11 @@ jobs:
           submodules: recursive
       - uses: ./.github/actions/setup-build
       - name: "Build msi installer"
-        run: ./gradlew.bat packageReleaseMsi
+        run: ./gradlew.bat desktopApp:packageReleaseMsi
 
       - run: |
           mkdir release-files
-          mv composeApp/build/compose/binaries/main-release/msi/*.msi release-files/spellbook-installer-${{ github.event.release.tag_name }}.msi
+          mv desktopApp/build/compose/binaries/main-release/msi/*.msi release-files/spellbook-installer-${{ github.event.release.tag_name }}.msi
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ github.event.release.tag_name }} release-files/*.msi
@@ -53,14 +53,14 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SECRET_KEY_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ vars.SIGNING_KEY_ALIAS }}
         name: "Build releases"
-        run: ./gradlew --info createReleaseDistributable packageReleaseDeb packageReleaseApk packageReleaseUberJarForCurrentOS
+        run: ./gradlew --info desktopApp:createReleaseDistributable desktopApp:packageReleaseDeb androidApp:packageReleaseApk desktopApp:packageReleaseUberJarForCurrentOS
 
       - run: |
           mkdir release-files
-          mv composeApp/build/outputs/apk_from_bundle/release/*.apk release-files/spellbook-${{ github.event.release.tag_name }}.apk
-          mv composeApp/build/compose/binaries/main-release/deb/org.fufu.spellbook_*.deb release-files/spellbook-${{ github.event.release.tag_name }}.deb
-          mv composeApp/build/compose/jars/org.fufu.spellbook-linux-x64-*-release.jar release-files/spellbook-${{ github.event.release.tag_name }}.jar
-          tar -czvf release-files/spellbook-${{ github.event.release.tag_name }}.tar.gz composeApp/build/compose/binaries/main-release/app
+          mv androidApp/build/outputs/apk_from_bundle/release/*.apk release-files/spellbook-${{ github.event.release.tag_name }}.apk
+          mv desktopApp/build/compose/binaries/main-release/deb/org.fufu.spellbook_*.deb release-files/spellbook-${{ github.event.release.tag_name }}.deb
+          mv desktopApp/build/compose/jars/org.fufu.spellbook-linux-x64-*-release.jar release-files/spellbook-${{ github.event.release.tag_name }}.jar
+          tar -czvf release-files/spellbook-${{ github.event.release.tag_name }}.tar.gz desktopApp/build/compose/binaries/main-release/app
 
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
