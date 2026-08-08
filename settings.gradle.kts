@@ -31,5 +31,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(":composeApp")
-includeBuild("KsonMulti")
+include(":shared")
+include(":androidApp")
+include(":desktopApp")
