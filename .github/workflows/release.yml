@@ -57,7 +57,7 @@ jobs:
 
       - run: |
           mkdir release-files
-          mv composeApp/build/outputs/apk*/release/*.apk release-files/spellbook-${{ github.event.release.tag_name }}.apk
+          mv composeApp/build/outputs/apk_from_bundle/release/*.apk release-files/spellbook-${{ github.event.release.tag_name }}.apk
           mv composeApp/build/compose/binaries/main-release/deb/org.fufu.spellbook_*.deb release-files/spellbook-${{ github.event.release.tag_name }}.deb
           mv composeApp/build/compose/jars/org.fufu.spellbook-linux-x64-*-release.jar release-files/spellbook-${{ github.event.release.tag_name }}.jar
           tar -czvf release-files/spellbook-${{ github.event.release.tag_name }}.tar.gz composeApp/build/compose/binaries/main-release/app
