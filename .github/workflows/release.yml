@@ -51,7 +51,7 @@ jobs:
       - env:
           SIGNING_STORE_PASSWORD: ${{ secrets.SECRET_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SECRET_KEY_PASSWORD }}
-          SIGNING_KEY_ALIAS: ${{ variables.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_ALIAS: ${{ vars.SIGNING_KEY_ALIAS }}
         name: "Build releases"
         run: ./gradlew --info createReleaseDistributable packageReleaseDeb packageReleaseApk packageReleaseUberJarForCurrentOS
 
