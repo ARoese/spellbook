@@ -42,7 +42,17 @@ jobs:
         with:
           submodules: recursive
       - uses: ./.github/actions/setup-build
-      - name: "Build releases"
+
+      - uses: mobiledevops/secret-to-file-action@v2
+        with:
+          base64-encoded-secret: ${{ secrets.SECRET_KEYSTORE }}
+          filename: "secrets/keystore.jks"
+
+      - env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SECRET_STORE_PASSWORD }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SECRET_KEY_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ variables.SIGNING_KEY_ALIAS }}
+        name: "Build releases"
         run: ./gradlew --info createReleaseDistributable packageReleaseDeb packageReleaseApk packageReleaseUberJarForCurrentOS
 
       - run: |

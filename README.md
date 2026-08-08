@@ -29,7 +29,7 @@ Installers and distributions are provided for various systems. Download the appr
 | Linux (other)         | .tar.gz   |
 | Other                 | .jar      |
 
-I do not publish to the Google Play Store, and my APKs are not signed. In order to install on android, you need to install the APK manually. Download the APK on your phone, then tap the "download complete" notification to install it. Reference [this tutorial](https://www.lifewire.com/install-apk-on-android-4177185) for further assistance.
+I do not publish to the Google Play Store. In order to install on android, you need to install the APK manually. Download the APK on your phone, then tap the "download complete" notification to install it. Reference [this tutorial](https://www.lifewire.com/install-apk-on-android-4177185) for further assistance.
 
 ## Manual Build
 1. Clone this repository
