@@ -13,6 +13,7 @@ import org.koin.compose.koinInject
 
 data object PreferencesKeys {
     val IS_DARK_MODE = booleanPreferencesKey("dark_mode")
+    val USE_SPELL_BADGES = booleanPreferencesKey("use_spell_badges")
 }
 
 enum class DarkModePreference{
@@ -46,6 +47,17 @@ fun setPreferencesIsDarkMode(datastore: DataStore<Preferences>, newState: DarkMo
     }
 }
 
-data object PreferencesDefaults {
-    val IS_DARK_MODE: Boolean? = null
+fun getPreferencesUseSpellBadge(datastore: DataStore<Preferences>): Flow<Boolean> {
+    return datastore.data.map {
+        it[PreferencesKeys.USE_SPELL_BADGES] ?: false
+    }
+}
+
+fun setPreferencesUseSpellBadge(datastore: DataStore<Preferences>, newState: Boolean) {
+    //TODO: make this properly async. This is fast enough for now, though
+    runBlocking {
+        datastore.edit {
+            it[PreferencesKeys.USE_SPELL_BADGES] = newState
+        }
+    }
 }

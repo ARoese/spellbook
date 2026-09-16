@@ -50,7 +50,8 @@ fun Chip(
             color = contentColor,
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier
-                .align(Alignment.Center)
+                .align(Alignment.Center),
+            softWrap = false,
         )
     }
 }

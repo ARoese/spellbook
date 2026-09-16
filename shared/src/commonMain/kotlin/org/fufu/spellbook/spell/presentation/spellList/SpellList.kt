@@ -9,9 +9,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowOverflow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.icons.Icons
@@ -22,16 +27,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import org.fufu.spellbook.composables.ChipSize
 import org.fufu.spellbook.composables.TagChip
+import org.fufu.spellbook.settings.getPreferencesUseSpellBadge
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellListFilter
+import org.fufu.spellbook.spell.presentation.SpellBadge
+import org.fufu.spellbook.spell.presentation.parseComponents
+import org.koin.compose.koinInject
 
 // sorted by name, then by level. Levels are grouped together, and
 // within that, names are sorted alphabetically
@@ -65,6 +78,7 @@ fun LazyListScope.ungroupedSpellList(
     state: SpellListState,
     onSpellSelected: (Spell) -> Unit,
     rightSideButton: (@Composable (Spell) -> Unit)? = null,
+    useBadges: Boolean,
 ){
     val sortedSpells : List<Spell> = orderSpellList(
         state.displayedSpells,
@@ -72,7 +86,7 @@ fun LazyListScope.ungroupedSpellList(
     )
     sortedSpells.forEach{ spell ->
         item(key=spell.key){
-            SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton)
+            SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton, useBadges)
             HorizontalDivider()
         }
     }
@@ -85,6 +99,7 @@ fun LazyListScope.groupedSpellList(
     rightSideButton: (@Composable (Spell) -> Unit)? = null,
     headerContent: @Composable (Int) -> Unit = {},
     necessaryLevels: Set<Int>,
+    useBadges: Boolean,
 ){
     val spellGroups = groupSpellsByLevels(state.displayedSpells, necessaryLevels)
 
@@ -99,7 +114,7 @@ fun LazyListScope.groupedSpellList(
         }
         spells.forEach{ spell ->
             item(key=spell.key){
-                SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton)
+                SpellListItem(spell, {onSpellSelected(spell)}, rightSideButton, useBadges)
                 HorizontalDivider()
             }
         }
@@ -125,6 +140,9 @@ fun SpellList(
                 if(showFilterOptions){
                     SpellListFilterSelector(state, onChangeFilter)
                 }
+                val preferencesDataStore = koinInject<DataStore<Preferences>>()
+                val useBadges by getPreferencesUseSpellBadge(preferencesDataStore)
+                    .collectAsState(false)
                 LazyColumn(modifier = Modifier
                     .padding(horizontal = 5.dp)
                 ) {
@@ -134,13 +152,15 @@ fun SpellList(
                             onSpellSelected,
                             rightSideButton,
                             headerContent,
-                            necessarySpellLevels
+                            necessarySpellLevels,
+                            useBadges
                         )
                     } else {
                         ungroupedSpellList(
                             state,
                             onSpellSelected,
                             rightSideButton,
+                            useBadges
                         )
                     }
                 }
@@ -179,25 +199,37 @@ fun SpellListStickyHeader(
 fun SpellListItem(
     spell: Spell,
     onClick: () -> Unit,
-    rightSideButton: (@Composable (Spell) -> Unit)? = null
+    rightSideButton: (@Composable (Spell) -> Unit)? = null,
+    useBadge: Boolean
 ){
     Row(modifier = Modifier
         .padding(vertical=5.dp)
         .fillMaxWidth()
         .clickable(onClick = onClick)
+        .height(IntrinsicSize.Max)
     ){
+        if(useBadge){
+            SpellBadge(
+                parseComponents(spell.info.components), spell.info.ritual,
+                Modifier.fillMaxHeight()
+            )
+            Spacer(Modifier.width(2.dp))
+        }
+
         Column(modifier= Modifier.weight(1f)){
             Text(
                 spell.info.name,
                 style= MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                overflow= TextOverflow.Ellipsis
+                overflow= TextOverflow.Ellipsis,
+                softWrap = false
             )
 
             Text(
                 text=spell.info.school,
                 fontStyle= FontStyle.Italic,
-                style= MaterialTheme.typography.titleSmall
+                style= MaterialTheme.typography.titleSmall,
+                softWrap = false
             )
         }
 
@@ -205,7 +237,8 @@ fun SpellListItem(
             modifier= Modifier
                 .weight(1f)
                 .align(Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            maxLines = 2
         ){
             spell.info.tag.forEach{
                 Box(modifier= Modifier.padding(2.dp)){
