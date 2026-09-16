@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -19,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
@@ -75,7 +78,7 @@ fun CharacterList(
     onCharacterClicked: (Character) -> Unit = {}
 ) {
     LazyVerticalGrid(
-        columns=GridCells.Fixed(2),
+        columns=GridCells.Adaptive(150.dp),
         contentPadding = PaddingValues(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -83,7 +86,7 @@ fun CharacterList(
         items(state.characters){ character ->
             CharacterCard(
                 character = character,
-                onClick = { onCharacterClicked(character) }
+                onClick = { onCharacterClicked(character) },
             )
         }
     }
@@ -92,10 +95,11 @@ fun CharacterList(
 @Composable
 fun CharacterCard(
     character: Character,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ){
     ElevatedCard(
-        modifier = Modifier
+        modifier = modifier
             .aspectRatio(1f)
             .clickable(
                 true,
@@ -109,7 +113,7 @@ fun CharacterCard(
                 .padding(16.dp),
         ){
             Column(horizontalAlignment = Alignment.CenterHorizontally){
-                Text(character.name)
+                Text(character.name, textAlign = TextAlign.Center)
                 Icon(CharacterIcon(character.characterIcon).fromString(), character.characterIcon)
             }
         }
