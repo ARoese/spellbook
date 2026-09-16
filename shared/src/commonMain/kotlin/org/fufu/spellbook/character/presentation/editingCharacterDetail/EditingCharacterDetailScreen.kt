@@ -12,7 +12,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.fufu.spellbook.character.domain.Character
 import org.fufu.spellbook.character.domain.CharacterIcon
 import org.fufu.spellbook.character.domain.SpellSlotLevel
+import org.fufu.spellbook.composables.ConfirmDeleteButton
 import org.fufu.spellbook.composables.DropdownSelector
 import kotlin.math.abs
 import kotlin.math.min
@@ -81,12 +81,8 @@ fun EditingCharacterDetailScreen(
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = {
-                        state.character?.let{intend(Intent.DeleteCharacter(it))}
-                    }
-                ){
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                ConfirmDeleteButton {
+                    state.character?.let{intend(Intent.DeleteCharacter(it))}
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(

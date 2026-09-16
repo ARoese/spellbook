@@ -13,7 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.fufu.spellbook.composables.ConfirmDeleteButton
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.spell.domain.Condition
 import org.fufu.spellbook.spell.domain.SpellInfo
@@ -141,11 +141,7 @@ fun SpellDetailScreen(
         topBar = {
             Box(modifier = Modifier.fillMaxWidth()){
                 if(state.isEditing){
-                    IconButton(
-                        onClick = onDeleteClicked
-                    ){
-                        Icon(Icons.Filled.Delete, "Delete")
-                    }
+                    ConfirmDeleteButton(onDeleteClicked)
                 }
 
                 Row(modifier = Modifier.align(Alignment.CenterEnd)){
