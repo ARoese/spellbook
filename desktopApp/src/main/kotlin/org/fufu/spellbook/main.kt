@@ -1,11 +1,13 @@
 package org.fufu.spellbook
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -20,6 +22,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import spellbook.shared.generated.resources.Res
 import spellbook.shared.generated.resources.app_icon
+import java.awt.Color
 import java.awt.Dimension
 
 fun main(){
@@ -34,6 +37,8 @@ fun main(){
         WithCustomTheme {
             var spellsToDisplay by remember { mutableStateOf(emptyList<Int>()) }
 
+            val bgColor = MaterialTheme.colorScheme.background
+            val awtColor = Color(bgColor.toArgb())
             val mainWindowState = rememberWindowState()
             Window(
                 state = mainWindowState,
@@ -41,6 +46,8 @@ fun main(){
                 title = "Spell Book",
                 icon = painterResource(Res.drawable.app_icon)
             ) {
+                window.background = awtColor
+                window.contentPane.background = awtColor
                 App(
                     requestWindowForSpell = {
                         if(it != 0){
@@ -62,6 +69,8 @@ fun main(){
                         icon = painterResource(Res.drawable.app_icon)
                     ) {
                         window.size = Dimension(400, 400)
+                        window.background = awtColor
+                        window.contentPane.background = awtColor
                         val vm = koinViewModel<SpellDetailVM>(
                             parameters = { parametersOf(spellId) }
                         )
