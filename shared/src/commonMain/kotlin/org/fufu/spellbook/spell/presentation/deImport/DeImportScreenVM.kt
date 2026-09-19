@@ -64,7 +64,11 @@ class DeImportScreenVM(val mutator: SpellMutator) : ViewModel() {
         val state = state.value
         val filter = SpellListFilter(sources = state.selectedImportKeys)
         val allSpells = state.spells.concreteState ?: return
-        val spellIdsToDelete = filter.filter(allSpells).map { it.key }
+
+        val spellIdsToDelete = filter.filter(allSpells)
+            // Don't delete custom spells
+            .filter { !it.info.isCustomSpell() }
+            .map { it.key }
         coroutineScope {
             spellIdsToDelete.map {
                 async { mutator.deleteSpell(it) }

@@ -14,6 +14,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,18 +46,47 @@ fun ImportScreenRoot(
     ){
         when(it){
             is Intent.ChangeSource -> viewModel.onChangeSource(it.newSource)
-            is Intent.DoImport -> viewModel.doImport(it.ids)
+            is Intent.SetImportPolicy -> viewModel.setImportPolicy(it.policy)
+            is Intent.DoImport -> viewModel.doImport()
             is Intent.NavigateTo -> navigateTo(it.route)
         }
     }
 }
 
 sealed interface Intent{
-    data class DoImport(val ids: Set<Int>?): Intent
+    data object DoImport: Intent
+    data class SetImportPolicy(val policy: ImportPolicy): Intent
     data class NavigateTo(val route: Route): Intent
     data class ChangeSource(val newSource: ImportSource): Intent
 }
 
+
+@Composable
+fun EditableImportPolicy(
+    state: ImportPolicy,
+    intend: (Intent) -> Unit
+) {
+    Column {
+        Row {
+            Text("Update Spells: ", modifier = Modifier.align(Alignment.CenterVertically))
+            Switch(checked = state.update, onCheckedChange = {
+                intend(Intent.SetImportPolicy(state.copy(update = it)))
+            })
+        }
+        Row {
+            Text("Import New Spells: ", modifier = Modifier.align(Alignment.CenterVertically))
+            Switch(checked = state.unique, onCheckedChange = {
+                intend(Intent.SetImportPolicy(state.copy(unique = it)))
+            })
+        }
+        Row {
+            Text("Match by level: ", modifier = Modifier.align(Alignment.CenterVertically))
+            Switch(checked = state.matchByLevel, onCheckedChange = {
+                intend(Intent.SetImportPolicy(state.copy(matchByLevel = it)))
+            })
+        }
+    }
+}
 @Composable
 fun ImportScreen(
     state: ImportScreenState,
@@ -87,16 +117,20 @@ fun ImportScreen(
                     return@Box
                 }
 
-                state.currentSpells.combine(state.availableSpells).map(
+                EditableImportPolicy(state.importPolicy, intend)
+
+                state.currentSpells.combine(state.availableSpells).combine(state.filteredAvailableSpells).map(
                     ifNotLoaded = {CircularProgressIndicator()}
-                ){ (currentSpells, availableSpells) ->
+                ){ (t, segmentation) ->
+                    val (currentSpells, availableSpells) = t
                     Text("There are ${availableSpells.size} spells available to import")
-                    val uniqueSpells = ImportPolicy(matchByName = true)
-                        .filterShouldImport(currentSpells, availableSpells)
-                        .map { it.key }
-                    Text("Only the ${uniqueSpells.size} unique spells will be imported")
-                    if(uniqueSpells.isNotEmpty()){
-                        Button(onClick = {intend(Intent.DoImport(uniqueSpells.toSet()))}){
+                    val uniqueSpells = segmentation.unique
+                    val updateSpells = segmentation.update
+                    Text("Using them,")
+                    Text("- ${uniqueSpells.size} new spells will be imported")
+                    Text("- ${updateSpells.size} spells will be updated")
+                    if(!segmentation.isEmpty()){
+                        Button(onClick = {intend(Intent.DoImport)}){
                             Text("Import!")
                         }
                     }

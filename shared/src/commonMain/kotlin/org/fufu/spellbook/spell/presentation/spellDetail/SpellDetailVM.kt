@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.fufu.spellbook.spell.domain.Condition
 import org.fufu.spellbook.spell.domain.ConditionProvider
-import org.fufu.spellbook.spell.domain.DefaultSpellInfo
+import org.fufu.spellbook.spell.domain.defaultSpellInfo
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.SpellMutator
@@ -75,8 +75,8 @@ class SpellDetailVM(
 
     private val _state = MutableStateFlow(
         SpellDetailState(
-            originalSpell = Spell(0, DefaultSpellInfo()),
-            spellInfo = DefaultSpellInfo(),
+            originalSpell = Spell(0, defaultSpellInfo()),
+            spellInfo = defaultSpellInfo(),
             loading = spellId != 0,
             isEditing = spellId == 0
         )
@@ -142,11 +142,13 @@ class SpellDetailVM(
             val newSpell = if(it.originalSpell != null){
                 it.originalSpell.copy(
                     key = 0,
-                    it.originalSpell.info.copy(
-                        name = "${it.originalSpell.info.name} copy")
+                    info = it.originalSpell.info.copy(
+                        name = "${it.originalSpell.info.name} copy",
+                        sources = it.originalSpell.info.sources.plus("Custom")
+                    ),
                 )
             }else{
-                Spell(0, DefaultSpellInfo())
+                Spell(0, defaultSpellInfo())
             }
             it.copy(originalSpell = newSpell, spellInfo = newSpell.info, isEditing = true)
         }

@@ -23,7 +23,7 @@ interface SpellMutator : SpellProvider {
     suspend fun addSpell(spell: SpellInfo): Int
 }
 
-private fun importTagFor(i: Int): String{
+fun importTagFor(i: Int): String{
     return "Import-$i"
 }
 
@@ -36,41 +36,22 @@ fun importNumFromSource(source: String): Int? {
         }
 }
 
-private fun getMaxImportNum(spell: Spell): Int? {
+fun SpellInfo.withoutImportTags(): SpellInfo {
+    return this.copy(
+        sources = this.sources.filter { importNumFromSource(it) == null }
+    )
+}
+
+fun getMaxImportNum(spell: Spell): Int? {
     return spell.info.sources
         .mapNotNull { importNumFromSource(it) }
         .maxOfOrNull { it }
 }
 
-suspend fun SpellMutator.importFrom(
-    provider: SpellProvider,
-    ids : Set<Int>? = null,
-    scope: CoroutineScope,
-    onProgress : (Float) -> Unit = {},
-) : List<Int> {
-    val spellsFlow = if(ids == null) provider.getSpells() else provider.getSpells(ids)
-    val nextImportNum: Int = this.getSpells().map {
-        it.maxOfOrNull {
-            getMaxImportNum(it) ?: 0
-        } ?: 0
-    }.stateIn(scope = scope).value
-    val lastSpells = spellsFlow.stateIn(scope = scope).value
-    onProgress(0.5f)
-    if(lastSpells.isEmpty()){
-        onProgress(1f)
-        return emptyList()
-    }
-
-    val numSpells = lastSpells.size // not 0 because of above check
-    val importNum = nextImportNum+1
-    return lastSpells.map{ (i, spell) ->
-        addSpell(
-            spell.copy(sources = spell.sources.plus(importTagFor(importNum)))
-                .normalized()
-        ).also {
-            onProgress(0.5f + ((i+1)/numSpells)*0.5f)
-        }
-    }.toList()
+fun Iterable<Spell>.getMaxImportNum(): Int {
+    return this.maxOfOrNull {
+        getMaxImportNum(it) ?: 0
+    } ?: 0
 }
 
 class MockSpellProvider : SpellProvider {

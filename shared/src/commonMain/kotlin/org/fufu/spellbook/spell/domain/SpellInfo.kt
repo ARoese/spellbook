@@ -27,19 +27,50 @@ data class SpellInfo(
     val damages: List<String>,
     val saves: List<String>,
     val dragonmarks: List<String>
-)
+) {
+    fun isCustomSpell(): Boolean {
+        return this.sources.any {
+            it.equals("Custom", ignoreCase = true)
+        }
+    }
 
-fun SpellInfo.normalized() : SpellInfo {
-    return this.copy(
-        classes=classes.titleCased(),
-        guilds=guilds.titleCased(),
-        school=school.uppercase(),
-        subclasses=subclasses.titleCased(),
-        damages=damages.normalized(),
-        saves=saves.normalized(),
-        dragonmarks=dragonmarks.titleCased(),
-        sources=sources.titleCased()
-    )
+    fun normalized() : SpellInfo {
+        return this.copy(
+            classes = classes.titleCased(),
+            guilds = guilds.titleCased(),
+            school = school.uppercase(),
+            subclasses = subclasses.titleCased(),
+            damages = damages.normalized(),
+            saves = saves.normalized(),
+            dragonmarks = dragonmarks.titleCased(),
+            sources = sources.titleCased()
+        )
+    }
+
+    /**
+     * Format the spell as an ordinal level with the school such as:
+     * 7th-level Transformation
+     * Conjuration cantrip
+     */
+    fun formatAsOrdinalSchool() : String {
+        fun SpellInfo.formatAsOrdinalSchoolInternal() : String{
+            val schoolName = school
+                .lowercase()
+                .replaceFirstChar{
+                    if(it.isLowerCase())
+                        it.titlecase()
+                    else it.toString()
+                }
+            if(level == 0){
+                return "$schoolName cantrip"
+            }
+            return "${level.asOrdinal()}-level $schoolName"
+        }
+
+        // tack (ritual) onto the end if it's a ritual
+        val formatted = this.formatAsOrdinalSchoolInternal()
+        return if(ritual) "$formatted (ritual)" else formatted
+    }
 }
 
 private fun List<String>.normalized() : List<String> {
@@ -80,7 +111,7 @@ private fun List<String>.titleCased() : List<String> {
     }
 }
 
-fun DefaultSpellInfo() : SpellInfo {
+fun defaultSpellInfo() : SpellInfo {
     return SpellInfo(
         sources = listOf("Custom"),
         versions = listOf("5e"),
@@ -102,28 +133,6 @@ fun DefaultSpellInfo() : SpellInfo {
         saves = emptyList(),
         dragonmarks = emptyList()
     )
-}
-
-fun SpellInfo.formatAsOrdinalSchool() : String {
-    // 7th-level Transformation
-    // Conjuration cantrip
-    fun SpellInfo.formatAsOrdinalSchoolInternal() : String{
-        val schoolName = school
-            .lowercase()
-            .replaceFirstChar{
-                if(it.isLowerCase())
-                    it.titlecase()
-                else it.toString()
-            }
-        if(level == 0){
-            return "$schoolName cantrip"
-        }
-        return "${level.asOrdinal()}-level $schoolName"
-    }
-
-    // tack (ritual) onto the end if it's a ritual
-    val formatted = this.formatAsOrdinalSchoolInternal()
-    return if(ritual) "$formatted (ritual)" else formatted
 }
 
 ///https://stackoverflow.com/a/41774548

@@ -40,7 +40,6 @@ import org.fufu.spellbook.composables.ConfirmDeleteButton
 import org.fufu.spellbook.composables.DropdownSelector
 import org.fufu.spellbook.spell.domain.Condition
 import org.fufu.spellbook.spell.domain.SpellInfo
-import org.fufu.spellbook.spell.domain.formatAsOrdinalSchool
 import org.jetbrains.compose.resources.painterResource
 import spellbook.shared.generated.resources.Res
 import spellbook.shared.generated.resources.content_copy

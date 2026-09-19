@@ -18,10 +18,12 @@ import kotlinx.coroutines.launch
 import org.fufu.spellbook.composables.ComposeLoadable
 import org.fufu.spellbook.spell.data.json.JsonSpellProvider
 import org.fufu.spellbook.spell.data.srd5eapi.SRD5eSpellProvider
+import org.fufu.spellbook.spell.domain.ImportPolicy
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellMutator
 import org.fufu.spellbook.spell.domain.SpellProvider
-import org.fufu.spellbook.spell.domain.importFrom
+import org.fufu.spellbook.spell.domain.getMaxImportNum
+import org.fufu.spellbook.spell.domain.importTagFor
 
 sealed interface ImportSource {
     data class JSON(val file: PlatformFile?) : ImportSource
@@ -31,9 +33,11 @@ sealed interface ImportSource {
 }
 
 data class ImportScreenState(
-    val availableSpells: ComposeLoadable<List<Spell>> = ComposeLoadable(emptyList()),
     val currentSpells: ComposeLoadable<List<Spell>> = ComposeLoadable(),
     val importSource: ImportSource = ImportSource.SELECT,
+    val availableSpells: ComposeLoadable<List<Spell>> = ComposeLoadable(emptyList()),
+    val filteredAvailableSpells: ComposeLoadable<ImportPolicy.Segmentation> = ComposeLoadable(),
+    val importPolicy: ImportPolicy = ImportPolicy(update = true, unique = true, matchByLevel = false),
     val importing: Boolean = false,
     val importProgress: Float = 0f
 )
@@ -64,6 +68,7 @@ class ImportScreenVM(
         _state.update { it.copy(availableSpells = ComposeLoadable()) }
         observeImportSpellsJob = provider.getSpells().onEach{ spells ->
             _state.update { it.copy(availableSpells = ComposeLoadable(spells)) }
+            setImportPolicy(_state.value.importPolicy)
         }.launchIn(viewModelScope)
     }
 
@@ -73,6 +78,7 @@ class ImportScreenVM(
         _state.update { it.copy(currentSpells = ComposeLoadable()) }
         observeCurrentSpellsJob = destination.getSpells().onEach{ spells ->
             _state.update { it.copy(currentSpells = ComposeLoadable(spells)) }
+            setImportPolicy(_state.value.importPolicy)
         }.launchIn(viewModelScope)
     }
 
@@ -86,14 +92,45 @@ class ImportScreenVM(
         }
     }
 
+    fun setImportPolicy(new: ImportPolicy) {
+        _state.update {
+            val currentSpells = it.currentSpells.concreteState
+            val availableSpells = it.availableSpells.concreteState
+            if (currentSpells == null || availableSpells == null) {
+                return@update it
+            }
+
+            it.copy(
+                importPolicy = new,
+                filteredAvailableSpells = ComposeLoadable(new.segment(currentSpells, availableSpells))
+            )
+        }
+    }
+
     private var importJob: Job? = null
-    fun doImport(ids: Set<Int>? = null) {
-        val prov = provider ?: return
+    fun doImport() {
         importJob?.cancel("canceled")
         _state.update { it.copy(importing = true) }
+        val segmentationToUse = _state.value.filteredAvailableSpells.concreteState ?: return
         importJob = CoroutineScope(Dispatchers.IO).launch {
-            destination.importFrom(prov, ids=ids, scope = viewModelScope) { progress ->
-                _state.update {it.copy(importProgress = progress)}
+            val totalWork = segmentationToUse.update.size + segmentationToUse.unique.size
+            val progress = { workDone: Int ->
+                _state.update { it.copy(importProgress = workDone.toFloat()/totalWork) }
+            }
+            var workDone = 0
+            val importNum = segmentationToUse.unique.getMaxImportNum()+1
+            val importTag = importTagFor(importNum)
+            // import unique spells
+            for(spell in segmentationToUse.unique) {
+                destination.addSpell(spell.info.copy(sources = spell.info.sources.plus(importTag)))
+                workDone += totalWork
+                progress(workDone)
+            }
+            // update existing spells
+            for(spell in segmentationToUse.update) {
+                destination.setSpell(spell)
+                workDone += totalWork
+                progress(workDone)
             }
             _state.update { ImportScreenState() }
         }

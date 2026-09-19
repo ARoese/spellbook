@@ -16,7 +16,6 @@ import org.fufu.spellbook.CachedSuspend
 import org.fufu.spellbook.spell.domain.Spell
 import org.fufu.spellbook.spell.domain.SpellInfo
 import org.fufu.spellbook.spell.domain.SpellProvider
-import org.fufu.spellbook.spell.domain.normalized
 import spellbook.shared.generated.resources.Res
 
 fun formatComponents(components: List<String>, material: String?): String {
