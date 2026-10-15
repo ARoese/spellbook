@@ -36,6 +36,9 @@ compose.desktop {
                 iconFile = project(":shared").file("src/commonMain/composeResources/drawable/app_icon.ico")
                 shortcut = true
             }
+            linux {
+                modules("java.instrument", "jdk.security.auth", "jdk.unsupported")
+            }
         }
     }
 }
