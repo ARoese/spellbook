@@ -1,8 +1,8 @@
 [versions]
 spellbookPackageName = "org.fufu.spellbook"
 # when spellbook version is increased, spellbookVersionCode should also be increased
-spellbook = "1.4.0"
-spellbookVersionCode = "9"
+spellbook = "1.4.1"
+spellbookVersionCode = "10"
 spellbookGithubLink = "https://github.com/ARoese/spellbook"
 
 composableTable = "1.3.1"
